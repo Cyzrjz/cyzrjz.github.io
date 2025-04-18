@@ -1,4 +1,28 @@
 
 [
   
+  
+  {
+    "objectID": "1744885519",
+    "permalink": "/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/",
+    "title": "Z3约束求解",
+    
+    "content": "\rZ3约束求解\rZ3是微软开源的开源软件，可以用来进行数学规划、逻辑推理、符号执行等问题的求解 常用于离散数学，逻辑学，计算机科学等领域 可以用pip安装，命令如下：\npip install z3-solver 函数介绍与使用\r数据类型\r数据类型 示例 解释 Bool x = Bool(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个布尔变量x Bools x, y, z = Bools(\u0026amp;lsquo;x y z\u0026amp;rsquo;) 创建三个布尔变量x,y,z,以此类推 BitVec x = BitVec(\u0026amp;lsquo;x\u0026amp;rsquo;, 8) 创建一个8位的二进制向量变量x Int x = Int(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个整数变量x Real x = Real(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个实数变量x 常用函数\r函数 功能 And(a, b) 逻辑与，返回a和b的逻辑与,表示同时满足a和b Or(a, b) 逻辑或，返回a和b的逻辑或,表示满足a或b Not(a) 逻辑非，返回a的逻辑非,表示不满足a Xor(a, b) 逻辑异或，返回a和b的逻辑异或,表示满足a或b，但不同时满足 If(a, b, c) 条件选择，返回a和b的条件选择，表示满足a时返回b，否则返回c Distinct(a, b, c) 不同，返回a、b、c的不同关系，表示a、b、c中没有相同的值 Sum(a, b, c) 求和，返回a、b、c的求和，表示a、b、c的和 Implies(a, b) 蕴含，返回a和b的蕴含关系，表示a成立那b必然成立，否则无所谓 PbEq([(x, 1), (y, 2), (z, 3)] , n) 伪布尔约束,x,y,z为布尔变量,1,2,3为权重,n为目标值，表示满足x*1+y*2+z*3=n 函数详解\rPbEq 用于表示多个布尔变量中恰好有几个为真 s.add(PbEq([(x, 1), (y, 2), (z, 3)], 6)) # 约束条件是x*1+y*2+z*3=6 这里约束的表达式是 变量真值 * 权重 = 目标值 当所有权重为1时，表示多个目标只有一个成立 s.add(PbEq([(x, 1), (y, 1), (z, 1)], 1)) 表示条件x,y,z中只有一个为真 创建Solver对象\r创建Solver对象， …",
+    
+    "date": "2025-04-17 18:25:19",
+    "updated": "2025-04-17 18:25:19"
+  }
+  
+  , 
+  {
+    "objectID": "1744781683",
+    "permalink": "/post/c++%E8%BF%9B%E7%A8%8B%E9%81%8D%E5%8E%86/",
+    "title": "C++进程遍历",
+    
+    "content": "\r遍历进程\r获取系统快照\rCreateToolhelp32Snapshot\r函数原型\rHANDLE WINAPI CreateToolhelp32Snapshot( DWORD dwFlags, DWORD th32ProcessID ); 参数\rdwFlags 描述 TH32CS_INHERIT 进程的创建者可以访问进程的子进程 TH32CS_SNAPALL 在快照中包含系统中的所有进程和线程 TH32CS_SNAPHEAPLIST 在快照中包含在th32ProcessID中指定的进程的所有的堆 TH32CS_SNAPMODULE 在快照中包含在th32ProcessID中指定的进程的所有的模块 TH32CS_SNAPPROCESS 在快照中包含系统中所有的进程 TH32CS_SNAPTHREAD 在快照中包含系统中所有的线程 返回值\r如果成功，则返回一个进程快照的句柄；如果失败，则返回INVALID_HANDLE_VALUE\n举例\rint main() { HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0); //核心函数 if(hSnapshot == INVALID_HANDLE_VALUE) { _tprintf(_T(\u0026amp;#34;CreateToolhelp32Snapshot error: %u\\n\u0026amp;#34;), GetLastError()); /* _tprintf无法输出中文，需要使用 #include \u0026amp;lt;locale.h\u0026amp;gt; setlocale(LC_ALL, \u0026amp;#34;\u0026amp;#34;); //设置本地化 */ return 0; } } 遍历进程信息\r在调用 CreateToolhelp32Snapshot 创建系统快照后，首先需要用 Process32First 函数获取快照中的第一个进程信息 然后用 Process32Next 函数依次获取快照中的下一个进程信息，直到没有更多的进程信息为止。\nProcess32First和Process32Next\r函数原型\rBOOL WINAPI Process32First( HANDLE hSnapshot, LPPROCESSENTRY32 lppe ); BOOL WINAPI Process32Next( …",
+    
+    "date": "2025-04-16 13:34:43",
+    "updated": "2025-04-16 13:34:43"
+  }
+  
 ]
