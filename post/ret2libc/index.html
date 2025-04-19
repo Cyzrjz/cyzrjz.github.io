@@ -22,7 +22,7 @@
   
 
 <title>
-  Ret2libc | Cyzrjz
+  Ret2libc(未完成) | Cyzrjz
 </title>
 <meta
   name="description"
@@ -114,7 +114,7 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Ret2libc | Cyzrjz" />
+  <meta property="og:title" content="Ret2libc(未完成) | Cyzrjz" />
   <meta
     property="og:description"
     content="少女祈祷中..."
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2libc">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2libc(未完成)">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">Ret2libc</h1>
+            <h1 data-aos="slide-up">Ret2libc(未完成)</h1>
           </a>
         
       
@@ -710,23 +710,44 @@ ebp的地址是
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
-              alt="堆栈"
+              alt="Z3约束求解"
               class="lazyload"
             />
           
         
-        <a href="/post/%E5%A0%86%E6%A0%88/"></a>
+        <a href="/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            堆栈
+            Z3约束求解
           
         </h3>
       </div>
     
 
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://d-sketon.top/img/_backwebp/bg1.webp"
+              data-sizes="auto"
+              alt="Ret2syscall(未完成)"
+              class="lazyload"
+            />
+          
+        
+        <a href="/post/ret2syscall/"></a>
+        <div class="article-nav-caption">后一篇</div>
+        <h3 class="article-nav-title">
+          
+            Ret2syscall(未完成)
+          
+        </h3>
+      </div>
     
   </nav>
 
@@ -802,7 +823,7 @@ ebp的地址是
       <div>
         <span class="icon-brush"
           >&nbsp;
-            5.2k
+            6.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -810,7 +831,7 @@ ebp的地址是
           
           
 
-          00:12
+          00:13
         </span>
       </div>
     
@@ -1260,7 +1281,7 @@ ebp的地址是
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Ret2libc",
+          title: "Ret2libc(未完成)",
           url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
           description: " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 动态链接的程序是在运行时需要对全局和静态数据访问进行GOT定位，然后间接寻址。同样，对于模块间的调用也需要GOT定位，再才间接跳转，这么做势必会影响到程序的运行速度。而且程序在运行时很大一部分函数都可能用不到，于是ELF采用了当函数第一次 …",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",

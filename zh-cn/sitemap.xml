@@ -3,13 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cyzrjz.github.io/tags/pwn/</loc>
-    <lastmod>2025-04-19T14:13:28+08:00</lastmod>
+    <lastmod>2025-04-19T22:06:54+08:00</lastmod>
   </url><url>
-    <loc>https://cyzrjz.github.io/post/ret2libc/</loc>
-    <lastmod>2025-04-19T14:13:28+08:00</lastmod>
+    <loc>https://cyzrjz.github.io/post/ret2syscall/</loc>
+    <lastmod>2025-04-19T22:06:54+08:00</lastmod>
   </url><url>
     <loc>https://cyzrjz.github.io/tags/</loc>
-    <lastmod>2025-04-19T14:13:28+08:00</lastmod>
+    <lastmod>2025-04-19T22:06:54+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -32,7 +32,7 @@
                 />
   </url><url>
     <loc>https://cyzrjz.github.io/</loc>
-    <lastmod>2025-04-19T14:13:28+08:00</lastmod>
+    <lastmod>2025-04-19T22:06:54+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -54,8 +54,8 @@
                 href="https://cyzrjz.github.io/"
                 />
   </url><url>
-    <loc>https://cyzrjz.github.io/post/%E5%A0%86%E6%A0%88/</loc>
-    <lastmod>2025-04-19T13:37:41+08:00</lastmod>
+    <loc>https://cyzrjz.github.io/post/ret2libc/</loc>
+    <lastmod>2025-04-19T14:13:28+08:00</lastmod>
   </url><url>
     <loc>https://cyzrjz.github.io/tags/python/</loc>
     <lastmod>2025-04-17T18:25:19+08:00</lastmod>

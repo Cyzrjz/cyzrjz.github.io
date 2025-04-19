@@ -22,7 +22,7 @@
   
 
 <title>
-  堆栈 | Cyzrjz
+  Ret2syscall(未完成) | Cyzrjz
 </title>
 <meta
   name="description"
@@ -114,12 +114,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="堆栈 | Cyzrjz" />
+  <meta property="og:title" content="Ret2syscall(未完成) | Cyzrjz" />
   <meta
     property="og:description"
     content="少女祈祷中..."
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/post/%E5%A0%86%E6%A0%88/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/ret2syscall/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -129,8 +129,10 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-19T13:37:41&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-19T13:37:41&#43;08:00" />
+  <meta property="article:published_time" content="2025-04-19T22:06:54&#43;08:00" />
+  <meta property="article:modified_time" content="2025-04-19T22:06:54&#43;08:00" />
+  
+    <meta property="article:tag" content="pwn" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -339,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="堆栈">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2syscall(未完成)">
         
       
     
@@ -355,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">堆栈</h1>
+            <h1 data-aos="slide-up">Ret2syscall(未完成)</h1>
           </a>
         
       
@@ -388,7 +390,16 @@
             <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前置知识">前置知识</a>
+      <ul>
+        <li><a href="#system函数">system()函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a></li>
+  </ul>
+</nav>
   </div>
 </div>
           </div>
@@ -530,7 +541,7 @@
     class="article-date-link"
     data-aos="zoom-in"
   >
-    <time datetime="2025-04-19 13:37:41 &#43;0800 &#43;0800" itemprop="datePublished"
+    <time datetime="2025-04-19 22:06:54 &#43;0800 &#43;0800" itemprop="datePublished"
       >2025-04-19</time
     >
     <time style="display: none;" id="post-update-time"
@@ -549,14 +560,60 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <pre class="mermaid">block-beta
-  block:Stack["堆栈"]
-    columns 1
-    A["块 A"]
-    B["块 B"]
-    C["块 C"]
-  end
+        <h2 id="前置知识">
+<a class="header-anchor" href="#%e5%89%8d%e7%bd%ae%e7%9f%a5%e8%af%86"></a>
+前置知识
+</h2><p>假设有以下程序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">char</span> <span class="n">shellcode</span><span class="p">[</span><span class="mh">0x100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">my_puts</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">shellcode</span><span class="p">,</span> <span class="mh">0x100</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">my_puts</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>代码很简单,就是输出字符串&quot;hello world&quot;
+但这一串代码在操作系统层面如何实现?</p>
+<pre class="mermaid">flowchart LR
+    A["my_puts()"] --> B["write()"] --> C["sys_write()"] --> D["标准输出"]
 </pre>
+<p>my_puts()调用了动态链接库libc.so中的write()函数
+write(1,&amp;&ldquo;hello world&rdquo;,12)
+write()将传入参数包装为汇编代码<code>[eax = 4;ebx = 1;ecx = &amp;&quot;hello world&quot;;edx = 12;] + int 0x80;</code>
+<strong>write()函数其实就是对write系统调用的封装</strong>
+执行完成后才进入了内核kernel中的sys_write()函数
+sys_write()函数会将字符串&quot;hello world&quot;写入到标准输出设备中</p>
+<ul>
+<li><strong>什么是系统调用</strong></li>
+</ul>
+<ol>
+<li>系统调用是操作系统提供给用户态程序调用的接口，它是操作系统内核与用户态程序之间的接口，它提供了系统调用的入口，用户态程序通过系统调用与内核进行交互。</li>
+<li>本质上时一些内核函数代码(一段指令),以规范的方式驱动硬件</li>
+<li>x86通过int 0x80指令实现系统调用,amd64通过syscall指令实现系统调用</li>
+</ol>
+<ul>
+<li><strong>什么是libc.so</strong>
+这是一个动态链接库，它包含了系统调用的实现，如open(),read(),write()等等,libc.so随着系统版本更新也会进行更新
+操作系统如何调用不同版本的libc的同一个函数呢?
+这里可以类比Windows系统创建的快捷方式,无论软件版本怎么变化,快捷方式都指向同一个文件,当快捷方式被点击时,系统会自动调用对应的程序</li>
+</ul>
+<h3 id="system函数">
+<a class="header-anchor" href="#system%e5%87%bd%e6%95%b0"></a>
+system()函数
+</h3><p>有了上面的基础,可以知道system()其实是对execve()系统调用的封装,execve()可以执行外部可执行文件,system()可以执行外部命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mh">0xb</span> <span class="c1">; execve系统调用号,在x86架构中,eax寄存器存放系统调用号</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ebx</span><span class="p">,</span> <span class="p">[</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ecx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">edx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mh">0x80</span> <span class="c1">; 调用系统调用</span>
+</span></span></code></pre></div><p>这段汇编实现了execve(&quot;/bin/sh&quot;,0,0)系统调用,即执行/bin/sh命令</p>
+<p><strong>但是在程序中没有存在这一段汇编怎么办?</strong>
+<strong>请看ROP-返回导向编程</strong></p>
+<h2 id="ropreturn-oriented-programming-返回导向编程">
+<a class="header-anchor" href="#ropreturn-oriented-programming-%e8%bf%94%e5%9b%9e%e5%af%bc%e5%90%91%e7%bc%96%e7%a8%8b"></a>
+ROP(Return-Oriented Programming)-返回导向编程
+</h2><p>ROP是一种攻击技术，它利用程序的控制流和数据结构，通过控制程序的执行流程，以达到控制目标程序的目的。</p>
 
       
     </div>
@@ -578,6 +635,15 @@
       
       <ul class="article-tag-list" itemprop="keywords">
   
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/pwn"
+        rel="tag"
+        >PWN</a
+      >
+    </li>
+  
 </ul>
 
     </footer>
@@ -596,42 +662,21 @@
             <img
               data-src="https://d-sketon.top/img/_backwebp/bg1.webp"
               data-sizes="auto"
-              alt="Z3约束求解"
-              class="lazyload"
-            />
-          
-        
-        <a href="/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/"></a>
-        <div class="article-nav-caption">前一篇</div>
-        <h3 class="article-nav-title">
-          
-            Z3约束求解
-          
-        </h3>
-      </div>
-    
-
-    
-      <div class="article-nav-link-wrap article-nav-link-right">
-        
-          
-          
-            <img
-              data-src="/images/my/3.jpg"
-              data-sizes="auto"
-              alt="Ret2libc"
+              alt="Ret2libc(未完成)"
               class="lazyload"
             />
           
         
         <a href="/post/ret2libc/"></a>
-        <div class="article-nav-caption">后一篇</div>
+        <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            Ret2libc
+            Ret2libc(未完成)
           
         </h3>
       </div>
+    
+
     
   </nav>
 
@@ -707,7 +752,7 @@
       <div>
         <span class="icon-brush"
           >&nbsp;
-            5.2k
+            6.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -715,7 +760,7 @@
           
           
 
-          00:12
+          00:13
         </span>
       </div>
     
@@ -757,7 +802,16 @@
           <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前置知识">前置知识</a>
+      <ul>
+        <li><a href="#system函数">system()函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a></li>
+  </ul>
+</nav>
   </div>
 </div>
         </div>
@@ -1150,13 +1204,133 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "堆栈",
-          url: "https:\/\/cyzrjz.github.io\/post\/%E5%A0%86%E6%A0%88\/",
-          description: "block-beta block:Stack[\u0022堆栈\u0022] columns 1 A[\u0022块 A\u0022] B[\u0022块 B\u0022] C[\u0022块 C\u0022] end ",
+          title: "Ret2syscall(未完成)",
+          url: "https:\/\/cyzrjz.github.io\/post\/ret2syscall\/",
+          description: " 前置知识 假设有以下程序\n#include \u0026lt;stdio.h\u0026gt; char shellcode[0x100] = \u0026#34;hello world\u0026#34;; my_puts(){ write(1, shellcode, 0x100); } int main(){ my_puts(); return 0; } 代码很简单,就是输出字符串\u0026quot;hello world\u0026quot; 但这一串代码在操作系统层面如何实现?\nflowchart LR A[\u0022my_puts()\u0022] --\u003e B[\u0022write()\u0022] --\u003e C[\u0022sys_write()\u0022] --\u003e D[\u0022标准输出\u0022] …",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",
         };
       </script>
     
+    
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD/kZRD47aJ" crossorigin="anonymous"
+  ></script>
+
+
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-eEu5CTj3qGvu9PdJuS&#43;YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"
+  ></script>
+
+
+      <script data-pjax>
+        if (window.mermaid) {
+          
+          const elementCode = ".mermaid";
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") == null) {
+                    element.setAttribute(
+                      "data-original-code",
+                      element.innerHTML,
+                    );
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") != null) {
+                    element.removeAttribute("data-processed");
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute("data-original-code"));
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({ theme });
+            window.mermaid.init({ theme }, _$$(elementCode));
+          };
+          document.body.addEventListener("dark-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          });
+          document.body.addEventListener("light-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          });
+          if (localStorage.getItem("dark_mode") == "true") {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          } else {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          }
+        }
+      </script>
     
     
       
