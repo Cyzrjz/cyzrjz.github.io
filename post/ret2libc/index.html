@@ -20,11 +20,9 @@
 
 
   
-    
-  
 
 <title>
-  Reverse | Cyzrjz
+  Ret2libc | Cyzrjz
 </title>
 <meta
   name="description"
@@ -116,12 +114,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Reverse | Cyzrjz" />
+  <meta property="og:title" content="Ret2libc | Cyzrjz" />
   <meta
     property="og:description"
     content="å°‘å¥³ç¥ˆç¥·ä¸­..."
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/tags/reverse/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/ret2libc/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -131,8 +129,10 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-16T13:34:43&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-16T13:34:43&#43;08:00" />
+  <meta property="article:published_time" content="2025-04-19T14:13:28&#43;08:00" />
+  <meta property="article:modified_time" content="2025-04-19T14:13:28&#43;08:00" />
+  
+    <meta property="article:tag" content="pwn" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -144,7 +144,6 @@
   
 
 
-<link rel="alternate" type="application/rss+xml" href="https://cyzrjz.github.io/tags/reverse/index.xml" title="W31c0me t0 My610g">
 
 
 <link rel="shortcut icon" href="/favicon.ico">
@@ -328,7 +327,6 @@
     <a id="main-nav-toggle" class="nav-icon"></a>
   </nav>
   <nav id="sub-nav">
-    <a id="nav-rss-link" class="nav-icon" href="/tags/reverse/index.xml" title="RSS è®¢é˜…" target="_blank"></a>
     
     
       <a id="nav-search-btn" class="nav-icon popup-trigger" title="æœç´¢"></a>
@@ -338,11 +336,13 @@
 <header id="header">
   
     
-      <picture>
-        
-      </picture>
       
-        <img  fetchpriority="high" src="/images/banner.webp" alt="Reverse">
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2libc">
+        
       
     
   
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">æ ‡ç­¾</h1>
+            <h1 data-aos="slide-up">Ret2libc</h1>
           </a>
         
       
@@ -365,11 +365,7 @@
       
         
         
-          
-        
         <h2 id="subtitle-wrap" data-aos="slide-down">
-          
-            <a href="/" id="subtitle">Reverse</a>
           
         </h2>
       
@@ -383,13 +379,38 @@
   
   
   
-  <div class="sidebar-wrapper ">
+  <div class="sidebar-wrapper wrap-sticky">
     <div
       class="sidebar-wrap"
       data-aos="fade-up"
     >
       
         
+          <div class="sidebar-toc-sidebar">
+            <div class="sidebar-toc">
+  <h3 class="toc-title">æ–‡ç« ç›®å½•</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#Ç°Ê¶">Ç°ÖÃÖªÊ¶</a>
+      <ul>
+        <li><a href="#gotplt">GOT±íºÍPLT±í</a></li>
+        <li><a href="#Ó³">ÑÓ³Ù°ó¶¨»úÖÆ</a></li>
+        <li><a href="#Ô­">Â©¶´ÀûÓÃÔ­Àí</a></li>
+      </ul>
+    </li>
+    <li><a href="#ÊµÕ½">ÊµÕ½</a>
+      <ul>
+        <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+          </div>
+          <div class="sidebar-common-sidebar hidden">
+            
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar2.webp"
@@ -488,364 +509,247 @@
   
 </div>
 
+          </div>
+        
       
 
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
       
     </div>
   </div>
 
   <div class="sidebar-widget">
     
-      
-        
-
-      
-        
-  <div class="widget-wrapper">
-    <div
-      class="widget-wrap"
-      data-aos="fade-up"
-    >
-      <div style="display: flex; justify-content: space-between;">
-        <h3 class="widget-title">æ ‡ç­¾</h3>
-        
-      </div>
-      <div class="widget">
-        <ul class="tag-list" itemprop="keywords">
-          
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/c/c&#43;&#43;/"
-                  aria-label="æ ‡ç­¾: C/C&#43;&#43;"
-                >
-                  C/C&#43;&#43;
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/pwn/"
-                  aria-label="æ ‡ç­¾: Pwn"
-                >
-                  Pwn
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/python/"
-                  aria-label="æ ‡ç­¾: Python"
-                >
-                  Python
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/reverse/"
-                  aria-label="æ ‡ç­¾: Reverse"
-                >
-                  Reverse
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/windows/"
-                  aria-label="æ ‡ç­¾: Windows"
-                >
-                  Windows
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/%E5%B7%A5%E5%85%B7/"
-                  aria-label="æ ‡ç­¾: å·¥å…·"
-                >
-                  å·¥å…·
-                </a>
-              </li>
-              
-            
-          
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
-      
-        
-<div class="widget-wrapper">
-  <div
-    class="widget-wrap"
-    data-aos="fade-up"
-  >
-    <h3 class="widget-title">æ ‡ç­¾äº‘</h3>
-    
-    <div class="widget tagcloud">
-      
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/c/c&#43;&#43;/"
-            aria-label="æ ‡ç­¾: C/C&#43;&#43;"
-            >C/C&#43;&#43;</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/pwn/"
-            aria-label="æ ‡ç­¾: Pwn"
-            >Pwn</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/python/"
-            aria-label="æ ‡ç­¾: Python"
-            >Python</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/reverse/"
-            aria-label="æ ‡ç­¾: Reverse"
-            >Reverse</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/windows/"
-            aria-label="æ ‡ç­¾: Windows"
-            >Windows</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E5%B7%A5%E5%85%B7/"
-            aria-label="æ ‡ç­¾: å·¥å…·"
-            >å·¥å…·</a
-          >
-          
-        
-      
-    </div>
-  </div>
-</div>
-
-      
-        
-  
-  <div class="widget-wrapper">
-    <div
-      class="widget-wrap"
-      data-aos="fade-up"
-    >
-      <h3 class="widget-title">æœ€æ–°æ–‡ç« </h3>
-      <div class="widget">
-        <ul>
-          
-            <li>
-              <a href="/post/ret2libc/">Ret2libc</a>
-            </li>
-          
-            <li>
-              <a href="/post/%E5%A0%86%E6%A0%88/">å †æ ˆ</a>
-            </li>
-          
-            <li>
-              <a href="/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/">Z3çº¦æŸæ±‚è§£</a>
-            </li>
-          
-            <li>
-              <a href="/post/c&#43;&#43;%E8%BF%9B%E7%A8%8B%E9%81%8D%E5%8E%86/">C&#43;&#43;è¿›ç¨‹éåŽ†</a>
-            </li>
-          
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
-      
-    
   </div>
   
 </aside>
 
           <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
   <div
-    class="archives-outer-wrap"
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <span
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-04-19 14:13:28 &#43;0800 &#43;0800" itemprop="datePublished"
+      >2025-04-19</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-04-19</time
+    >
+  </span>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="Ç°Ê¶">
+<a class="header-anchor" href="#%c7%b0%ca%b6"></a>
+Ç°ÖÃÖªÊ¶
+</h2><h3 id="gotplt">
+<a class="header-anchor" href="#gotplt"></a>
+GOT±íºÍPLT±í
+</h3><ul>
+<li>GOT: Global Offset Table, È«¾ÖÆ«ÒÆ±í£¬°üº¬ËùÓÐÐèÒª¶¯Ì¬Á´½ÓµÄÍâ²¿º¯ÊýµÄµØÖ·(ÔÚµÚÒ»´ÎÖ´ÐÐºó)</li>
+<li>PLT: Procedure Link Table, ¹ý³ÌÁ´½Ó±í£¬°üº¬µ÷ÓÃÍâ²¿º¯ÊýµÄÌø×ªÖ¸Áî(Ìø×ªµ½GOT±íÖÐ)£¬ÒÔ¼°³õÊ¼»¯Íâ²¿µ÷ÓÃÖ¸Áî(ÓÃÓÚÁ´½ÓÆ÷¶¯Ì¬°ó¶¨dl_runtime_resolve)</li>
+</ul>
+<h3 id="Ó³">
+<a class="header-anchor" href="#%d3%b3"></a>
+ÑÓ³Ù°ó¶¨»úÖÆ
+</h3><p>¶¯Ì¬Á´½ÓµÄ³ÌÐòÊÇÔÚÔËÐÐÊ±ÐèÒª¶ÔÈ«¾ÖºÍ¾²Ì¬Êý¾Ý·ÃÎÊ½øÐÐGOT¶¨Î»£¬È»ºó¼ä½ÓÑ°Ö·¡£Í¬Ñù£¬¶ÔÓÚÄ£¿é¼äµÄµ÷ÓÃÒ²ÐèÒªGOT¶¨Î»£¬ÔÙ²Å¼ä½ÓÌø×ª£¬ÕâÃ´×öÊÆ±Ø»áÓ°Ïìµ½³ÌÐòµÄÔËÐÐËÙ¶È¡£¶øÇÒ³ÌÐòÔÚÔËÐÐÊ±ºÜ´óÒ»²¿·Öº¯Êý¶¼¿ÉÄÜÓÃ²»µ½£¬ÓÚÊÇELF²ÉÓÃÁË<strong>µ±º¯ÊýµÚÒ»´ÎÊ¹ÓÃÊ±²Å½øÐÐ°ó¶¨</strong>µÄË¼Ïë£¬Ò²¾ÍÊÇÎÒÃÇËùËµµÄÑÓ³Ù°ó¶¨¡£ELFÊµÏÖÑÓ³Ù°ó¶¨ÊÇÍ¨¹ýPLT £¬Ô­ÏÈ GOT ÖÐ´æ·Å×ÅÈ«¾Ö±äÁ¿ºÍº¯Êýµ÷ÓÃ£¬ÏÖÔÚ°ÑËû²ð³ÉÁ½¸ö²¿·Ö<code>.got</code>ºÍ<code>.got.plt</code>ÓÃ<code>.got</code>´æ·Å×ÅÈ«¾Ö±äÁ¿ÒýÓÃ£¬ÓÃ<code>.got.plt</code>´æ·Å×Åº¯ÊýÒýÓÃ
+ÒÔµ÷ÓÃsystemÎªÀý</p>
+<ul>
+<li><strong>Ê×´Îµ÷ÓÃ</strong></li>
+</ul>
+<pre class="mermaid">flowchart LR
+    A["call system"] --> B["system@plt"]
+    B --> C["system@got"]
+    C --> D["glibcÖÐµÄsystemº¯ÊýµØÖ·"]
+    D -->|"´æ´¢µØÖ·"| C
+    D --> E["µ÷ÓÃsystem"]
+</pre>
+<ul>
+<li><strong>ºóÐøµ÷ÓÃ</strong></li>
+</ul>
+<pre class="mermaid">flowchart LR
+    A["call system"] --> B["system@plt"]
+    B --> C["system@got"] --> D["µ÷ÓÃsystem"]
+</pre>
+<p>ÓÉÓÚ<code>.got</code>ÖÐÒÑ¾­ÓÐÁË<code>system</code>µÄµØÖ·£¬ËùÒÔºóÐøµ÷ÓÃÊ±Ö±½Ó´Ó<code>.got</code>ÖÐÈ¡µØÖ·¼´¿É£¬¶ø²»ÐèÒªÔÙÈ¥<code>.got.plt</code>ÖÐÑ°ÕÒ¡£</p>
+<h3 id="Ô­">
+<a class="header-anchor" href="#%d4%ad"></a>
+Â©¶´ÀûÓÃÔ­Àí
+</h3><p>Í¨¹ýÕ»Òç³ö·µ»Øsystemº¯ÊýµÄ<strong>ÕæÊµµØÖ·</strong>£¬Ö´ÐÐ<code>/bin/sh</code>ÃüÁî»ñÈ¡shell
+ÏÖÔÚÃæÁÙÁ½¸öÎÊÌâ</p>
+<ol>
+<li>ÈçºÎ»ñÈ¡systemº¯ÊýµÄÕæÊµµØÖ·£¿</li>
+<li><code>/bin/sh</code>ÃüÁîµÄµØÖ·ÈçºÎ»ñÈ¡£¿</li>
+</ol>
+<ul>
+<li><strong>system º¯ÊýÊôÓÚ libc£¬¶ø libc.so ¶¯Ì¬Á´½Ó¿âÖÐµÄº¯ÊýÖ®¼äÏà¶ÔÆ«ÒÆÊÇ¹Ì¶¨µÄ</strong></li>
+<li><strong>¼´Ê¹³ÌÐòÓÐ ASLR ±£»¤£¬Ò²Ö»ÊÇÕë¶ÔÓÚµØÖ·ÖÐ¼äÎ»½øÐÐËæ»ú£¬×îµÍµÄ 12 Î»²¢²»»á·¢Éú¸Ä±ä</strong></li>
+<li><strong>º¯ÊýµÄÕæÊµµØÖ· = º¯ÊýµÄÆ«ÒÆ + libc.soÖÐµÄ»ùÖ·</strong></li>
+</ul>
+<p>¿ÉÒÔ»®·ÖÎªÒÔÏÂ²½Öè:</p>
+<ol>
+<li>Ìî³äÎÞÓÃÊý¾Ý¸²¸Ç»º³åÇø</li>
+<li>µ÷ÓÃputsµÈº¯Êý,<strong>Ð¹Â¶ÒÑÖ´ÐÐº¯ÊýµÄÕæÊµµØÖ·</strong></li>
+<li>Í¨¹ý<strong>ÕæÊµµØÖ·µÍ12Î»È·¶¨libc°æ±¾</strong></li>
+<li>²é±íµÃµ½**ÒÑÖ´ÐÐº¯Êý¶ÔÓÚlibcµÄÆ«ÒÆ**</li>
+<li>Í¨¹ý<strong>»ùÖ· = º¯ÊýµÄÕæÊµµØÖ· - º¯ÊýµÄÆ«ÒÆµÃµ½libcµÄ»ùÖ·</strong></li>
+<li>²é±í¼ÆËãËùÐè<strong>º¯ÊýµÄÕæÊµµØÖ· = º¯ÊýµÄÆ«ÒÆ + libcµÄ»ùÖ·</strong></li>
+</ol>
+<h2 id="ÊµÕ½">
+<a class="header-anchor" href="#%ca%b5%d5%bd"></a>
+ÊµÕ½
+</h2><h3 id="ctf-wiki-ret2libc3">
+<a class="header-anchor" href="#ctf-wiki-ret2libc3"></a>
+CTF-Wiki ret2libc3
+</h3><p><a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc3/ret2libc3">ret2libc3</a></p>
+<p>ida´ò¿ª¿ÉÒÔ¿´µ½Ã»ÓÐsystemºÍ<code>/bin/sh</code>¸øÎÒÃÇÀûÓÃ
+<img src="/post/ret2libc/img/image.png" alt="alt text">
+<img src="/post/ret2libc/img/image-1.png" alt="alt text">
+gdbµ÷ÊÔ£¬ÊäÈë³¤×Ö·û´®£¬²é¿´Õ»²¼¾Ö
+<img src="/post/ret2libc/img/image-2.png" alt="alt text">
+¿ÉÒÔ¿´µ½×Ö·û´®¿ªÊ¼Ð´ÈëµÄµØÖ·ÊÇ
+0xffffca7c
+ebpµÄµØÖ·ÊÇ
+0xffffcae8
+ËùÒÔÒªÏÈ¹¹ÔìÎÞÓÃÊý¾Ý<code>b'a'*(0xffffcae8-0xffffca7c+4)</code>
+ÎªÁËÊµÏÖµÚ¶þ²½:µ÷ÓÃputsµÈº¯Êý,<strong>Ð¹Â¶ÒÑÖ´ÐÐº¯ÊýµÄÕæÊµµØÖ·</strong>
+ÐèÒªÏÈÕÒµ½putº¯ÊýµÄpltµØÖ·£¬¿ÉÒÔÔÚidaÖÐÖ±½Ó¿´£¬Ò²¿ÉÒÔÔÚgdbÖÐÊäÈëplt²é¿´
+<img src="/post/ret2libc/img/image-4.png" alt="alt text">
+µÃµ½putµÄpltµØÖ·Îª0x8048460£¬½ÓÏÂÀ´Ó¦¸Ã»Ø¹ËÖ®Ç°Ñ§¹ýµÄ¶ÑÕ»¿Õ¼äµÄÖªÊ¶</p>
+<blockquote>
+<p>ÔÚµ÷ÓÃÒ»¸öcallÊ±£¬µ±½øÈëcallÄÚ£¬¶ÑÕ»¿Õ¼ä»á×Ô¶¯Ñ¹ÈëcallµÄ·µ»ØµØÖ·£¬Ò²¾ÍÊÇcallµÄÏÂÒ»ÐÐÃüÁîµÄµØÖ·
+ËùÒÔÔÚµ÷ÓÃputsº¯ÊýÊ±£¬¶ÑÕ»¿Õ¼ä»á×Ô¶¯Ñ¹Èë·µ»ØµØÖ·£¬Ò²¾ÍÊÇputsº¯ÊýµÄÏÂÒ»ÐÐÃüÁîµÄµØÖ·
+ÎªÁË¸ü·½±ãµ÷ÊÔ£¬¿ÉÒÔÖ±½Ó°Ñstartº¯ÊýµØÖ·Ñ¹½øÈ¥£¬µÈÖ´ÐÐÍêputsº¯Êýºó£¬ÔÙ°Ñstartº¯ÊýµØÖ·popµ½eip³öÀ´£¬¼ÌÐøÖ´ÐÐ³ÌÐò
+½Ó×Å¾ÍÊÇ¶Ôputsº¯Êý´«µÝÒªÊä³öµÄ²ÎÊý£¬Ò²¾ÍÊÇÓÃÀ´È·¶¨libc°æ±¾µÄº¯Êý(ÕæÊµµØÖ·,Ò²¾ÍÊÇgot±íÒÑ¾­´æ´¢µÄµØÖ·)£¬ÈÎÒâÒ»¸ö»ò¼¸¸ö¶¼ÐÐ£¬Ô½¶àÔ½¾«×¼</p></blockquote>
+<p>ÒªÕÒµ½got±íÒÑ¾­´æ´¢µÄµØÖ·,¿ÉÒÔÔÚgdbÖÐÊäÈëgot²é¿´
+<img src="/post/ret2libc/img/image-5.png" alt="alt text">
+¿ÉµÃgot_startµÄµØÖ·Îª0x804a024</p>
+<p>ÔÚidaÖÐÕÒµ½startµÄµØÖ·0x080484D0</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">put_plt</span> <span class="o">=</span> <span class="mh">0x08048460</span>
+</span></span><span class="line"><span class="cl"><span class="n">start_addr</span> <span class="o">=</span> <span class="mh">0x080484D0</span>
+</span></span><span class="line"><span class="cl"><span class="n">got_start</span> <span class="o">=</span> <span class="mh">0x804a024</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload1</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="p">(</span><span class="mh">0xffffcae8</span><span class="o">-</span><span class="mh">0xffffca7c</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">put_plt</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">start_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">got_start</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_start_addr</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">sh</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;__libc_start_main is:&#34;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">libc_start_addr</span><span class="p">))</span>
+</span></span></code></pre></div><ul>
+<li><strong>Á÷³ÌÍ¼</strong>
+<img src="/post/ret2libc/img/image-3.png" alt="alt text"></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/pwn"
+        rel="tag"
+        >PWN</a
+      >
+    </li>
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
     data-aos="fade-up"
   >
     
-      <div class="tag-wrap">
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/c/c&#43;&#43;/"
-        >C/C&#43;&#43;</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/pwn/"
-        >Pwn</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/python/"
-        >Python</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/reverse/"
-        >Reverse</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/windows/"
-        >Windows</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/"
-        >å·¥å…·</a
-      >
-    </div>
-  
-</div>
-<div class="category-wrap">
-  
-</div>
-    
-    
-
-
-
-  <section class="archives-wrap" data-aos="fade-up">
-    <div class="archive-year-wrap">
-      <a href="" class="archive-year">2025</a>
-    </div>
-    <ul>
-      
-        <li class="archive-article">
-          <div class="archive-article-date-wrap">
-            <span>
-              <time
-                class="dt-published"
-                datetime="2025-04-16 13:34:43 &#43;0800 &#43;0800"
-                itemprop="datePublished"
-                >2025-04</time
-              >
-            </span>
-          </div>
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
           
-            <a class="archive-article-title" href="/post/c&#43;&#43;%E8%BF%9B%E7%A8%8B%E9%81%8D%E5%8E%86/"
-              >C&#43;&#43;è¿›ç¨‹éåŽ†</a
-            >
           
-        </li>
-      
-    </ul>
-  </section>
-
-
-  </div>
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-<nav id="page-nav" data-aos="fade-up">
-  
-  
+            <img
+              data-src="/images/my/6.jpg"
+              data-sizes="auto"
+              alt="å †æ ˆ"
+              class="lazyload"
+            />
+          
+        
+        <a href="/post/%E5%A0%86%E6%A0%88/"></a>
+        <div class="article-nav-caption">å‰ä¸€ç¯‡</div>
+        <h3 class="article-nav-title">
+          
+            å †æ ˆ
+          
+        </h3>
+      </div>
     
-      
-        <span class="page-number current">1</span>
-      
+
     
+  </nav>
+
+
   
+</article>
+
+
+
+
+
+
   
-</nav>
+
+  
+
+  
+
+  
+
+  
+
+
 
 </section>
         </div>
@@ -944,6 +848,31 @@
   <div class="sidebar-wrap">
     
       
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">æ–‡ç« ç›®å½•</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#Ç°Ê¶">Ç°ÖÃÖªÊ¶</a>
+      <ul>
+        <li><a href="#gotplt">GOT±íºÍPLT±í</a></li>
+        <li><a href="#Ó³">ÑÓ³Ù°ó¶¨»úÖÆ</a></li>
+        <li><a href="#Ô­">Â©¶´ÀûÓÃÔ­Àí</a></li>
+      </ul>
+    </li>
+    <li><a href="#ÊµÕ½">ÊµÕ½</a>
+      <ul>
+        <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar2.webp"
@@ -1042,8 +971,17 @@
   
 </div>
 
+        </div>
+      
     
   </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
   
 </nav>
 
@@ -1322,9 +1260,9 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Reverse",
-          url: "https:\/\/cyzrjz.github.io\/tags\/reverse\/",
-          description: "",
+          title: "Ret2libc",
+          url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
+          description: " Ç°ï¿½ï¿½ÖªÊ¶ GOTï¿½ï¿½ï¿½ï¿½PLTï¿½ï¿½ GOT: Global Offset Table, È«ï¿½ï¿½Æ«ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½Óµï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ö·(ï¿½Úµï¿½Ò»ï¿½ï¿½Ö´ï¿½Ðºï¿½) PLT: Procedure Link Table, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªÖ¸ï¿½ï¿½(ï¿½ï¿½×ªï¿½ï¿½GOTï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½dl_runtime_resolve) ï¿½Ó³Ù°ó¶¨»ï¿½ï¿½ï¿½ â€¦",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",
         };
       </script>

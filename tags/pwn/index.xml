@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pwn on W31c0me t0 My610g</title>
+    <link>https://cyzrjz.github.io/tags/pwn/</link>
+    <description>Recent content in Pwn on W31c0me t0 My610g</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 19 Apr 2025 14:13:28 +0800</lastBuildDate>
+    <atom:link href="https://cyzrjz.github.io/tags/pwn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ret2libc</title>
+      <link>https://cyzrjz.github.io/post/ret2libc/</link>
+      <pubDate>Sat, 19 Apr 2025 14:13:28 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/ret2libc/</guid>
+      <description>&lt;h2 id=&#34;ǰʶ&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%c7%b0%ca%b6&#34;&gt;&lt;/a&gt;&#xA;ǰ��֪ʶ&#xA;&lt;/h2&gt;&lt;h3 id=&#34;gotplt&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#gotplt&#34;&gt;&lt;/a&gt;&#xA;GOT����PLT��&#xA;&lt;/h3&gt;&lt;ul&gt;&#xA;&lt;li&gt;GOT: Global Offset Table, ȫ��ƫ�Ʊ�������������Ҫ��̬���ӵ��ⲿ�����ĵ�ַ(�ڵ�һ��ִ�к�)&lt;/li&gt;&#xA;&lt;li&gt;PLT: Procedure Link Table, �������ӱ������������ⲿ��������תָ��(��ת��GOT����)���Լ���ʼ���ⲿ����ָ��(������������̬����dl_runtime_resolve)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;ӳ&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%d3%b3&#34;&gt;&lt;/a&gt;&#xA;�ӳٰ󶨻���&#xA;&lt;/h3&gt;&lt;p&gt;��̬���ӵĳ�����������ʱ��Ҫ��ȫ�ֺ;�̬���ݷ��ʽ���GOT��λ��Ȼ������Ѱַ��ͬ��������ģ�����ĵ���Ҳ��ҪGOT��λ���ٲż�����ת����ô���Ʊػ�Ӱ�쵽�����������ٶȡ����ҳ���������ʱ�ܴ�һ���ֺ����������ò���������ELF������&lt;strong&gt;��������һ��ʹ��ʱ�Ž��а���&lt;/strong&gt;��˼�룬Ҳ����������˵���ӳٰ󶨡�ELFʵ���ӳٰ�����ͨ��PLT ��ԭ�� GOT �д�����ȫ�ֱ����ͺ������ã����ڰ���������������&lt;code&gt;.got&lt;/code&gt;��&lt;code&gt;.got.plt&lt;/code&gt;��&lt;code&gt;.got&lt;/code&gt;������ȫ�ֱ������ã���&lt;code&gt;.got.plt&lt;/code&gt;�����ź�������&#xA;�Ե���systemΪ��&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
