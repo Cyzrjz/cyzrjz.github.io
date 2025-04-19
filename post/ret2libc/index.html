@@ -392,14 +392,14 @@
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#ǰʶ">ǰ��֪ʶ</a>
+    <li><a href="#前置知识">前置知识</a>
       <ul>
-        <li><a href="#gotplt">GOT����PLT��</a></li>
-        <li><a href="#ӳ">�ӳٰ󶨻���</a></li>
-        <li><a href="#ԭ">©������ԭ��</a></li>
+        <li><a href="#got表和plt表">GOT表和PLT表</a></li>
+        <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
+        <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
       </ul>
     </li>
-    <li><a href="#ʵս">ʵս</a>
+    <li><a href="#实战">实战</a>
       <ul>
         <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
       </ul>
@@ -566,92 +566,92 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h2 id="ǰʶ">
-<a class="header-anchor" href="#%c7%b0%ca%b6"></a>
-ǰ��֪ʶ
-</h2><h3 id="gotplt">
-<a class="header-anchor" href="#gotplt"></a>
-GOT����PLT��
+        <h2 id="前置知识">
+<a class="header-anchor" href="#%e5%89%8d%e7%bd%ae%e7%9f%a5%e8%af%86"></a>
+前置知识
+</h2><h3 id="got表和plt表">
+<a class="header-anchor" href="#got%e8%a1%a8%e5%92%8cplt%e8%a1%a8"></a>
+GOT表和PLT表
 </h3><ul>
-<li>GOT: Global Offset Table, ȫ��ƫ�Ʊ�������������Ҫ��̬���ӵ��ⲿ�����ĵ�ַ(�ڵ�һ��ִ�к�)</li>
-<li>PLT: Procedure Link Table, �������ӱ������������ⲿ��������תָ��(��ת��GOT����)���Լ���ʼ���ⲿ����ָ��(������������̬��dl_runtime_resolve)</li>
+<li>GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后)</li>
+<li>PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve)</li>
 </ul>
-<h3 id="ӳ">
-<a class="header-anchor" href="#%d3%b3"></a>
-�ӳٰ󶨻���
-</h3><p>��̬���ӵĳ�����������ʱ��Ҫ��ȫ�ֺ;�̬���ݷ��ʽ���GOT��λ��Ȼ����Ѱַ��ͬ��������ģ���ĵ���Ҳ��ҪGOT��λ���ٲż����ת����ô���Ʊػ�Ӱ�쵽����������ٶȡ����ҳ���������ʱ�ܴ�һ���ֺ����������ò���������ELF������<strong>��������һ��ʹ��ʱ�Ž��а�</strong>��˼�룬Ҳ����������˵���ӳٰ󶨡�ELFʵ���ӳٰ���ͨ��PLT ��ԭ�� GOT �д����ȫ�ֱ����ͺ������ã����ڰ��������������<code>.got</code>��<code>.got.plt</code>��<code>.got</code>�����ȫ�ֱ������ã���<code>.got.plt</code>����ź�������
-�Ե���systemΪ��</p>
+<h3 id="延迟绑定机制">
+<a class="header-anchor" href="#%e5%bb%b6%e8%bf%9f%e7%bb%91%e5%ae%9a%e6%9c%ba%e5%88%b6"></a>
+延迟绑定机制
+</h3><p>动态链接的程序是在运行时需要对全局和静态数据访问进行GOT定位，然后间接寻址。同样，对于模块间的调用也需要GOT定位，再才间接跳转，这么做势必会影响到程序的运行速度。而且程序在运行时很大一部分函数都可能用不到，于是ELF采用了<strong>当函数第一次使用时才进行绑定</strong>的思想，也就是我们所说的延迟绑定。ELF实现延迟绑定是通过PLT ，原先 GOT 中存放着全局变量和函数调用，现在把他拆成两个部分<code>.got</code>和<code>.got.plt</code>用<code>.got</code>存放着全局变量引用，用<code>.got.plt</code>存放着函数引用
+以调用system为例</p>
 <ul>
-<li><strong>�״ε���</strong></li>
+<li><strong>首次调用</strong></li>
 </ul>
 <pre class="mermaid">flowchart LR
     A["call system"] --> B["system@plt"]
     B --> C["system@got"]
-    C --> D["glibc�е�system������ַ"]
-    D -->|"�洢��ַ"| C
-    D --> E["����system"]
+    C --> D["glibc中的system函数地址"]
+    D -->|"存储地址"| C
+    D --> E["调用system"]
 </pre>
 <ul>
-<li><strong>��������</strong></li>
+<li><strong>后续调用</strong></li>
 </ul>
 <pre class="mermaid">flowchart LR
     A["call system"] --> B["system@plt"]
-    B --> C["system@got"] --> D["����system"]
+    B --> C["system@got"] --> D["调用system"]
 </pre>
-<p>����<code>.got</code>���Ѿ�����<code>system</code>�ĵ�ַ�����Ժ�������ʱֱ�Ӵ�<code>.got</code>��ȡ��ַ���ɣ�������Ҫ��ȥ<code>.got.plt</code>��Ѱ�ҡ�</p>
-<h3 id="ԭ">
-<a class="header-anchor" href="#%d4%ad"></a>
-©������ԭ��
-</h3><p>ͨ��ջ�������system������<strong>��ʵ��ַ</strong>��ִ��<code>/bin/sh</code>�����ȡshell
-����������������</p>
+<p>由于<code>.got</code>中已经有了<code>system</code>的地址，所以后续调用时直接从<code>.got</code>中取地址即可，而不需要再去<code>.got.plt</code>中寻找。</p>
+<h3 id="漏洞利用原理">
+<a class="header-anchor" href="#%e6%bc%8f%e6%b4%9e%e5%88%a9%e7%94%a8%e5%8e%9f%e7%90%86"></a>
+漏洞利用原理
+</h3><p>通过栈溢出返回system函数的<strong>真实地址</strong>，执行<code>/bin/sh</code>命令获取shell
+现在面临两个问题</p>
 <ol>
-<li>��λ�ȡsystem��������ʵ��ַ��</li>
-<li><code>/bin/sh</code>����ĵ�ַ��λ�ȡ��</li>
+<li>如何获取system函数的真实地址？</li>
+<li><code>/bin/sh</code>命令的地址如何获取？</li>
 </ol>
 <ul>
-<li><strong>system �������� libc���� libc.so ��̬���ӿ��еĺ���֮�����ƫ���ǹ̶���</strong></li>
-<li><strong>��ʹ������ ASLR ������Ҳֻ������ڵ�ַ�м�λ�����������͵� 12 λ�����ᷢ���ı�</strong></li>
-<li><strong>��������ʵ��ַ = ������ƫ�� + libc.so�еĻ�ַ</strong></li>
+<li><strong>system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的</strong></li>
+<li><strong>即使程序有 ASLR 保护，也只是针对于地址中间位进行随机，最低的 12 位并不会发生改变</strong></li>
+<li><strong>函数的真实地址 = 函数的偏移 + libc.so中的基址</strong></li>
 </ul>
-<p>���Ի���Ϊ���²���:</p>
+<p>可以划分为以下步骤:</p>
 <ol>
-<li>����������ݸ��ǻ�����</li>
-<li>����puts�Ⱥ���,<strong>й¶��ִ�к�������ʵ��ַ</strong></li>
-<li>ͨ��<strong>��ʵ��ַ��12λȷ��libc�汾</strong></li>
-<li>����õ�**��ִ�к�������libc��ƫ��**</li>
-<li>ͨ��<strong>��ַ = ��������ʵ��ַ - ������ƫ�Ƶõ�libc�Ļ�ַ</strong></li>
-<li>�����������<strong>��������ʵ��ַ = ������ƫ�� + libc�Ļ�ַ</strong></li>
+<li>填充无用数据覆盖缓冲区</li>
+<li>调用puts等函数,<strong>泄露已执行函数的真实地址</strong></li>
+<li>通过<strong>真实地址低12位确定libc版本</strong></li>
+<li>查表得到<strong>已执行函数对于libc的偏移</strong></li>
+<li>通过<strong>基址 = 函数的真实地址 - 函数的偏移得到libc的基址</strong></li>
+<li>查表计算所需<strong>函数的真实地址 = 函数的偏移 + libc的基址</strong></li>
 </ol>
-<h2 id="ʵս">
-<a class="header-anchor" href="#%ca%b5%d5%bd"></a>
-ʵս
+<h2 id="实战">
+<a class="header-anchor" href="#%e5%ae%9e%e6%88%98"></a>
+实战
 </h2><h3 id="ctf-wiki-ret2libc3">
 <a class="header-anchor" href="#ctf-wiki-ret2libc3"></a>
 CTF-Wiki ret2libc3
 </h3><p><a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc3/ret2libc3">ret2libc3</a></p>
-<p>ida�򿪿��Կ���û��system��<code>/bin/sh</code>����������
+<p>ida打开可以看到没有system和<code>/bin/sh</code>给我们利用
 <img src="/post/ret2libc/img/image.png" alt="alt text">
 <img src="/post/ret2libc/img/image-1.png" alt="alt text">
-gdb���ԣ����볤�ַ������鿴ջ����
+gdb调试，输入长字符串，查看栈布局
 <img src="/post/ret2libc/img/image-2.png" alt="alt text">
-���Կ����ַ�����ʼд��ĵ�ַ��
+可以看到字符串开始写入的地址是
 0xffffca7c
-ebp�ĵ�ַ��
+ebp的地址是
 0xffffcae8
-����Ҫ�ȹ�����������<code>b'a'*(0xffffcae8-0xffffca7c+4)</code>
-Ϊ��ʵ�ֵڶ���:����puts�Ⱥ���,<strong>й¶��ִ�к�������ʵ��ַ</strong>
-��Ҫ���ҵ�put������plt��ַ��������ida��ֱ�ӿ���Ҳ������gdb������plt�鿴
+所以要先构造无用数据<code>b'a'*(0xffffcae8-0xffffca7c+4)</code>
+为了实现第二步:调用puts等函数,<strong>泄露已执行函数的真实地址</strong>
+需要先找到put函数的plt地址，可以在ida中直接看，也可以在gdb中输入plt查看
 <img src="/post/ret2libc/img/image-4.png" alt="alt text">
-�õ�put��plt��ַΪ0x8048460��������Ӧ�ûع�֮ǰѧ���Ķ�ջ�ռ��֪ʶ</p>
+得到put的plt地址为0x8048460，接下来应该回顾之前学过的堆栈空间的知识</p>
 <blockquote>
-<p>�ڵ���һ��callʱ��������call�ڣ���ջ�ռ���Զ�ѹ��call�ķ��ص�ַ��Ҳ����call����һ������ĵ�ַ
-�����ڵ���puts����ʱ����ջ�ռ���Զ�ѹ�뷵�ص�ַ��Ҳ����puts��������һ������ĵ�ַ
-Ϊ�˸�������ԣ�����ֱ�Ӱ�start������ַѹ��ȥ����ִ����puts�������ٰ�start������ַpop��eip����������ִ�г���
-���ž��Ƕ�puts��������Ҫ����Ĳ�����Ҳ��������ȷ��libc�汾�ĺ���(��ʵ��ַ,Ҳ����got���Ѿ��洢�ĵ�ַ)������һ���򼸸����У�Խ��Խ��׼</p></blockquote>
-<p>Ҫ�ҵ�got���Ѿ��洢�ĵ�ַ,������gdb������got�鿴
+<p>在调用一个call时，当进入call内，堆栈空间会自动压入call的返回地址，也就是call的下一行命令的地址
+所以在调用puts函数时，堆栈空间会自动压入返回地址，也就是puts函数的下一行命令的地址
+为了更方便调试，可以直接把start函数地址压进去，等执行完puts函数后，再把start函数地址pop到eip出来，继续执行程序
+接着就是对puts函数传递要输出的参数，也就是用来确定libc版本的函数(真实地址,也就是got表已经存储的地址)，任意一个或几个都行，越多越精准</p></blockquote>
+<p>要找到got表已经存储的地址,可以在gdb中输入got查看
 <img src="/post/ret2libc/img/image-5.png" alt="alt text">
-�ɵ�got_start�ĵ�ַΪ0x804a024</p>
-<p>��ida���ҵ�start�ĵ�ַ0x080484D0</p>
+可得got_start的地址为0x804a024</p>
+<p>在ida中找到start的地址0x080484D0</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">put_plt</span> <span class="o">=</span> <span class="mh">0x08048460</span>
 </span></span><span class="line"><span class="cl"><span class="n">start_addr</span> <span class="o">=</span> <span class="mh">0x080484D0</span>
 </span></span><span class="line"><span class="cl"><span class="n">got_start</span> <span class="o">=</span> <span class="mh">0x804a024</span>
@@ -661,7 +661,7 @@ ebp�ĵ�ַ��
 </span></span><span class="line"><span class="cl"><span class="n">libc_start_addr</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">sh</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;__libc_start_main is:&#34;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">libc_start_addr</span><span class="p">))</span>
 </span></span></code></pre></div><ul>
-<li><strong>����ͼ</strong>
+<li><strong>流程图</strong>
 <img src="/post/ret2libc/img/image-3.png" alt="alt text"></li>
 </ul>
 
@@ -710,7 +710,7 @@ ebp�ĵ�ַ��
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/1.jpg"
               data-sizes="auto"
               alt="堆栈"
               class="lazyload"
@@ -802,7 +802,7 @@ ebp�ĵ�ַ��
       <div>
         <span class="icon-brush"
           >&nbsp;
-            5.8k
+            5.2k
           </span
         >
         &nbsp;|&nbsp;
@@ -810,7 +810,7 @@ ebp�ĵ�ַ��
           
           
 
-          00:13
+          00:12
         </span>
       </div>
     
@@ -854,14 +854,14 @@ ebp�ĵ�ַ��
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#ǰʶ">ǰ��֪ʶ</a>
+    <li><a href="#前置知识">前置知识</a>
       <ul>
-        <li><a href="#gotplt">GOT����PLT��</a></li>
-        <li><a href="#ӳ">�ӳٰ󶨻���</a></li>
-        <li><a href="#ԭ">©������ԭ��</a></li>
+        <li><a href="#got表和plt表">GOT表和PLT表</a></li>
+        <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
+        <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
       </ul>
     </li>
-    <li><a href="#ʵս">ʵս</a>
+    <li><a href="#实战">实战</a>
       <ul>
         <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
       </ul>
@@ -1262,7 +1262,7 @@ ebp�ĵ�ַ��
           author: "Cyzrjz",
           title: "Ret2libc",
           url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
-          description: " ǰ��֪ʶ GOT����PLT�� GOT: Global Offset Table, ȫ��ƫ�Ʊ�������������Ҫ��̬���ӵ��ⲿ�����ĵ�ַ(�ڵ�һ��ִ�к�) PLT: Procedure Link Table, �������ӱ������������ⲿ��������תָ��(��ת��GOT����)���Լ���ʼ���ⲿ����ָ��(������������̬����dl_runtime_resolve) �ӳٰ󶨻��� …",
+          description: " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 动态链接的程序是在运行时需要对全局和静态数据访问进行GOT定位，然后间接寻址。同样，对于模块间的调用也需要GOT定位，再才间接跳转，这么做势必会影响到程序的运行速度。而且程序在运行时很大一部分函数都可能用不到，于是ELF采用了当函数第一次 …",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",
         };
       </script>
