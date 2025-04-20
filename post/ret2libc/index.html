@@ -396,6 +396,7 @@
       <ul>
         <li><a href="#got表和plt表">GOT表和PLT表</a></li>
         <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
+        <li><a href="#动态链接过程">动态链接过程</a></li>
         <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
       </ul>
     </li>
@@ -425,7 +426,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">4</div>
+    <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -435,7 +436,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">7</div>
+    <div class="sidebar-state-number">8</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -579,7 +580,12 @@ GOT表和PLT表
 <h3 id="延迟绑定机制">
 <a class="header-anchor" href="#%e5%bb%b6%e8%bf%9f%e7%bb%91%e5%ae%9a%e6%9c%ba%e5%88%b6"></a>
 延迟绑定机制
-</h3><p>动态链接的程序是在运行时需要对全局和静态数据访问进行GOT定位，然后间接寻址。同样，对于模块间的调用也需要GOT定位，再才间接跳转，这么做势必会影响到程序的运行速度。而且程序在运行时很大一部分函数都可能用不到，于是ELF采用了<strong>当函数第一次使用时才进行绑定</strong>的思想，也就是我们所说的延迟绑定。ELF实现延迟绑定是通过PLT ，原先 GOT 中存放着全局变量和函数调用，现在把他拆成两个部分<code>.got</code>和<code>.got.plt</code>用<code>.got</code>存放着全局变量引用，用<code>.got.plt</code>存放着函数引用
+</h3><p>在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：<strong>编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global Offset Table） 中。首次调用时，通过 PLT0 跳入动态链接器执行符号解析（即 _dl_runtime_resolve），并将解析结果回写到 GOT 条目；后续调用则直接通过 GOT 跳转到实际函数地址，省去额外解析开销。</strong></p>
+<h3 id="动态链接过程">
+<a class="header-anchor" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5%e8%bf%87%e7%a8%8b"></a>
+动态链接过程
+</h3><p><img src="/post/ret2libc/img/image-7.png" alt="alt text">
+<img src="/post/ret2libc/img/image-6.png" alt="alt text">
 以调用system为例</p>
 <ul>
 <li><strong>首次调用</strong></li>
@@ -719,7 +725,7 @@ ebp的地址是
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
               alt="Z3约束求解"
               class="lazyload"
@@ -742,7 +748,7 @@ ebp的地址是
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
               alt="Ret2syscall"
               class="lazyload"
@@ -799,6 +805,9 @@ ebp的地址是
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -832,7 +841,7 @@ ebp的地址是
       <div>
         <span class="icon-brush"
           >&nbsp;
-            6.7k
+            7.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -840,7 +849,7 @@ ebp的地址是
           
           
 
-          00:15
+          00:16
         </span>
       </div>
     
@@ -888,6 +897,7 @@ ebp的地址是
       <ul>
         <li><a href="#got表和plt表">GOT表和PLT表</a></li>
         <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
+        <li><a href="#动态链接过程">动态链接过程</a></li>
         <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
       </ul>
     </li>
@@ -917,7 +927,7 @@ ebp的地址是
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">4</div>
+    <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -927,7 +937,7 @@ ebp的地址是
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">7</div>
+    <div class="sidebar-state-number">8</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -1292,7 +1302,7 @@ ebp的地址是
           author: "Cyzrjz",
           title: "Ret2libc(未完成)",
           url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
-          description: " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 动态链接的程序是在运行时需要对全局和静态数据访问进行GOT定位，然后间接寻址。同样，对于模块间的调用也需要GOT定位，再才间接跳转，这么做势必会影响到程序的运行速度。而且程序在运行时很大一部分函数都可能用不到，于是ELF采用了当函数第一次 …",
+          description: " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global …",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",
         };
       </script>
