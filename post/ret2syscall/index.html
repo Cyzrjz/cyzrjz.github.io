@@ -400,6 +400,7 @@
     <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a>
       <ul>
         <li><a href="#gadget">gadget</a></li>
+        <li><a href="#构造rop链">构造ROP链</a></li>
       </ul>
     </li>
   </ul>
@@ -622,8 +623,38 @@ ROP(Return-Oriented Programming)-返回导向编程
 <a class="header-anchor" href="#gadget"></a>
 gadget
 </h3><p>gadget就是位于text段的可执行代码，它可以被用来控制程序的执行流程。</p>
-<p><img src="/post/ret2syscall/img/f7db7389fc756b7b4e6a0e8fe98798ef.png" alt="alt text"></p>
-
+<p>在Linux系统中,可以只用ROPgadget来获取gadget</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ROPgadget --binary file --only <span class="s2">&#34;pop|ret&#34;</span>
+</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image.png" alt="alt text"></p>
+<p>我们随便找一行看看再ida中是什么样的</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080481c9</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">ebx</span> <span class="c1">; ret</span>
+</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image-1.png" alt="alt text">
+可以看到这两行汇编指令的意思就是将栈顶的数值弹出到ebx寄存器中,然后再将栈顶的地址pop给eip</p>
+<p>知道了这些,就可以开始构造system()函数的ROP链了</p>
+<h3 id="构造rop链">
+<a class="header-anchor" href="#%e6%9e%84%e9%80%a0rop%e9%93%be"></a>
+构造ROP链
+</h3><ul>
+<li><strong>流程图</strong>
+<img src="/post/ret2syscall/img/f7db7389fc756b7b4e6a0e8fe98798ef.png" alt="alt text">
+随着ROP链的变化,可能不完全是流程图里所说的,但大体思路是这样的</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="c1">; 准备参数</span>
+</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">eax</span> <span class="c1">; ret</span>
+</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">ebx</span> <span class="c1">; ret</span>
+</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">ecx</span> <span class="c1">; ret</span>
+</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">edx</span> <span class="c1">; ret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">; 调用execve(&#34;/bin/sh&#34;,0,0)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mh">0xb</span> <span class="c1">; execve系统调用号,在x86架构中,eax寄存器存放系统调用号</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ebx</span><span class="p">,</span> <span class="p">[</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ecx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">edx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mh">0x80</span> <span class="c1">; 调用系统调用</span>
+</span></span></code></pre></div><p>利用ROPgadget找到</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x0806eb90</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">edx</span> <span class="c1">; pop ecx ; pop ebx ; ret</span>
+</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080bb196</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">eax</span> <span class="c1">; ret</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -669,7 +700,7 @@ gadget
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/4.jpg"
               data-sizes="auto"
               alt="Ret2libc(未完成)"
               class="lazyload"
@@ -761,7 +792,7 @@ gadget
       <div>
         <span class="icon-brush"
           >&nbsp;
-            6.1k
+            6.4k
           </span
         >
         &nbsp;|&nbsp;
@@ -769,7 +800,7 @@ gadget
           
           
 
-          00:13
+          00:14
         </span>
       </div>
     
@@ -821,6 +852,7 @@ gadget
     <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a>
       <ul>
         <li><a href="#gadget">gadget</a></li>
+        <li><a href="#构造rop链">构造ROP链</a></li>
       </ul>
     </li>
   </ul>
