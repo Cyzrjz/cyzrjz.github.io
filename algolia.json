@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1745246559",
+    "permalink": "/post/reverse/",
+    "title": "Reverse",
+    
+    "content": " [安洵杯 2019]crackMe 分析 IDA打开，找到主函数_main_0,查看汇编代码 发现对于弹出窗口MessageBoxW的调用存在问题,重点关注 双击进入MessageBoxW函数,发现存在两处,猜测只有一处是真的,动态调试一下 果然MessageBoxW跳转到别的地方了,以下几步进行溯源,与本次解题无关,可以跳过\n溯源 对跳转的函数X交叉引用,然后按下F5 在if ( WriteProcessMemory((HANDLE)0xFFFFFFFF, lpBaseAddress, lpBuffer_, 4u, 0) )处下断点运行 发现 lpBuffer_指向C01023,也就是上面动调中MessageBoxW跳转到的地址 lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正是主函数调用的,再次进去看看 果然地址发生了变化\n更简单的方法就是Shift+F12查找hooked,按下X查找交叉引用也能找到MessageBoxW跳转的地址\n",
+    
+    "date": "2025-04-21 22:42:39",
+    "updated": "2025-04-21 22:42:39"
+  }
+  
+  , 
+  {
     "objectID": "1745160795",
     "permalink": "/post/buuctf-pwn/",
     "title": "BUUCTF Pwn",

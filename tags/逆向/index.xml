@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>逆向 on W31c0me t0 My610g</title>
+    <link>https://cyzrjz.github.io/tags/%E9%80%86%E5%90%91/</link>
+    <description>Recent content in 逆向 on W31c0me t0 My610g</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 21 Apr 2025 22:42:39 +0800</lastBuildDate>
+    <atom:link href="https://cyzrjz.github.io/tags/%E9%80%86%E5%90%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reverse</title>
+      <link>https://cyzrjz.github.io/post/reverse/</link>
+      <pubDate>Mon, 21 Apr 2025 22:42:39 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/reverse/</guid>
+      <description>&lt;h2 id=&#34;安洵杯-2019crackme&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%ae%89%e6%b4%b5%e6%9d%af-2019crackme&#34;&gt;&lt;/a&gt;&#xA;[安洵杯 2019]crackMe&#xA;&lt;/h2&gt;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;IDA打开，找到主函数_main_0,查看汇编代码&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/reverse/img/image-6.png&#34; alt=&#34;alt text&#34;&gt;&#xA;发现对于弹出窗口MessageBoxW的调用存在问题,重点关注&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/reverse/img/image-1.png&#34; alt=&#34;alt text&#34;&gt;&#xA;双击进入MessageBoxW函数,发现存在两处,猜测只有一处是真的,动态调试一下&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/reverse/img/image-2.png&#34; alt=&#34;alt text&#34;&gt;&#xA;果然MessageBoxW跳转到别的地方了,以下几步进行溯源,与本次解题无关,可以跳过&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
