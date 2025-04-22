@@ -395,6 +395,8 @@
     <li><a href="#安洵杯-2019crackme">[安洵杯 2019]crackMe</a>
       <ul>
         <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
+        <li><a href="#扩展">扩展</a></li>
       </ul>
     </li>
   </ul>
@@ -565,28 +567,122 @@
 </h2><h3 id="分析">
 <a class="header-anchor" href="#%e5%88%86%e6%9e%90"></a>
 分析
-</h3><p>IDA打开，找到主函数_main_0,查看汇编代码
-<img src="/post/reverse/img/image-6.png" alt="alt text">
-发现对于弹出窗口MessageBoxW的调用存在问题,重点关注
-<img src="/post/reverse/img/image-1.png" alt="alt text">
-双击进入MessageBoxW函数,发现存在两处,猜测只有一处是真的,动态调试一下
-<img src="/post/reverse/img/image-2.png" alt="alt text">
-果然MessageBoxW跳转到别的地方了,以下几步进行溯源,与本次解题无关,可以跳过</p>
-<hr>
+</h3><p>MessageBoxW被hook跳转到了别的函数,这部分在拓展再说,先分析程序
+跳转到了sub_C02AB0,进行了两部操作
+<img src="/post/reverse/img/image-8.png" alt="alt text"></p>
+<ol>
+<li>base64表的大小写互换</li>
+<li>注册VEH</li>
+</ol>
+<p>然后回到main函数,安装了一个SEH,然后将eax清零，在地址0(eax)写入数据，触发 EXCEPTION_ACCESS_VIOLATION异常,执行异常处理
+<img src="/post/reverse/img/image-7.png" alt="alt text">
+以下是<strong>Windows 用户态异常处理的四个主要阶段</strong></p>
+<pre class="mermaid">flowchart LR
+    A["触发异常"]-->B["调试器"]-->C["向量化异常处理(VEH)"]-->D["结构化异常处理(SEH)"]-->E["顶层未处理异常过滤器(UEF)"]
+</pre>
+<p>由于已经注册了VEH,所以先进入VEH处理
+VEH中进行了两步操作</p>
 <ul>
-<li><strong>溯源</strong></li>
+<li>用where_are_u_now?初始化sm4加密</li>
+<li>设置 UEF 为 TopLevelExceptionFilter</li>
 </ul>
-<p>对跳转的函数X交叉引用,然后按下F5
-<img src="/post/reverse/img/image-3.png" alt="alt text">
-<img src="/post/reverse/img/image-4.png" alt="alt text"></p>
-<p>在<code>if ( WriteProcessMemory((HANDLE)0xFFFFFFFF, lpBaseAddress, lpBuffer_, 4u, 0) )</code>处下断点运行
-发现
-lpBuffer_指向C01023,也就是上面动调中MessageBoxW跳转到的地址
-lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正是主函数调用的,执行完后再次进去看看
-<img src="/post/reverse/img/image-5.png" alt="alt text">
-果然地址发生了变化</p>
-<hr>
-<p>更简单的方法就是Shift+F12查找hooked,按下X查找交叉引用也能找到MessageBoxW跳转的地址</p>
+<p><img src="/post/reverse/img/image-9.png" alt="alt text"></p>
+<p>SEH中对输入进行sm4加密,返回值为 1,继续进行错误处理
+<img src="/post/reverse/img/image-10.png" alt="alt text"></p>
+<p>进入UEF(TopLevelExceptionFilter)
+对str2每两位进行置换,然后对str1进行变种base64加密
+<img src="/post/reverse/img/image-11.png" alt="alt text"></p>
+<p>进入sub_C0126C
+这里将str1进行变种base64加密,加密算法为base64换表,base64有两处换表</p>
+<ol>
+<li>大小写互换</li>
+<li>整个表想左移动24字符</li>
+</ol>
+<p>最终表为yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvwx
+<img src="/post/reverse/img/image-12.png" alt="alt text"></p>
+<p>最后str1和str2在sub_C01136进行对比</p>
+<h3 id="exp">
+<a class="header-anchor" href="#exp"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">base64</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pysm4</span> <span class="kn">import</span> <span class="n">decrypt</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Util.number</span> <span class="kn">import</span> <span class="n">long_to_bytes</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="s2">&#34;where_are_u_now?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Str2</span> <span class="o">=</span> <span class="s2">&#34;1UTAOIkpyOSWGv/mOYFY4R==&#34;</span> <span class="c1"># !要改成=</span>
+</span></span><span class="line"><span class="cl"><span class="n">temp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Str2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span><span class="mi">2</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">res</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mybase64</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s2">&#34;yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvwx&#34;</span><span class="p">,</span><span class="s2">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">temp</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">mybase64</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="mh">0x77686572655f6172655f755f6e6f773f</span>
+</span></span><span class="line"><span class="cl"><span class="n">temp</span> <span class="o">=</span> <span class="mh">0x59d095290df2400614f48d276906874e</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;flag</span><span class="se">{{</span><span class="si">{</span><span class="n">long_to_bytes</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="扩展">
+<a class="header-anchor" href="#%e6%89%a9%e5%b1%95"></a>
+扩展
+</h3><p>本题采用了IAT hook技术</p>
+<ul>
+<li>
+<p><strong>什么是IAT hook?</strong>
+​IAT Hook（Import Address Table Hook）是一种在 Windows 系统中常见的 API Hook 技术，主要用于拦截和修改应用程序对动态链接库（DLL）中导入函数的调用</p>
+</li>
+<li>
+<p><strong>什么是IAT?</strong>
+在 Windows 的可执行文件（PE 文件）中，IAT 是一个数据结构，用于存储程序在运行时所需的外部函数的实际地址。​当程序调用 DLL 中的函数时，会通过 IAT 中的指针间接调用这些函数。​这种机制允许操作系统在加载程序时动态解析和填充这些函数地址</p>
+</li>
+<li>
+<p><strong>IAT Hook 的原理</strong>
+IAT Hook 的核心思想是修改 IAT 中的函数指针，将原本指向系统或其他 DLL 中函数的地址替换为自定义函数的地址。​这样，当程序调用该函数时，实际上会执行自定义的函数，从而实现对函数调用的拦截和控制。</p>
+</li>
+<li>
+<p><strong>实现步骤</strong></p>
+</li>
+<li>
+<ol>
+<li>获取模块基地址：​使用 GetModuleHandle 获取目标程序或 DLL 的基地址。</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>解析 PE 文件结构：​通过 PE 文件格式，定位导入表（IMAGE_IMPORT_DESCRIPTOR）和导入地址表（IAT）</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>查找目标函数：​遍历导入表，找到需要 Hook 的函数在 IAT 中的入口。</li>
+</ol>
+</li>
+<li>
+<ol start="4">
+<li>修改 IAT 项：​将目标函数在 IAT 中的地址替换为自定义函数的地址。</li>
+</ol>
+</li>
+<li>
+<ol start="5">
+<li>实现自定义函数：​编写自定义函数，该函数可以在执行特定操作后调用原始函数，或完全替代原始函数的功能。</li>
+</ol>
+</li>
+</ul>
+<p>在main函数处下断点,运行
+<img src="/post/reverse/img/image-13.png" alt="alt text">
+<img src="/post/reverse/img/image-14.png" alt="alt text"></p>
+<p>按下X查找sub_C01023的交叉引用来到sub_C027B0,再向上查找 ,最后找到rdata数据段的sub_C01235
+<img src="/post/reverse/img/image-15.png" alt="alt text">
+在sub_C01E40处获取程序基址,并传<strong>程序基址,要 hook 的函数所在的 dll 名 - User32.dll,要 hook 的函数名 - MessageBoxW</strong>给sub_C0114A
+<img src="/post/reverse/img/image-16.png" alt="alt text">
+调用 LoadLibrary 加载 user32.dll，返回 user32.dll 的基址存到 hModule 中；调用 GetProcAddress，传入 hModule 与 MessageBoxW 函数名，得到 MessageBoxW 函数的内存地址
+继续传<strong>程序基址,要 hook 的函数所在的 dll 名 - User32.dll,要 hook 的函数名 - MessageBoxW</strong>给sub_C0114A
+<img src="/post/reverse/img/image-17.png" alt="sub_C0114A–&gt;sub_C02DF0">
+IAT hook如图所示
+<img src="/post/reverse/img/image-19.png" alt="sub_C027B0"></p>
 
       
     </div>
@@ -633,7 +729,7 @@ lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正
           
           
             <img
-              data-src="/images/my/8.jpg"
+              data-src="/images/my/4.jpg"
               data-sizes="auto"
               alt="Pwn"
               class="lazyload"
@@ -731,7 +827,7 @@ lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正
       <div>
         <span class="icon-brush"
           >&nbsp;
-            7.4k
+            8.5k
           </span
         >
         &nbsp;|&nbsp;
@@ -739,7 +835,7 @@ lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正
           
           
 
-          00:17
+          00:19
         </span>
       </div>
     
@@ -786,6 +882,8 @@ lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正
     <li><a href="#安洵杯-2019crackme">[安洵杯 2019]crackMe</a>
       <ul>
         <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
+        <li><a href="#扩展">扩展</a></li>
       </ul>
     </li>
   </ul>
@@ -1189,6 +1287,126 @@ lpBaseAddress指向C0B1A0,也就是上面两个MessageBoxW下面那个地址,正
         };
       </script>
     
+    
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD/kZRD47aJ" crossorigin="anonymous"
+  ></script>
+
+
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-eEu5CTj3qGvu9PdJuS&#43;YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"
+  ></script>
+
+
+      <script data-pjax>
+        if (window.mermaid) {
+          
+          const elementCode = ".mermaid";
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") == null) {
+                    element.setAttribute(
+                      "data-original-code",
+                      element.innerHTML,
+                    );
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") != null) {
+                    element.removeAttribute("data-processed");
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute("data-original-code"));
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({ theme });
+            window.mermaid.init({ theme }, _$$(elementCode));
+          };
+          document.body.addEventListener("dark-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          });
+          document.body.addEventListener("light-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          });
+          if (localStorage.getItem("dark_mode") == "true") {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          } else {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          }
+        }
+      </script>
     
     
       
