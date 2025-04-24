@@ -417,6 +417,12 @@
         <li><a href="#exp-3">exp</a></li>
       </ul>
     </li>
+    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+        <li><a href="#exp-4">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -721,7 +727,7 @@ IAT hook如图所示
 <code>v29 = *(_WORD *)Src_9;</code>
 其中Src_9是我输入的字符串,WORD获取2字节,由于已知输入的字符串必定是flag的形式,所以可以猜测v29是flag的第2个字节,就是fl
 中间的加密比较复杂,但是注意到在前面创建密钥时,并没有用到我们输入的后面的内容，所以可以动调获取密钥，查看buf2有42个字节，所以要爆破用于xor的42个密钥
-鼠标点击<code>Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 &amp; 0x55)) | (v35 &gt;&gt; 1) &amp; 0x55));</code>所在行，按下Tab键，可以看到该行代码的汇编代码
+鼠标点击<code>Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 &amp; 0x55)) | (v35 &gt;&gt; 1) &amp; 0x55));</code>所在行，按下Tab键，可以转到该行代码的汇编代码
 在此处下断点，然后开始动调
 <img src="/post/reverse/img/image-24.png" alt="alt text">
 <img src="/post/reverse/img/image-25.png" alt="alt text">
@@ -878,6 +884,57 @@ exp
 </span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)):</span>
 </span></span><span class="line"><span class="cl">	<span class="n">flag</span><span class="o">+=</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">^</span><span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="wustctf2020funnyre">
+<a class="header-anchor" href="#wustctf2020funnyre"></a>
+[WUSTCTF2020]funnyre
+</h2><h3 id="分析-4">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-4"></a>
+分析
+</h3><p>载入IDA,红了一大段，发现是main函数存在花指令
+<img src="/post/reverse/img/image-34.png" alt="alt text">
+NOP后选中红色区域按下P重构函数，F5反编译，发现
+JUMPOUT(0x400B82)
+说明还有花指令，按下Tab键去看看，存在相同的花指令
+一共有4处，全部NOP掉就行了
+最后有个比较，应该就是对比上面一千多行加密后的flag值，很明显这不是人算的，所以用angr来进行符号执行
+<img src="/post/reverse/img/image-35.png" alt="alt text">
+进反汇编看看具体操作
+先看看字符串存储模式</p>
+<blockquote>
+<p>从<code>lea     rdi, [rdx+5]</code>开始是为了绕过前面的比较，不然的话后面需要在bss段也写入<code>flag{</code>
+<img src="/post/reverse/img/image-36.png" alt="alt text">
+<code>[rdx+5]</code>就是<code>flag{</code>后的内容
+然后对flag{}包裹的内容进行逐字符异或</p></blockquote>
+<p>再看看最后的比较
+<img src="/post/reverse/img/image-37.png" alt="alt text">
+已知起点,终点，可以开始建立约束求解</p>
+<ol>
+<li>利用<code>angr.Project</code>加载文件，返回一个 Project 对象,利用<code>auto_load_libs=False</code>用自动载入依赖库（如 libc），将所有外部函数解析为无约束的 SimProcedure stub（ReturnUnconstrained），以加快分析速度并减少不必要的库模型</li>
+<li>利用<code>entry_state</code>构造一个起始于 虚拟地址 0x400601 的符号执行状态 state</li>
+<li>利用claripy.BVS创建符号位向量flag，用<code>.memory.store(addr,flag)</code>将其存入bss段
+用<code>state.regs.rdx = 0x603055</code>将rdx指向bss段</li>
+<li>利用<code>simulation_manager</code>基于初始状态 state 构造一个 SimulationManager对象 sm，用于批量管理和调度多个执行状态。</li>
+<li>利用<code>explore(fine=)</code> 设定目标地址，开始符号执行，直到找到目标地址或达到最大执行次数。</li>
+<li>利用<code>found[0].solver.eval(flag, cast_to=bytes)</code>求解flag的值，并转为bytes类型输出。</li>
+</ol>
+<h3 id="exp-4">
+<a class="header-anchor" href="#exp-4"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">angr</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">claripy</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">angr</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="s1">&#39;./attachment&#39;</span><span class="p">,</span><span class="n">auto_load_libs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">state</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">entry_state</span><span class="p">(</span><span class="n">addr</span> <span class="o">=</span> <span class="mh">0x400601</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="n">claripy</span><span class="o">.</span><span class="n">BVS</span><span class="p">(</span><span class="s1">&#39;flag&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="o">*</span><span class="mi">32</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">state</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="mh">0x603055</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span><span class="n">flag</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">state</span><span class="o">.</span><span class="n">regs</span><span class="o">.</span><span class="n">rdx</span> <span class="o">=</span> <span class="mh">0x603055</span> <span class="c1">#因为后续的异或操作是从rdx+5处开始的,所以rdx指向前5个字节</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">sm</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">simulation_manager</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sm</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">find</span><span class="o">=</span><span class="mh">0x401DA9</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">solution</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">cast_to</span><span class="o">=</span><span class="nb">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
 </span></span></code></pre></div>
       
     </div>
@@ -924,7 +981,7 @@ exp
           
           
             <img
-              data-src="https://d-sketon.top/img/_backwebp/bg1.webp"
+              data-src="/images/my/5.jpg"
               data-sizes="auto"
               alt="Pwn"
               class="lazyload"
@@ -1022,7 +1079,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            9.8k
+            10.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -1030,7 +1087,7 @@ exp
           
           
 
-          00:22
+          00:24
         </span>
       </div>
     
@@ -1097,6 +1154,12 @@ exp
       <ul>
         <li><a href="#分析-3">分析</a></li>
         <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+        <li><a href="#exp-4">exp</a></li>
       </ul>
     </li>
   </ul>
