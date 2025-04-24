@@ -13,7 +13,7 @@
       <link>https://cyzrjz.github.io/post/reverse/</link>
       <pubDate>Mon, 21 Apr 2025 22:42:39 +0800</pubDate>
       <guid>https://cyzrjz.github.io/post/reverse/</guid>
-      <description>&lt;h2 id=&#34;安洵杯-2019crackme&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%ae%89%e6%b4%b5%e6%9d%af-2019crackme&#34;&gt;&lt;/a&gt;&#xA;[安洵杯 2019]crackMe&#xA;&lt;/h2&gt;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序&lt;/p&gt;&#xA;&lt;p&gt;跳转到了sub_C02AB0，进行了两步操作&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/reverse/img/image-8.png&#34; alt=&#34;alt text&#34;&gt;&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;安洵杯-2019crackme&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%ae%89%e6%b4%b5%e6%9d%af-2019crackme&#34;&gt;&lt;/a&gt;&#xA;[安洵杯 2019]crackMe&#xA;&lt;/h2&gt;&lt;p&gt;[[WUSTCTF2020]funnyre](/process/[安洵杯 2019]crackMe/attachment.exe)&lt;/p&gt;&#xA;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
