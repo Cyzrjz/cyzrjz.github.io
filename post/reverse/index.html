@@ -156,7 +156,7 @@
 
 
   
- <link rel="stylesheet" href="/css/main.min.26a5991802cd955ce96071d7a292597fc93234a977f08e874910023776132fa4.css" />
+ <link rel="stylesheet" href="/css/main.min.f733dcb5f5f43503ece2a5817d54461ea9641518f66ab17c660d22bb4c1acecd.css" />
 
 
 
@@ -901,10 +901,10 @@ JUMPOUT(0x400B82)
 进反汇编看看具体操作
 先看看字符串存储模式</p>
 <blockquote>
-<p>从<code>lea     rdi, [rdx+5]</code>开始是为了绕过前面的比较，不然的话后面需要在bss段也写入<code>flag{</code>
-<img src="/post/reverse/img/image-36.png" alt="alt text">
+<p>从<code>lea     rdi, [rdx+5]</code>开始是为了绕过前面的比较，不然的话后面需要在bss段也写入<code>flag{</code></p></blockquote>
+<p><img src="/post/reverse/img/image-36.png" alt="alt text">
 <code>[rdx+5]</code>就是<code>flag{</code>后的内容
-然后对flag{}包裹的内容进行逐字符异或</p></blockquote>
+然后对flag{}包裹的内容进行逐字符异或</p>
 <p>再看看最后的比较
 <img src="/post/reverse/img/image-37.png" alt="alt text">
 已知起点,终点，可以开始建立约束求解</p>
@@ -981,7 +981,7 @@ exp
           
           
             <img
-              data-src="/images/my/5.jpg"
+              data-src="/images/my/3.jpg"
               data-sizes="auto"
               alt="Pwn"
               class="lazyload"
