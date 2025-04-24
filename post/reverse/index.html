@@ -405,10 +405,16 @@
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
-    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
+    <li><a href="#第三届京麒ctf-qjctf-2025-热身赛-re2">第三届京麒CTF-QJCTF-2025-热身赛-re2</a>
       <ul>
         <li><a href="#分析-2">分析</a></li>
         <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -750,11 +756,33 @@ exp
 </span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">buf2</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 </span></span></code></pre></div><blockquote>
 <p>flag{1c98572d-7f7b-4fbf-8750-4a2986c695ce}</p></blockquote>
-<h2 id="guet-ctf2019encrypt">
-<a class="header-anchor" href="#guet-ctf2019encrypt"></a>
-[GUET-CTF2019]encrypt
+<h2 id="第三届京麒ctf-qjctf-2025-热身赛-re2">
+<a class="header-anchor" href="#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-qjctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re2"></a>
+第三届京麒CTF-QJCTF-2025-热身赛-re2
 </h2><h3 id="分析-2">
 <a class="header-anchor" href="#%e5%88%86%e6%9e%90-2"></a>
+分析
+</h3><p>IDA打开,f5反编译，发现是see3指令集
+<img src="/post/reverse/img/image-32.png" alt="alt text">
+排列顺序和加法常量都给了
+<img src="/post/reverse/img/image-33.png" alt="alt text">
+直接对每位<strong>减常量后再反转</strong>就行了</p>
+<h3 id="exp-2">
+<a class="header-anchor" href="#exp-2"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">cipher</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;cge87k?9&lt;&gt;?@=pss393=&gt;;8@:Cp@DAuH&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">inv_block</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sub</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)]</span>        <span class="c1"># 减 mask2，并 wrap-around :contentReference[oaicite:4]{index=4}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">sub</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>                                <span class="c1"># mask1 反转即[::-1] :contentReference[oaicite:5]{index=5}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">flag_bytes</span> <span class="o">=</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[:</span><span class="mi">16</span><span class="p">])</span> <span class="o">+</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[</span><span class="mi">16</span><span class="p">:])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span> 
+</span></span></code></pre></div><h2 id="guet-ctf2019encrypt">
+<a class="header-anchor" href="#guet-ctf2019encrypt"></a>
+[GUET-CTF2019]encrypt
+</h2><h3 id="分析-3">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-3"></a>
 分析
 </h3><p>载入IDA找到main函数，F5反编译
 <img src="/post/reverse/img/image-27.png" alt="alt text">
@@ -834,8 +862,8 @@ esi存放输入的字符串,edx就是异或的密钥,所以我们可以用idc爆
   </tbody>
 </table>
 <p>所以只要通过&amp;操作对data取位，通过|拼接就能还原flag</p>
-<h3 id="exp-2">
-<a class="header-anchor" href="#exp-2"></a>
+<h3 id="exp-3">
+<a class="header-anchor" href="#exp-3"></a>
 exp
 </h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mh">0x5a</span><span class="p">,</span> <span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x7A</span><span class="p">,</span> <span class="mh">0x7A</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x44</span><span class="p">,</span><span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x51</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x5B</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span><span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x79</span><span class="p">,</span> <span class="mh">0x6E</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x55</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x79</span><span class="p">,</span><span class="mh">0x55</span><span class="p">,</span> <span class="mh">0x6D</span><span class="p">,</span> <span class="mh">0x46</span><span class="p">,</span> <span class="mh">0x6B</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span><span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x70</span><span class="p">,</span><span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x78</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x55</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span><span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x45</span><span class="p">,</span> <span class="mh">0x3D</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># print(len(data))</span>
@@ -896,7 +924,7 @@ exp
           
           
             <img
-              data-src="/images/my/9.jpg"
+              data-src="https://d-sketon.top/img/_backwebp/bg1.webp"
               data-sizes="auto"
               alt="Pwn"
               class="lazyload"
@@ -994,7 +1022,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            9.7k
+            9.8k
           </span
         >
         &nbsp;|&nbsp;
@@ -1059,10 +1087,16 @@ exp
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
-    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
+    <li><a href="#第三届京麒ctf-qjctf-2025-热身赛-re2">第三届京麒CTF-QJCTF-2025-热身赛-re2</a>
       <ul>
         <li><a href="#分析-2">分析</a></li>
         <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
       </ul>
     </li>
   </ul>
