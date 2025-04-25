@@ -575,22 +575,22 @@
 分析
 </h3><p>Rust逆向,头一回见,直接拖入IDA分析</p>
 <p>函数看起来都很奇怪,动态调试看看
-<img src="img/image-20.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-20.png" alt="alt text">
 运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看
-<img src="img/image-21.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-21.png" alt="alt text">
 到这里再按F5反编译,就是用户函数了</p>
 <p>一看300多行代码,直接转到最后面
-<img src="img/image-22.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-22.png" alt="alt text">
 找到判断函数
-<img src="img/image-23.png" alt="alt text"></p>
+<img src="/post/jqctf2025/img/image-23.png" alt="alt text"></p>
 <p>分析v29是什么,
 <code>v29 = *(_WORD *)Src_9;</code>
 其中Src_9是我输入的字符串，WORD获取2字节，由于已知输入的字符串必定是flag的形式,所以可以猜测v29是flag的第2个字节，就是fl</p>
 <p>中间的加密比较复杂，但是注意到在前面创建密钥时，并没有用到我们输入的后面的内容，所以可以动调获取密钥，查看buf2有42个字节，所以要爆破用于xor的42个密钥</p>
 <p>鼠标点击<code>Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 &amp; 0x55)) | (v35 &gt;&gt; 1) &amp; 0x55));</code>所在行，按下Tab键，可以转到该行代码的汇编代码
 在此处下断点，然后开始动调
-<img src="img/image-24.png" alt="alt text">
-<img src="img/image-25.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-24.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-25.png" alt="alt text">
 可以看到[r14+rax]就是我们输入的字符串，cl就是要异或的密钥，所以我们可以用idc爆破cl</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">(){</span>
@@ -601,7 +601,7 @@
 </span></span><span class="line"><span class="cl">        <span class="n">GetDebuggerEvent</span><span class="p">(</span><span class="n">WFNE_SUSP</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><img src="img/image-26.png" alt="alt text">
+</span></span></code></pre></div><p><img src="/post/jqctf2025/img/image-26.png" alt="alt text">
 可以看到key已经爆破出来了</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span>
 </span></span><span class="line"><span class="cl">    <span class="mh">0x66</span><span class="p">,</span><span class="mh">0xCD</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x34</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span><span class="mh">0xCB</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x22</span><span class="p">,</span><span class="mh">0x3E</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
@@ -640,9 +640,9 @@ exp
 <a class="header-anchor" href="#%e5%88%86%e6%9e%90-1"></a>
 分析
 </h3><p>IDA打开,f5反编译，发现是see3指令集
-<img src="img/image-32.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-32.png" alt="alt text">
 排列顺序和加法常量都给了
-<img src="img/image-33.png" alt="alt text">
+<img src="/post/jqctf2025/img/image-33.png" alt="alt text">
 直接对每位<strong>减常量后再反转</strong>就行了</p>
 <h3 id="exp-1">
 <a class="header-anchor" href="#exp-1"></a>
@@ -712,7 +712,7 @@ exp
           
           
             <img
-              data-src="/images/my/12.png"
+              data-src="/images/my/3.jpg"
               data-sizes="auto"
               alt="攻防世界 Reverse"
               class="lazyload"
