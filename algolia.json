@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1745854940",
+    "permalink": "/post/see%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/",
+    "title": "SEE指令集学习",
+    
+    "content": " SSE 数据类型 SSE提供了以下新的数据类型：\n__m128i: 128位整型向量，可以容纳 16 个 8 位、8 个 16 位、4 个 32 位或 2 个 64 位整数值 __m128d: 128位浮点型向量 __m128: 容纳四个32位浮点值 对于__m128d和__m128i，编译器自动把局部和全局变量在栈上对齐16字节。若需要对齐整型、float和double数组，使用__declspec(align)\n要访问8位数据 __m128i a = _mm_set1_epi8(1); // 在目标 __m128i 向量中将 每个 8-位整型元素（共 16 个字节）都置为相同的常量 val int b = _mm_extract_epi8(a, n); // 取出第n位的8位整型数值 要访问16位数据 _mm_extract_epi16(__m128i a, int imm) // 取出第imm位的16位整型数值 要访问32位数据 _mm_extract_epi32(x, imm) // 取出第imm位的32位整型数值 内部函数(SSE Intrinsics)调用注意事项 指令集不直接支持某些内部函数，例如 _mm_loadr_ps 和 _mm_cmpgt_ss 。虽然这些内部函数是方便的编程辅助工具，但请注意，它们可能包含多个机器语言指令。 作为 __m128 对象加载或存储的浮点数据通常必须 16 字节对齐。 由于指令的性质，一些内部函数要求它们的参数是即时的，即常量整数（文字）。 作用于两个 NaN （非数字） 参数的算术运算的结果是未定义的。因此，使用 NaN 参数的 FP 运算将与相应汇编指令的预期行为不匹配。 某些 intrinsic 并没有对应的单条机器指令? x86 指令集中并没有同名的一条机器指令可直接执行。它们只是编译器提供的“快捷接口”。 它们可能由多条机器指令组成? 例如，_mm_loadr_ps 要把内存中的 4 个 float 装载到 XMM 寄存器，并且按“反向”顺序排列。没有单条指令能同时完成“加载”与“字元素反序”两个操作，于是编译器可能先用一条 MOVAPS（或 MOVUPS）加载，然后再用一条 PSHUFD（或类似的 shuffle）重排字元素。 内存对齐? 对齐访问可在一次内存总线事务中完成全部数据加载/存储，降低时钟周 …",
+    
+    "date": "2025-04-28 23:42:20",
+    "updated": "2025-04-28 23:42:20"
+  }
+  
+  , 
+  {
     "objectID": "1745595588",
     "permalink": "/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/",
     "title": "攻防世界 Pwn",
@@ -31,7 +43,7 @@
     "permalink": "/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/",
     "title": "攻防世界 Reverse",
     
-    "content": " 1. echo-server[N3] echo-server\n分析 本题主要考察花指令分析 执行程序，发现没有环境，使用下面的指令安装环境\nyay -S lib32-openssl-1.0 IDA查看 查看反汇编 可以看到有db 0E8h，是常见的花指令，用NOP填充后重新用IDA打开，后续大多是这样操作 选中第一段按下P，注意不要选到nop了 可以成功反编译了，但是还有一处异常 查看反汇编窗口，这里应该是一个判断，不应该跳转到自己的开头，然后判断失败后直接执行exit，\n结合上一段汇编代码，这里应该是上一段的接续，直接nop掉不应该存在的跳转指令 nop掉后，逻辑就清晰了，再次F5反汇编 如图，反汇编正常了 接下来分析程序逻辑，开始动调，输入F1@gA，查看汇编代码 这里应该跳转的，但是没跳转，直接执行exit，试试直接修改为jmp\n输出F8C60EB40BF66919A77C4BD88D45DEF4 提交，发现这就是flag\nexp F8C60EB40BF66919A77C4BD88D45DEF4 ",
+    "content": " 1. echo-server[N3] echo-server\n分析 本题主要考察花指令分析 执行程序，发现没有环境，使用下面的指令安装环境\nyay -S lib32-openssl-1.0 IDA查看 查看反汇编 将爆红的call转为数据，可以看到有db 0E8h，是常见的花指令，用NOP填充后重新用IDA打开，后续大多是这样操作 选中第一段按下P，注意不要选到nop了 可以成功反编译了，但是还有一处异常 查看反汇编窗口，这里应该是一个判断，不应该跳转到自己的开头，然后判断失败后直接执行exit，\n结合上一段汇编代码，这里应该是上一段的接续，直接nop掉不应该存在的跳转指令 nop掉后，逻辑就清晰了，再次F5反汇编 如图，反汇编正常了 接下来分析程序逻辑，开始动调，输入F1@gA，查看汇编代码 这里应该跳转的，但是没跳转，直接执行exit，试试直接修改为jmp\n输出F8C60EB40BF66919A77C4BD88D45DEF4 提交，发现这就是flag\nexp F8C60EB40BF66919A77C4BD88D45DEF4 2. catch-me[N3] catch-me\n分析 exp ",
     
     "date": "2025-04-25 20:36:13",
     "updated": "2025-04-25 20:36:13"
@@ -79,7 +91,7 @@
     "permalink": "/post/ret2libc/",
     "title": "Ret2libc(未完成)",
     
-    "content": " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global Offset Table） 中。首次调用时，通过 PLT0 跳入动态链接器执行符号解析（即 _dl_runtime_resolve），并将解析结果回写到 GOT 条目；后续调用则直接通过 GOT 跳转到实际函数地址，省去额外解析开销。\n动态链接过程 以调用system为例\n首次调用 flowchart LR A[\u0026#34;call system\u0026#34;] --\u0026gt; B[\u0026#34;system@plt\u0026#34;] B --\u0026gt; C[\u0026#34;system@got\u0026#34;] C --\u0026gt; D[\u0026#34;glibc中的system函数地址\u0026#34;] D --\u0026gt;|\u0026#34;存储地址\u0026#34;| C D --\u0026gt; E[\u0026#34;调用system\u0026#34;] 后续调用 flowchart LR A[\u0026#34;call system\u0026#34;] --\u0026gt; B[\u0026#34;system@plt\u0026#34;] B --\u0026gt; C[\u0026#34;system@got\u0026#34;] --\u0026gt; D[\u0026#34;调用system\u0026#34;] 由于.got中已经有了system的地址，所以后续调用时直接从.got中取地址即可，而不需要再去.got.plt中寻找。\n漏洞利用原理 通过栈溢出返回system函数的真实地址，执行/bin/sh命令获取shell 现在面临两个问题\n如何获取system函数的真实地址？ /bin/sh命令的地址如何获取？ system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的 即使程序有 ASLR 保护，也只是针对于地址中间位进行随机，最低的 12 位并不会发生改变 函数的真实地址 = 函数的偏移 + libc.so中的基址 可以划分为以下步骤:\n填充无用数据覆盖缓冲区 调用puts等函数,泄露已执行函数的真实地址 通过真 …",
+    "content": " 前置知识 re2syscall GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global Offset Table） 中。首次调用时，通过 PLT0 跳入动态链接器执行符号解析（即 _dl_runtime_resolve），并将解析结果回写到 GOT 条目；后续调用则直接通过 GOT 跳转到实际函数地址，省去额外解析开销。\n动态链接过程 以调用system为例\n首次调用 flowchart LR A[\u0026#34;call system\u0026#34;] --\u0026gt; B[\u0026#34;system@plt\u0026#34;] B --\u0026gt; C[\u0026#34;system@got\u0026#34;] C --\u0026gt; D[\u0026#34;glibc中的system函数地址\u0026#34;] D --\u0026gt;|\u0026#34;存储地址\u0026#34;| C D --\u0026gt; E[\u0026#34;调用system\u0026#34;] 后续调用 flowchart LR A[\u0026#34;call system\u0026#34;] --\u0026gt; B[\u0026#34;system@plt\u0026#34;] B --\u0026gt; C[\u0026#34;system@got\u0026#34;] --\u0026gt; D[\u0026#34;调用system\u0026#34;] 由于.got中已经有了system的地址，所以后续调用时直接从.got中取地址即可，而不需要再去.got.plt中寻找。\n漏洞利用原理 通过栈溢出返回system函数的真实地址，执行/bin/sh命令获取shell 现在面临两个问题\n如何获取system函数的真实地址？ /bin/sh命令的地址如何获取？ system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的 即使程序有 ASLR 保护，也只是针对于地址中间位进行随机，最低的 12 位并不会发生改变 函数的真实地址 = 函数的偏移 + libc.so中的基址 可以划分为以下步骤:\n填充无用数据覆盖缓冲区 调用puts等函数,泄露已执行 …",
     
     "date": "2025-04-19 14:13:28",
     "updated": "2025-04-19 14:13:28"

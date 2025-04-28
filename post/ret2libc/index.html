@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="Ret2libc(未完成)">
+          <img  fetchpriority="high" src="/images/my/banner.webp" alt="Ret2libc(未完成)">
         
       
     
@@ -394,6 +394,7 @@
   <ul>
     <li><a href="#前置知识">前置知识</a>
       <ul>
+        <li><a href="#re2syscall">re2syscall</a></li>
         <li><a href="#got表和plt表">GOT表和PLT表</a></li>
         <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
         <li><a href="#动态链接过程">动态链接过程</a></li>
@@ -426,7 +427,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">10</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -436,7 +437,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">12</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -570,7 +571,10 @@
         <h2 id="前置知识">
 <a class="header-anchor" href="#%e5%89%8d%e7%bd%ae%e7%9f%a5%e8%af%86"></a>
 前置知识
-</h2><h3 id="got表和plt表">
+</h2><h3 id="re2syscall">
+<a class="header-anchor" href="#re2syscall"></a>
+re2syscall
+</h3><h3 id="got表和plt表">
 <a class="header-anchor" href="#got%e8%a1%a8%e5%92%8cplt%e8%a1%a8"></a>
 GOT表和PLT表
 </h3><ul>
@@ -725,7 +729,7 @@ ebp的地址是
           
           
             <img
-              data-src="/images/my/9.jpg"
+              data-src="/images/my/18.png"
               data-sizes="auto"
               alt="Z3约束求解"
               class="lazyload"
@@ -748,7 +752,7 @@ ebp的地址是
           
           
             <img
-              data-src="/images/my/13.png"
+              data-src="/images/my/8.jpg"
               data-sizes="auto"
               alt="Ret2syscall"
               class="lazyload"
@@ -820,6 +824,9 @@ ebp的地址是
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -853,7 +860,7 @@ ebp的地址是
       <div>
         <span class="icon-brush"
           >&nbsp;
-            13.0k
+            14.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -861,7 +868,7 @@ ebp的地址是
           
           
 
-          00:30
+          00:34
         </span>
       </div>
     
@@ -907,6 +914,7 @@ ebp的地址是
   <ul>
     <li><a href="#前置知识">前置知识</a>
       <ul>
+        <li><a href="#re2syscall">re2syscall</a></li>
         <li><a href="#got表和plt表">GOT表和PLT表</a></li>
         <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
         <li><a href="#动态链接过程">动态链接过程</a></li>
@@ -939,7 +947,7 @@ ebp的地址是
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">10</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -949,7 +957,7 @@ ebp的地址是
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">12</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -1314,8 +1322,8 @@ ebp的地址是
           author: "Cyzrjz",
           title: "Ret2libc(未完成)",
           url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
-          description: " 前置知识 GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global …",
-          cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
+          description: " 前置知识 re2syscall GOT表和PLT表 GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后) PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve) 延迟绑定机制 在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码， …",
+          cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.webp",
         };
       </script>
     
