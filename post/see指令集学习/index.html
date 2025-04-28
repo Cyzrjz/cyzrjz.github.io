@@ -592,20 +592,25 @@ SSE
 </span></span></span></code></pre></div><h3 id="内部函数sse-intrinsics调用注意事项">
 <a class="header-anchor" href="#%e5%86%85%e9%83%a8%e5%87%bd%e6%95%b0sse-intrinsics%e8%b0%83%e7%94%a8%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9"></a>
 内部函数(SSE Intrinsics)调用注意事项
-</h3><ol>
+</h3><p><a href="https://www.intel.com/content/www/us/en/docs/cpp-compiler/developer-guide-reference/2021-8/writing-programs-with-sse-intrinsics.html">原文</a></p>
+<ol>
 <li>指令集不直接支持某些内部函数，例如 _mm_loadr_ps 和 _mm_cmpgt_ss 。虽然这些内部函数是方便的编程辅助工具，但请注意，它们可能包含多个机器语言指令。</li>
 <li>作为 __m128 对象加载或存储的浮点数据通常必须 16 字节对齐。</li>
 <li>由于指令的性质，一些内部函数要求它们的参数是即时的，即常量整数（文字）。</li>
 <li>作用于两个 NaN （非数字） 参数的算术运算的结果是未定义的。因此，使用 NaN 参数的 FP 运算将与相应汇编指令的预期行为不匹配。</li>
 </ol>
 <ul>
-<li><strong>某些 intrinsic 并没有对应的单条机器指令?</strong>
-x86 指令集中并没有同名的一条机器指令可直接执行。它们只是编译器提供的“快捷接口”。</li>
-<li><strong>它们可能由多条机器指令组成?</strong>
-例如，_mm_loadr_ps 要把内存中的 4 个 float 装载到 XMM 寄存器，并且按“反向”顺序排列。没有单条指令能同时完成“加载”与“字元素反序”两个操作，于是编译器可能先用一条 MOVAPS（或 MOVUPS）加载，然后再用一条 PSHUFD（或类似的 shuffle）重排字元素。</li>
-<li><strong>内存对齐?</strong>
-对齐访问可在一次内存总线事务中完成全部数据加载/存储，降低时钟周期和硬件复杂度。未对齐访问可能被拆成多次访问，增加延迟；在部分架构上甚至会引发异常。</li>
+<li><strong>某些 intrinsic 并没有对应的单条机器指令?</strong></li>
 </ul>
+<p>x86 指令集中并没有同名的一条机器指令可直接执行。它们只是编译器提供的“快捷接口”。</p>
+<ul>
+<li><strong>它们可能由多条机器指令组成?</strong></li>
+</ul>
+<p>例如，_mm_loadr_ps 要把内存中的 4 个 float 装载到 XMM 寄存器，并且按“反向”顺序排列。没有单条指令能同时完成“加载”与“字元素反序”两个操作，于是编译器可能先用一条 MOVAPS（或 MOVUPS）加载，然后再用一条 PSHUFD（或类似的 shuffle）重排字元素。</p>
+<ul>
+<li><strong>内存对齐?</strong></li>
+</ul>
+<p>对齐访问可在一次内存总线事务中完成全部数据加载/存储，降低时钟周期和硬件复杂度。未对齐访问可能被拆成多次访问，增加延迟；在部分架构上甚至会引发异常。</p>
 <p>例如__m128 表示一个 128 位宽的 SIMD 向量，可存放 4 个单精度浮点（4×32 bit = 128 bit），在内存中，它占用 16 字节 连续空间</p>
 <blockquote>
 <p>早期 SSE/SSE2 指令（如 MOVAPS/MOVAPD）对内存操作数必须是 16 字节对齐，否则 CPU 会产生一般保护异常（#GP）,<strong>后续 SSE3/SSE4.1 引入了可处理非对齐数据的指令（如 MOVUPS），但性能仍低于对齐版本​</strong></p></blockquote>
@@ -613,10 +618,14 @@ x86 指令集中并没有同名的一条机器指令可直接执行。它们只�
 <a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%af%b9%e9%bd%90"></a>
 内存对齐
 </h4><ul>
-<li>定义
-若内存地址 A 能被 n（且通常为 2 的幂）整除，则称该地址是 <code>n字节对齐</code></li>
-<li>直观意义
-CPU 按其总线宽度或缓存线长度访问内存，若数据跨越对齐边界，可能需要多次总线访问或额外硬件处理。</li>
+<li>定义</li>
+</ul>
+<p>若内存地址 A 能被 n（且通常为 2 的幂）整除，则称该地址是 <code>n字节对齐</code></p>
+<ul>
+<li>直观意义</li>
+</ul>
+<p>CPU 按其总线宽度或缓存线长度访问内存，若数据跨越对齐边界，可能需要多次总线访问或额外硬件处理。</p>
+<ul>
 <li><strong>如何理解n字节对齐</strong></li>
 </ul>
 <ol>
