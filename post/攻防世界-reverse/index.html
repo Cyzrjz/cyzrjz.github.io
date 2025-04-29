@@ -624,6 +624,19 @@ exp
 <code>getenv(&quot;ASIS&quot;) == getenv(&quot;CTF&quot;)</code></p>
 <p>中间一大堆的SSE指令没对haystack做修改，先跳过，想了解可以看</p>
 <p><a href="/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/">SSE指令集学习</a></p>
+<h4 id="解法1">
+<a class="header-anchor" href="#%e8%a7%a3%e6%b3%951"></a>
+解法1
+</h4><p>程序通过getenv函数获取环境变量的值，那么直接往环境变量里写入正确的值就行了</p>
+<p>可以通过export设置临时环境变量，终端关闭后自动清除</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>通过printf可以导入十六进制整数类型，值得积累<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ASIS</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&#34;\x0a\xda\xf2\x4f&#34;</span><span class="k">)</span><span class="s2">&#34;</span>				<span class="c1">#注意参数是从低位到高位的</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CTF</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&#34;\x0a\xda\xf2\x4f&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-16.png" alt="alt text"></p>
+<h4 id="解法2">
+<a class="header-anchor" href="#%e8%a7%a3%e6%b3%952"></a>
+解法2
+</h4><p>纯逆向，下面贴出exp</p>
 <h3 id="exp-1">
 <a class="header-anchor" href="#exp-1"></a>
 exp
@@ -698,7 +711,7 @@ exp
           
           
             <img
-              data-src="/images/my/5.jpg"
+              data-src="/images/my/9.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -829,7 +842,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            15.6k
+            15.7k
           </span
         >
         &nbsp;|&nbsp;
