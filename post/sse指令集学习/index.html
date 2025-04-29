@@ -811,10 +811,226 @@ SSE
 </span></span></code></pre></div><h3 id="内部函数sse-intrinsics">
 <a class="header-anchor" href="#%e5%86%85%e9%83%a8%e5%87%bd%e6%95%b0sse-intrinsics"></a>
 内部函数(SSE Intrinsics)
-</h3><h4 id="算术内部函数arithmetic-intrinsics">
-<a class="header-anchor" href="#%e7%ae%97%e6%9c%af%e5%86%85%e9%83%a8%e5%87%bd%e6%95%b0arithmetic-intrinsics"></a>
-算术内部函数(Arithmetic Intrinsics)
-</h4><h2 id="参考文献">
+</h3><h4 id="命名和使用语法">
+<a class="header-anchor" href="#%e5%91%bd%e5%90%8d%e5%92%8c%e4%bd%bf%e7%94%a8%e8%af%ad%e6%b3%95"></a>
+命名和使用语法
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">_mm</span><span class="p">[</span><span class="n">_</span><span class="o">&lt;</span><span class="n">width</span><span class="o">&gt;</span><span class="p">]</span><span class="n">_</span><span class="o">&lt;</span><span class="n">intrin_op</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">suffix</span><span class="o">&gt;</span><span class="p">()</span>
+</span></span></code></pre></div><h5 id="">
+<a class="header-anchor" href="#"></a>
+<strong><!-- raw HTML omitted --></strong>
+</h5><p>字段表明向量寄存器宽度<strong>隐藏时默认为 128 位</strong></p>
+<h5 id="intrin_">
+<a class="header-anchor" href="#intrin_"></a>
+<strong>&lt;intrin_op&gt;</strong>
+</h5><p>指示 intrinsic 的基本作;例如，add 表示加法，sub 表示减法。</p>
+<table>
+  <thead>
+      <tr>
+          <th>操作码 <!-- raw HTML omitted --></th>
+          <th>含义</th>
+          <th>示例 Intrinsic</th>
+          <th>引用</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>add</strong></td>
+          <td>加法 (addition)</td>
+          <td>_mm_add_ps, _mm256_add_epi16</td>
+          <td>Stack Overflow</td>
+      </tr>
+      <tr>
+          <td><strong>sub</strong></td>
+          <td>减法 (subtraction)</td>
+          <td>_mm_sub_pd, _mm512_sub_epi32</td>
+          <td>Intel</td>
+      </tr>
+      <tr>
+          <td><strong>mul</strong></td>
+          <td>乘法 (multiplication)</td>
+          <td>_mm_mul_ps, _mm256_mul_epi32</td>
+          <td>Stack Overflow</td>
+      </tr>
+      <tr>
+          <td><strong>div</strong></td>
+          <td>除法 (division)</td>
+          <td>_mm_div_ss, _mm256_div_pd</td>
+          <td>assets.ctfassets.net</td>
+      </tr>
+      <tr>
+          <td><strong>load</strong></td>
+          <td>加载 (load)</td>
+          <td>_mm_load_ps, _mm256_loadu_si256</td>
+          <td>科学直接</td>
+      </tr>
+      <tr>
+          <td><strong>store</strong></td>
+          <td>存储 (store)</td>
+          <td>_mm_store_si128, _mm512_store_epi64</td>
+          <td>科学直接</td>
+      </tr>
+      <tr>
+          <td><strong>set</strong></td>
+          <td>设定向量元素 (set)</td>
+          <td>_mm_set_epi8, _mm256_set1_epi32</td>
+          <td>Stack Overflow</td>
+      </tr>
+      <tr>
+          <td><strong>cmp</strong></td>
+          <td>比较 (compare)</td>
+          <td>_mm_cmpgt_epi8, _mm512_cmpeq_pd</td>
+          <td>Stack Overflow</td>
+      </tr>
+      <tr>
+          <td><strong>shuffle</strong></td>
+          <td>重排 (shuffle)</td>
+          <td>_mm_shuffle_ps, _mm256_shuffle_epi8</td>
+          <td>科学直接</td>
+      </tr>
+      <tr>
+          <td><strong>blend</strong></td>
+          <td>混合 (blend)</td>
+          <td>_mm_blend_ps, _mm256_blend_pd</td>
+          <td>Intel</td>
+      </tr>
+      <tr>
+          <td><strong>align</strong></td>
+          <td>对齐/拼接 (align/concatenate)</td>
+          <td>_mm_alignr_epi8, _mm256_alignr_epi8</td>
+          <td>Intel</td>
+      </tr>
+      <tr>
+          <td><strong>abs</strong></td>
+          <td>绝对值 (absolute value)</td>
+          <td>_mm_abs_epi16, _mm256_abs_epi32</td>
+          <td>Intel</td>
+      </tr>
+  </tbody>
+</table>
+<h5 id="heading">
+<a class="header-anchor" href="#heading"></a>
++ <strong><!-- raw HTML omitted --></strong>
+</h5><p>前 1–2 个字母表示数据布局——Packed (p)、Extended Packed (ep) 或 Scalar (s)；剩下的字母/数字则表示元素的数据类型（如浮点／整数、位宽、有无符号）</p>
+<table>
+  <thead>
+      <tr>
+          <th>前缀</th>
+          <th>含义</th>
+          <th>语义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>p</strong></td>
+          <td>packed</td>
+          <td>在一个向量寄存器里并行存放多个元素（SIMD）</td>
+      </tr>
+      <tr>
+          <td><strong>ep</strong></td>
+          <td>extended packed</td>
+          <td>“扩展的 packed”，最初用来区分 SSE2+ 的 128-bit integer intrinsics 与 MMX 的 64-bit intrinsics，本质同 packed​Stack Overflow</td>
+      </tr>
+      <tr>
+          <td><strong>s</strong></td>
+          <td>scalar</td>
+          <td>仅在向量寄存器的最低位元素上操作，其它元素保持不变</td>
+      </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+      <tr>
+          <th>后缀</th>
+          <th>含义</th>
+          <th>例子</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>s</strong></td>
+          <td>single-precision FP (32-bit float)</td>
+          <td>_mm_add_ss</td>
+      </tr>
+      <tr>
+          <td><strong>d</strong></td>
+          <td>double-precision FP (64-bit double)</td>
+          <td>_mm_add_sd</td>
+      </tr>
+      <tr>
+          <td><strong>ps</strong></td>
+          <td>packed single-precision FP</td>
+          <td>_mm_add_ps (4×32-bit float)</td>
+      </tr>
+      <tr>
+          <td><strong>pd</strong></td>
+          <td>packed double-precision FP</td>
+          <td>_mm_add_pd (2×64-bit double)</td>
+      </tr>
+      <tr>
+          <td><strong>i8</strong></td>
+          <td>signed 8-bit integer</td>
+          <td>_mm_add_epi8</td>
+      </tr>
+      <tr>
+          <td><strong>u8</strong></td>
+          <td>unsigned 8-bit integer</td>
+          <td>_mm_add_epu8</td>
+      </tr>
+      <tr>
+          <td><strong>i16</strong></td>
+          <td>signed 16-bit integer</td>
+          <td>_mm_add_epi16</td>
+      </tr>
+      <tr>
+          <td><strong>u16</strong></td>
+          <td>unsigned 16-bit integer</td>
+          <td>_mm_add_epu16</td>
+      </tr>
+      <tr>
+          <td><strong>i32</strong></td>
+          <td>signed 32-bit integer</td>
+          <td>_mm_add_epi32</td>
+      </tr>
+      <tr>
+          <td><strong>u32</strong></td>
+          <td>unsigned 32-bit integer</td>
+          <td>_mm_add_epu32</td>
+      </tr>
+      <tr>
+          <td><strong>i64</strong></td>
+          <td>signed 64-bit integer</td>
+          <td>_mm_add_epi64</td>
+      </tr>
+      <tr>
+          <td><strong>u64</strong></td>
+          <td>unsigned 64-bit integer</td>
+          <td>_mm_add_epu64</td>
+      </tr>
+      <tr>
+          <td><strong>i128</strong></td>
+          <td>signed 128-bit integer (AVX-512)</td>
+          <td>_mm512_add_epi128</td>
+      </tr>
+      <tr>
+          <td><strong>si128</strong></td>
+          <td>scalar 128-bit integer (AVX-512)</td>
+          <td>_mm512_cvtsi128_si32</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li><strong>举例</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">//并行 4 个 float 相加
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">__m128</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>  
+</span></span><span class="line"><span class="cl"><span class="kr">__m128</span> <span class="n">c</span> <span class="o">=</span> <span class="n">_mm_add_ps</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>   <span class="c1">// “add” + “ps”：并行 (packed) single-precision  
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">//仅对第 0 元素做标量 double 相加
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">__m128d</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>  
+</span></span><span class="line"><span class="cl"><span class="kr">__m128d</span> <span class="n">c</span> <span class="o">=</span> <span class="n">_mm_add_sd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>  <span class="c1">// “add” + “sd”：scalar double-precision  
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">//并行 4 个有符号 32-bit 整数相加
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">__m128i</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>  
+</span></span><span class="line"><span class="cl"><span class="kr">__m128i</span> <span class="n">c</span> <span class="o">=</span> <span class="n">_mm_add_epi32</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span> <span class="c1">// “add” + “epi32”：extended packed signed-32  
+</span></span></span></code></pre></div><h2 id="参考文献">
 <a class="header-anchor" href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae"></a>
 参考文献
 </h2><p><a href="https://blog.csdn.net/sinat_41612591/article/details/84869971">SSE指令集学习</a>
@@ -884,7 +1100,7 @@ SSE
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/10.jpg"
               data-sizes="auto"
               alt="攻防世界 Pwn"
               class="lazyload"
@@ -994,7 +1210,7 @@ SSE
       <div>
         <span class="icon-brush"
           >&nbsp;
-            14.8k
+            15.4k
           </span
         >
         &nbsp;|&nbsp;
@@ -1002,7 +1218,7 @@ SSE
           
           
 
-          00:34
+          00:35
         </span>
       </div>
     
