@@ -6,15 +6,8 @@
     <description>Recent content on W31c0me t0 My610g</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 30 Apr 2025 13:46:34 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 28 Apr 2025 23:42:20 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>NCTF2025</title>
-      <link>https://cyzrjz.github.io/post/nctf2025/</link>
-      <pubDate>Wed, 30 Apr 2025 13:46:34 +0800</pubDate>
-      <guid>https://cyzrjz.github.io/post/nctf2025/</guid>
-      <description>&lt;h2 id=&#34;ezdos&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#ezdos&#34;&gt;&lt;/a&gt;&#xA;ezDOS&#xA;&lt;/h2&gt;&lt;p&gt;给了一个16位的dos程序，我的环境不能直接运行，直接用IDA试试吧&lt;/p&gt;&#xA;&lt;p&gt;拖入IDA，看到前面的一堆数据，细看发现有字符串，而DOS 打印以 &amp;lsquo;$&#39; 结尾的字符串，所以从选择字符串开始到&#39;$&amp;lsquo;结束的地方按下A转为字符串&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/nctf2025/img/image.png&#34; alt=&#34;alt text&#34;&gt;&#xA;下面还有一堆不知道的数据，先看看末尾能分析出代码的部分&#xA;&lt;img src=&#34;https://cyzrjz.github.io/post/nctf2025/img/image-1.png&#34; alt=&#34;alt text&#34;&gt;&#xA;发现有几处常见的花指令&lt;/p&gt;</description>
-    </item>
     <item>
       <title>SSE指令集学习</title>
       <link>https://cyzrjz.github.io/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/</link>
