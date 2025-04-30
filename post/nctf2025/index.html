@@ -20,15 +20,13 @@
 
 
   
-    
-  
 
 <title>
-  C/C&#43;&#43; | Cyzrjz
+  NCTF2025 | Cyzrjz
 </title>
 <meta
   name="description"
-  content="静籁永恒"
+  content="NCTF2025-Reverse Writeup"
 />
 
 
@@ -116,12 +114,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="C/C&#43;&#43; | Cyzrjz" />
+  <meta property="og:title" content="NCTF2025 | Cyzrjz" />
   <meta
     property="og:description"
-    content="静籁永恒"
+    content="NCTF2025-Reverse Writeup"
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/tags/c/c&#43;&#43;/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/nctf2025/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -131,8 +129,10 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-28T23:42:20&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-28T23:42:20&#43;08:00" />
+  <meta property="article:published_time" content="2025-04-30T13:46:34&#43;08:00" />
+  <meta property="article:modified_time" content="2025-04-30T13:46:34&#43;08:00" />
+  
+    <meta property="article:tag" content="Reverse线上赛" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -144,7 +144,6 @@
   
 
 
-<link rel="alternate" type="application/rss+xml" href="https://cyzrjz.github.io/tags/c/c++/index.xml" title="W31c0me t0 My610g">
 
 
 <link rel="shortcut icon" href="/favicon.ico">
@@ -328,7 +327,6 @@
     <a id="main-nav-toggle" class="nav-icon"></a>
   </nav>
   <nav id="sub-nav">
-    <a id="nav-rss-link" class="nav-icon" href="/tags/c/c&#43;&#43;/index.xml" title="RSS 订阅" target="_blank"></a>
     
     
       <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
@@ -338,11 +336,13 @@
 <header id="header">
   
     
-      <picture>
-        
-      </picture>
       
-        <img  fetchpriority="high" src="/images/my/banner.png" alt="C/C&#43;&#43;">
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="NCTF2025">
+        
       
     
   
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">标签</h1>
+            <h1 data-aos="slide-up">NCTF2025</h1>
           </a>
         
       
@@ -365,11 +365,7 @@
       
         
         
-          
-        
         <h2 id="subtitle-wrap" data-aos="slide-down">
-          
-            <a href="/" id="subtitle">C/C&#43;&#43;</a>
           
         </h2>
       
@@ -383,13 +379,27 @@
   
   
   
-  <div class="sidebar-wrapper ">
+  <div class="sidebar-wrapper wrap-sticky">
     <div
       class="sidebar-wrap"
       data-aos="fade-up"
     >
       
         
+          <div class="sidebar-toc-sidebar">
+            <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ezdos">ezDOS</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+          </div>
+          <div class="sidebar-common-sidebar hidden">
+            
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar.png"
@@ -488,564 +498,189 @@
   
 </div>
 
+          </div>
+        
       
 
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
       
     </div>
   </div>
 
   <div class="sidebar-widget">
     
-      
-        
-
-      
-        
-  <div class="widget-wrapper">
-    <div
-      class="widget-wrap"
-      data-aos="fade-up"
-    >
-      <div style="display: flex; justify-content: space-between;">
-        <h3 class="widget-title">标签</h3>
-        
-          <a class="widget-link" href="/tags/">查看更多</a>
-        
-      </div>
-      <div class="widget">
-        <ul class="tag-list" itemprop="keywords">
-          
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/c/c&#43;&#43;/"
-                  aria-label="标签: C/C&#43;&#43;"
-                >
-                  C/C&#43;&#43;
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/pwn/"
-                  aria-label="标签: Pwn"
-                >
-                  Pwn
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/python/"
-                  aria-label="标签: Python"
-                >
-                  Python
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/reverse/"
-                  aria-label="标签: Reverse"
-                >
-                  Reverse
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/see/"
-                  aria-label="标签: SEE"
-                >
-                  SEE
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/windows/"
-                  aria-label="标签: Windows"
-                >
-                  Windows
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
-                  aria-label="标签: 基础理论"
-                >
-                  基础理论
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/%E5%B7%A5%E5%85%B7/"
-                  aria-label="标签: 工具"
-                >
-                  工具
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/%E6%8C%87%E4%BB%A4%E9%9B%86/"
-                  aria-label="标签: 指令集"
-                >
-                  指令集
-                </a>
-              </li>
-              
-            
-          
-            
-            <li class="tag-item">
-                <a
-                  class="tag-link"
-                  href="/tags/%E7%BA%BF%E4%B8%8A%E8%B5%9B/"
-                  aria-label="标签: 线上赛"
-                >
-                  线上赛
-                </a>
-              </li>
-              
-            
-          
-            
-          
-            
-          
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
-      
-        
-<div class="widget-wrapper">
-  <div
-    class="widget-wrap"
-    data-aos="fade-up"
-  >
-    <h3 class="widget-title">标签云</h3>
-    
-    <div class="widget tagcloud">
-      
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/c/c&#43;&#43;/"
-            aria-label="标签: C/C&#43;&#43;"
-            >C/C&#43;&#43;</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/pwn/"
-            aria-label="标签: Pwn"
-            >Pwn</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/python/"
-            aria-label="标签: Python"
-            >Python</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/reverse/"
-            aria-label="标签: Reverse"
-            >Reverse</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/see/"
-            aria-label="标签: SEE"
-            >SEE</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/windows/"
-            aria-label="标签: Windows"
-            >Windows</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
-            aria-label="标签: 基础理论"
-            >基础理论</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E5%B7%A5%E5%85%B7/"
-            aria-label="标签: 工具"
-            >工具</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E6%8C%87%E4%BB%A4%E9%9B%86/"
-            aria-label="标签: 指令集"
-            >指令集</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E7%BA%BF%E4%B8%8A%E8%B5%9B/"
-            aria-label="标签: 线上赛"
-            >线上赛</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E8%AE%AD%E7%BB%83/"
-            aria-label="标签: 训练"
-            >训练</a
-          >
-          
-        
-      
-        
-          
-          <a
-            style="font-size:10px"
-            href="/tags/%E9%80%86%E5%90%91/"
-            aria-label="标签: 逆向"
-            >逆向</a
-          >
-          
-        
-      
-    </div>
-  </div>
-</div>
-
-      
-        
-  
-  <div class="widget-wrapper">
-    <div
-      class="widget-wrap"
-      data-aos="fade-up"
-    >
-      <h3 class="widget-title">最新文章</h3>
-      <div class="widget">
-        <ul>
-          
-            <li>
-              <a href="/post/nctf2025/">NCTF2025</a>
-            </li>
-          
-            <li>
-              <a href="/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/">SSE指令集学习</a>
-            </li>
-          
-            <li>
-              <a href="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-pwn/">攻防世界 Pwn</a>
-            </li>
-          
-            <li>
-              <a href="/post/jqctf2025/">JQCTF2025</a>
-            </li>
-          
-            <li>
-              <a href="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/">攻防世界 Reverse</a>
-            </li>
-          
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
-      
-    
   </div>
   
 </aside>
 
           <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
   <div
-    class="archives-outer-wrap"
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <span
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-04-30 13:46:34 &#43;0800 &#43;0800" itemprop="datePublished"
+      >2025-04-30</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-04-30</time
+    >
+  </span>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="ezdos">
+<a class="header-anchor" href="#ezdos"></a>
+ezDOS
+</h2><p>给了一个16位的dos程序，我的环境不能直接运行，直接用IDA试试吧</p>
+<p>拖入IDA，看到前面的一堆数据，细看发现有字符串，而DOS 打印以 &lsquo;$' 结尾的字符串，所以从选择字符串开始到'$&lsquo;结束的地方按下A转为字符串
+<img src="/post/nctf2025/img/image.png" alt="alt text">
+下面还有一堆不知道的数据，先看看末尾能分析出代码的部分
+<img src="/post/nctf2025/img/image-1.png" alt="alt text">
+发现有几处常见的花指令</p>
+<p>对于短跳<code>jz     short near ptr loc_104BF+1</code>直接NOP掉就行</p>
+<p>对于爆红的call，直接按D转为数据，NOP填充<code>db 0E8h</code>就行了，后面的操作都是这样</p>
+<p>修复完成后patch程序，再用IDA重新打开自动分析就行了</p>
+<p>直接来到最后的判断部分分析，如图
+<img src="/post/nctf2025/img/image-2.png" alt="alt text">
+0x142地址存放的数据如图，猜测是密文，但不知道长度
+<img src="/post/nctf2025/img/image-3.png" alt="alt text"></p>
+<p>来到输入flag的部分，这里有一处判断长度的汇编代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">lea</span>     <span class="nb">bx</span><span class="p">,</span> <span class="nv">input</span>
+</span></span><span class="line"><span class="cl"><span class="nf">cmp</span>     <span class="kt">byte</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">bx</span><span class="p">],</span> <span class="mh">26h</span> <span class="c1">; &#39;&amp;&#39;</span>
+</span></span></code></pre></div><p><img src="/post/nctf2025/img/image-4.png" alt="alt text"></p>
+<p>这里可以得到长度应该是0x26，推出密文长度也为0x26
+<img src="/post/nctf2025/img/image-5.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">enc</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x3E</span><span class="p">,</span> <span class="mh">0x0D</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0x0E</span><span class="p">,</span> <span class="mh">0x3B</span><span class="p">,</span> <span class="mh">0xB8</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="mh">0x99</span><span class="p">,</span> <span class="mh">0x1B</span><span class="p">,</span> <span class="mh">0x9B</span><span class="p">,</span> <span class="mh">0xE5</span><span class="p">,</span> <span class="mh">0x23</span><span class="p">,</span> <span class="mh">0x43</span><span class="p">,</span> <span class="mh">0xC5</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x45</span><span class="p">,</span> <span class="mh">0x5B</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="mh">0x9A</span><span class="p">,</span> <span class="mh">0x29</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x38</span><span class="p">,</span> <span class="mh">0xA9</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xCB</span><span class="p">,</span> <span class="mh">0x7A</span><span class="p">,</span> <span class="mh">0xE5</span><span class="p">,</span> <span class="mh">0x93</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x0E</span><span class="p">,</span> <span class="mh">0x70</span><span class="p">,</span> <span class="mh">0x6D</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x2B</span><span class="p">,</span> <span class="mh">0x8C</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><p>再看对输入的字符串进行了什么操作，如图
+<img src="/post/nctf2025/img/image-6.png" alt="alt text"></p>
+<p>现在关键点在于获取al的值，也就是key，简单的方法就是动态调试获取al的值</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/reverse"
+        rel="tag"
+        >REVERSE</a
+      >
+    </li>
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e7%ba%bf%e4%b8%8a%e8%b5%9b"
+        rel="tag"
+        >线上赛</a
+      >
+    </li>
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
     data-aos="fade-up"
   >
     
-      <div class="tag-wrap">
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/c/c&#43;&#43;/"
-        >C/C&#43;&#43;</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/pwn/"
-        >Pwn</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/python/"
-        >Python</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/reverse/"
-        >Reverse</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/see/"
-        >SEE</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/windows/"
-        >Windows</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
-        >基础理论</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/"
-        >工具</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E6%8C%87%E4%BB%A4%E9%9B%86/"
-        >指令集</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E7%BA%BF%E4%B8%8A%E8%B5%9B/"
-        >线上赛</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E8%AE%AD%E7%BB%83/"
-        >训练</a
-      >
-    </div>
-  
-    <div
-      class="archives-tag-list-item"
-      data-aos="zoom-in"
-    >
-      <a class="archives-tag-list-link" href="/tags/%E9%80%86%E5%90%91/"
-        >逆向</a
-      >
-    </div>
-  
-</div>
-<div class="category-wrap">
-  
-</div>
-    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="/images/my/3.jpg"
+              data-sizes="auto"
+              alt="SSE指令集学习"
+              class="lazyload"
+            />
+          
+        
+        <a href="/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            SSE指令集学习
+          
+        </h3>
+      </div>
     
 
-
-
-  <section class="archives-wrap" data-aos="fade-up">
-    <div class="archive-year-wrap">
-      <a href="" class="archive-year">2025</a>
-    </div>
-    <ul>
-      
-        <li class="archive-article">
-          <div class="archive-article-date-wrap">
-            <span>
-              <time
-                class="dt-published"
-                datetime="2025-04-28 23:42:20 &#43;0800 &#43;0800"
-                itemprop="datePublished"
-                >2025-04</time
-              >
-            </span>
-          </div>
-          
-            <a class="archive-article-title" href="/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/"
-              >SSE指令集学习</a
-            >
-          
-        </li>
-      
-        <li class="archive-article">
-          <div class="archive-article-date-wrap">
-            <span>
-              <time
-                class="dt-published"
-                datetime="2025-04-16 13:34:43 &#43;0800 &#43;0800"
-                itemprop="datePublished"
-                >2025-04</time
-              >
-            </span>
-          </div>
-          
-            <a class="archive-article-title" href="/post/c&#43;&#43;%E8%BF%9B%E7%A8%8B%E9%81%8D%E5%8E%86/"
-              >C&#43;&#43;进程遍历</a
-            >
-          
-        </li>
-      
-    </ul>
-  </section>
-
-
-  </div>
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-<nav id="page-nav" data-aos="fade-up">
-  
-  
     
-      
-        <span class="page-number current">1</span>
-      
-    
+  </nav>
+
+
   
+</article>
+
+
+
+
+
+
   
-</nav>
+
+  
+
+  
+
+  
+
+  
+
+
 
 </section>
         </div>
@@ -1165,6 +800,20 @@
   <div class="sidebar-wrap">
     
       
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ezdos">ezDOS</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar.png"
@@ -1263,8 +912,17 @@
   
 </div>
 
+        </div>
+      
     
   </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
   
 </nav>
 
@@ -1543,9 +1201,9 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "C\/C\u002b\u002b",
-          url: "https:\/\/cyzrjz.github.io\/tags\/c\/c\u002b\u002b\/",
-          description: "",
+          title: "NCTF2025",
+          url: "https:\/\/cyzrjz.github.io\/post\/nctf2025\/",
+          description: "NCTF2025-Reverse Writeup",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>

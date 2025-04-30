@@ -399,28 +399,16 @@
         <li><a href="#扩展">扩展</a></li>
       </ul>
     </li>
-    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re1">第三届京麒CTF-JQCTF-2025-热身赛-re1</a>
+    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
       <ul>
         <li><a href="#分析-1">分析</a></li>
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
-    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re2">第三届京麒CTF-JQCTF-2025-热身赛-re2</a>
+    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
       <ul>
         <li><a href="#分析-2">分析</a></li>
         <li><a href="#exp-2">exp</a></li>
-      </ul>
-    </li>
-    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
-      <ul>
-        <li><a href="#分析-3">分析</a></li>
-        <li><a href="#exp-3">exp</a></li>
-      </ul>
-    </li>
-    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
-      <ul>
-        <li><a href="#分析-4">分析</a></li>
-        <li><a href="#exp-4">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -444,7 +432,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -708,103 +696,12 @@ IAT Hook 的核心思想是修改 IAT 中的函数指针，将原本指向系统
 <img src="/post/buuctf-reverse/img/image-17.png" alt="sub_C0114A–&gt;sub_C02DF0">
 IAT hook如图所示
 <img src="/post/buuctf-reverse/img/image-19.png" alt="sub_C027B0"></p>
-<h2 id="第三届京麒ctf-jqctf-2025-热身赛-re1">
-<a class="header-anchor" href="#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-jqctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re1"></a>
-第三届京麒CTF-JQCTF-2025-热身赛-re1
-</h2><p><a href="/process/JQCTF/re/re1/re1.exe">JQCTF2025-热身赛-re1</a></p>
-<h3 id="分析-1">
-<a class="header-anchor" href="#%e5%88%86%e6%9e%90-1"></a>
-分析
-</h3><p>Rust逆向,头一回见,直接拖入IDA分析</p>
-<p>函数看起来都很奇怪,动态调试看看
-<img src="img/image-20.png" alt="alt text">
-运行到这个call时，提示输入字符串，然后输入后终端输出err,说明所有的判断或加密都在这个call里，步入看看
-<img src="img/image-21.png" alt="alt text">
-到这里再按F5反编译,就是用户函数了</p>
-<p>一看300多行代码,直接转到最后面
-<img src="img/image-22.png" alt="alt text">
-找到判断函数
-<img src="img/image-23.png" alt="alt text"></p>
-<p>分析v29是什么,
-<code>v29 = *(_WORD *)Src_9;</code>
-其中Src_9是我输入的字符串，WORD获取2字节，由于已知输入的字符串必定是flag的形式,所以可以猜测v29是flag的第2个字节，就是fl</p>
-<p>中间的加密比较复杂，但是注意到在前面创建密钥时，并没有用到我们输入的后面的内容，所以可以动调获取密钥，查看buf2有42个字节，所以要爆破用于xor的42个密钥</p>
-<p>鼠标点击<code>Buf1[Size_2] = *(_BYTE *)(Src_9 + Size_2) ^ (Size_2 + ((2 * (v35 &amp; 0x55)) | (v35 &gt;&gt; 1) &amp; 0x55));</code>所在行，按下Tab键，可以转到该行代码的汇编代码
-在此处下断点，然后开始动调
-<img src="img/image-24.png" alt="alt text">
-<img src="img/image-25.png" alt="alt text">
-可以看到[r14+rax]就是我们输入的字符串，cl就是要异或的密钥，所以我们可以用idc爆破cl</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">(){</span>
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">i</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">42</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span></span><span class="line"><span class="cl">        <span class="n">Message</span><span class="p">(</span><span class="s">&#34;0x%X,&#34;</span><span class="p">,</span><span class="n">GetRegValue</span><span class="p">(</span><span class="s">&#34;CL&#34;</span><span class="p">));</span>
-</span></span><span class="line"><span class="cl">        <span class="n">RunTo</span><span class="p">(</span><span class="mh">0x7FF79CE91534</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GetDebuggerEvent</span><span class="p">(</span><span class="n">WFNE_SUSP</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><img src="img/image-26.png" alt="alt text">
-可以看到key已经爆破出来了</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x66</span><span class="p">,</span><span class="mh">0xCD</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x34</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span><span class="mh">0xCB</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x22</span><span class="p">,</span><span class="mh">0x3E</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0xE3</span><span class="p">,</span><span class="mh">0xBE</span><span class="p">,</span><span class="mh">0x72</span><span class="p">,</span><span class="mh">0xD9</span><span class="p">,</span><span class="mh">0xA7</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span><span class="mh">0xDB</span><span class="p">,</span><span class="mh">0xA6</span><span class="p">,</span><span class="mh">0x3B</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x64</span><span class="p">,</span><span class="mh">0xB5</span><span class="p">,</span><span class="mh">0x57</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x1E</span><span class="p">,</span><span class="mh">0x25</span><span class="p">,</span><span class="mh">0x33</span><span class="p">,</span><span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x83</span><span class="p">,</span><span class="mh">0xEB</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0xBB</span><span class="p">,</span><span class="mh">0x5A</span><span class="p">,</span><span class="mh">0x96</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x86</span><span class="p">,</span><span class="mh">0xE9</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x3A</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x76</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span></code></pre></div><p>接下来就是简单的xor了</p>
-<h3 id="exp-1">
-<a class="header-anchor" href="#exp-1"></a>
-exp
-</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">buf2</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">  <span class="mh">0x00</span><span class="p">,</span><span class="mh">0xA1</span><span class="p">,</span><span class="mh">0xFB</span><span class="p">,</span><span class="mh">0x53</span><span class="p">,</span><span class="mh">0x1C</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xF0</span><span class="p">,</span><span class="mh">0x1B</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x40</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x8C</span><span class="p">,</span><span class="mh">0x16</span><span class="p">,</span><span class="mh">0xF4</span><span class="p">,</span><span class="mh">0x90</span><span class="p">,</span><span class="mh">0x27</span><span class="p">,</span><span class="mh">0x42</span><span class="p">,</span><span class="mh">0xB9</span><span class="p">,</span><span class="mh">0x8B</span><span class="p">,</span><span class="mh">0x0F</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="mh">0x02</span><span class="p">,</span><span class="mh">0xD7</span><span class="p">,</span><span class="mh">0x31</span><span class="p">,</span><span class="mh">0xB7</span><span class="p">,</span><span class="mh">0x26</span><span class="p">,</span><span class="mh">0x12</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x7E</span><span class="p">,</span><span class="mh">0xAE</span><span class="p">,</span><span class="mh">0xDF</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="mh">0xDA</span><span class="p">,</span><span class="mh">0x68</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x35</span><span class="p">,</span><span class="mh">0xCC</span><span class="p">,</span><span class="mh">0xB7</span><span class="p">,</span><span class="mh">0xB0</span><span class="p">,</span><span class="mh">0xD0</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x59</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">  <span class="mh">0x2B</span><span class="p">,</span><span class="mh">0x0B</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x66</span><span class="p">,</span><span class="mh">0xCD</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x34</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span><span class="mh">0xCB</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x22</span><span class="p">,</span><span class="mh">0x3E</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0xE3</span><span class="p">,</span><span class="mh">0xBE</span><span class="p">,</span><span class="mh">0x72</span><span class="p">,</span><span class="mh">0xD9</span><span class="p">,</span><span class="mh">0xA7</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span><span class="mh">0xDB</span><span class="p">,</span><span class="mh">0xA6</span><span class="p">,</span><span class="mh">0x3B</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x64</span><span class="p">,</span><span class="mh">0xB5</span><span class="p">,</span><span class="mh">0x57</span><span class="p">,</span><span class="mh">0x9A</span><span class="p">,</span><span class="mh">0x1E</span><span class="p">,</span><span class="mh">0x25</span><span class="p">,</span><span class="mh">0x33</span><span class="p">,</span><span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x83</span><span class="p">,</span><span class="mh">0xEB</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0xBB</span><span class="p">,</span><span class="mh">0x5A</span><span class="p">,</span><span class="mh">0x96</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0xFA</span><span class="p">,</span><span class="mh">0xD4</span><span class="p">,</span><span class="mh">0x86</span><span class="p">,</span><span class="mh">0xE9</span><span class="p">,</span><span class="mh">0xAF</span><span class="p">,</span><span class="mh">0x3A</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x4E</span><span class="p">,</span><span class="mh">0x76</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)):</span>
-</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">buf2</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-</span></span></code></pre></div><blockquote>
-<p>flag{1c98572d-7f7b-4fbf-8750-4a2986c695ce}</p></blockquote>
-<h2 id="第三届京麒ctf-jqctf-2025-热身赛-re2">
-<a class="header-anchor" href="#%e7%ac%ac%e4%b8%89%e5%b1%8a%e4%ba%ac%e9%ba%92ctf-jqctf-2025-%e7%83%ad%e8%ba%ab%e8%b5%9b-re2"></a>
-第三届京麒CTF-JQCTF-2025-热身赛-re2
-</h2><p><a href="/process/JQCTF/re/re2/re2.exe">JQCTF2025-热身赛-re1</a></p>
-<h3 id="分析-2">
-<a class="header-anchor" href="#%e5%88%86%e6%9e%90-2"></a>
-分析
-</h3><p>IDA打开,f5反编译，发现是see3指令集
-<img src="img/image-32.png" alt="alt text">
-排列顺序和加法常量都给了
-<img src="img/image-33.png" alt="alt text">
-直接对每位<strong>减常量后再反转</strong>就行了</p>
-<h3 id="exp-2">
-<a class="header-anchor" href="#exp-2"></a>
-exp
-</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">cipher</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;cge87k?9&lt;&gt;?@=pss393=&gt;;8@:Cp@DAuH&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">inv_block</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sub</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)]</span>        <span class="c1"># 减 mask2，并 wrap-around :contentReference[oaicite:4]{index=4}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">sub</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>                                <span class="c1"># mask1 反转即[::-1] :contentReference[oaicite:5]{index=5}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">flag_bytes</span> <span class="o">=</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[:</span><span class="mi">16</span><span class="p">])</span> <span class="o">+</span> <span class="n">inv_block</span><span class="p">(</span><span class="n">cipher</span><span class="p">[</span><span class="mi">16</span><span class="p">:])</span>
-</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span> 
-</span></span></code></pre></div><blockquote>
-<p>flag{cdb0444318e24beb8f374e9181599072}</p></blockquote>
 <h2 id="guet-ctf2019encrypt">
 <a class="header-anchor" href="#guet-ctf2019encrypt"></a>
 [GUET-CTF2019]encrypt
 </h2><p><a href="/process/[GUET-CTF2019]encrypt/attachment.zip">[GUET-CTF2019]encrypt</a></p>
-<h3 id="分析-3">
-<a class="header-anchor" href="#%e5%88%86%e6%9e%90-3"></a>
+<h3 id="分析-1">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-1"></a>
 分析
 </h3><p>载入IDA找到main函数，F5反编译
 <img src="/post/buuctf-reverse/img/image-27.png" alt="alt text">
@@ -884,8 +781,8 @@ esi存放输入的字符串,edx就是异或的密钥,所以我们可以用idc爆
   </tbody>
 </table>
 <p>所以只要通过&amp;操作对data取位，通过|拼接就能还原flag</p>
-<h3 id="exp-3">
-<a class="header-anchor" href="#exp-3"></a>
+<h3 id="exp-1">
+<a class="header-anchor" href="#exp-1"></a>
 exp
 </h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
 </span></span><span class="line"><span class="cl">    <span class="mh">0x5a</span><span class="p">,</span> <span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x7A</span><span class="p">,</span> <span class="mh">0x7A</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x44</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> 
@@ -923,8 +820,8 @@ exp
 <a class="header-anchor" href="#wustctf2020funnyre"></a>
 [WUSTCTF2020]funnyre
 </h2><p><a href="/process/[WUSTCTF2020]funnyre/attachment">[WUSTCTF2020]funnyre</a></p>
-<h3 id="分析-4">
-<a class="header-anchor" href="#%e5%88%86%e6%9e%90-4"></a>
+<h3 id="分析-2">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-2"></a>
 分析
 </h3><p>载入IDA,红了一大段，发现是main函数存在花指令
 <img src="/post/buuctf-reverse/img/image-34.png" alt="alt text">
@@ -951,8 +848,8 @@ NOP后选中红色区域按下P重构函数，F5反编译，发现JUMPOUT(0x400B
 <li>利用<code>explore(fine=)</code> 设定目标地址，开始符号执行，直到找到目标地址或达到最大执行次数。</li>
 <li>利用<code>found[0].solver.eval(flag, cast_to=bytes)</code>求解flag的值，并转为bytes类型输出。</li>
 </ol>
-<h3 id="exp-4">
-<a class="header-anchor" href="#exp-4"></a>
+<h3 id="exp-2">
+<a class="header-anchor" href="#exp-2"></a>
 exp
 </h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">angr</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">claripy</span>
@@ -1049,7 +946,7 @@ exp
           
           
             <img
-              data-src="/images/my/11.png"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
               alt="攻防世界 Reverse"
               class="lazyload"
@@ -1124,6 +1021,9 @@ exp
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -1157,7 +1057,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            15.7k
+            16.3k
           </span
         >
         &nbsp;|&nbsp;
@@ -1165,7 +1065,7 @@ exp
           
           
 
-          00:36
+          00:37
         </span>
       </div>
     
@@ -1216,28 +1116,16 @@ exp
         <li><a href="#扩展">扩展</a></li>
       </ul>
     </li>
-    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re1">第三届京麒CTF-JQCTF-2025-热身赛-re1</a>
+    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
       <ul>
         <li><a href="#分析-1">分析</a></li>
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
-    <li><a href="#第三届京麒ctf-jqctf-2025-热身赛-re2">第三届京麒CTF-JQCTF-2025-热身赛-re2</a>
+    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
       <ul>
         <li><a href="#分析-2">分析</a></li>
         <li><a href="#exp-2">exp</a></li>
-      </ul>
-    </li>
-    <li><a href="#guet-ctf2019encrypt">[GUET-CTF2019]encrypt</a>
-      <ul>
-        <li><a href="#分析-3">分析</a></li>
-        <li><a href="#exp-3">exp</a></li>
-      </ul>
-    </li>
-    <li><a href="#wustctf2020funnyre">[WUSTCTF2020]funnyre</a>
-      <ul>
-        <li><a href="#分析-4">分析</a></li>
-        <li><a href="#exp-4">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -1261,7 +1149,7 @@ exp
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>

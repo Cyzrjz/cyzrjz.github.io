@@ -404,6 +404,12 @@
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
+    <li><a href="#3-梅津美治郎n3">3. 梅津美治郎[N3]</a>
+      <ul>
+        <li><a href="#分析-2">分析</a></li>
+        <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -425,7 +431,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -630,7 +636,7 @@ exp
 </h4><p>程序通过getenv函数获取环境变量的值，那么直接往环境变量里写入正确的值就行了</p>
 <p>可以通过export设置临时环境变量，终端关闭后自动清除</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>通过printf可以导入十六进制整数类型，值得积累<span class="o">)</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ASIS</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&#34;\x0a\xda\xf2\x4f&#34;</span><span class="k">)</span><span class="s2">&#34;</span>				<span class="c1">#注意参数是从低位到高位的</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ASIS</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&#34;\x0a\xda\xf2\x4f&#34;</span><span class="k">)</span><span class="s2">&#34;</span> <span class="c1">#注意参数是从低位到高位的</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CTF</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&#34;\x0a\xda\xf2\x4f&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
 </span></span></code></pre></div><p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-16.png" alt="alt text"></p>
 <h4 id="解法2">
@@ -656,6 +662,56 @@ exp
 </span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
 </span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mi">7</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ASIS</span><span class="se">{{</span><span class="si">{</span><span class="n">flag</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="3-梅津美治郎n3">
+<a class="header-anchor" href="#3-%e6%a2%85%e6%b4%a5%e7%be%8e%e6%b2%bb%e9%83%8en3"></a>
+3. 梅津美治郎[N3]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/3.zip">梅津美治郎</a></p>
+<h3 id="分析-2">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-2"></a>
+分析
+</h3><p>运行程序
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-17.png" alt="alt text">
+拖入IDA，查看反汇编
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-19.png" alt="alt text">
+动调，解释如图
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-22.png" alt="alt text"></p>
+<p>这里要注意到</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">lpProcName</span> <span class="o">=</span> <span class="o">::</span><span class="n">lpProcName</span><span class="p">;</span>                    <span class="c1">// lpProcName = AddVectoredExceptionHandler
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">hModule</span> <span class="o">=</span> <span class="n">GetModuleHandleA</span><span class="p">(</span><span class="n">lpModuleName</span><span class="p">);</span>     <span class="c1">// GetModuleHandleA获取模块名，这里获取的模块为kernel32.dll
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ProcAddress</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="kr">__stdcall</span> <span class="o">*</span><span class="p">)(</span><span class="n">HMODULE</span><span class="p">,</span> <span class="n">LPCSTR</span><span class="p">))</span><span class="n">GetProcAddress</span><span class="p">(</span><span class="n">hModule</span><span class="p">,</span> <span class="n">lpProcName</span><span class="p">);</span><span class="c1">// GetProcAddress获取模块中的函数，这里为AddVectoredExceptionHandler函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ProcAddress</span><span class="p">((</span><span class="n">HMODULE</span><span class="p">)</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">LPCSTR</span><span class="p">)</span><span class="n">sub_40157F</span><span class="p">);</span>  <span class="c1">// AddVectoredExceptionHandler(1, sub_40157F);自定义异常处理
+</span></span></span></code></pre></div><p>在微软的<a href="https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-addvectoredexceptionhandler?utm_source=chatgpt.com">官方文档</a>中有定义</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">PVOID</span> <span class="nf">AddVectoredExceptionHandler</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ULONG</span>                       <span class="n">First</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">PVECTORED_EXCEPTION_HANDLER</span> <span class="n">Handler</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span></code></pre></div><blockquote>
+<p>The order in which the handler should be called. If the parameter is nonzero, the handler is the first handler to be called. If the parameter is zero, the handler is the last handler to be called.
+处理程序的调用顺序。如果参数为非零，则处理程序是第一个被调用的处理程序。如果参数为零，则处理程序是要调用的最后一个处理程序。
+A pointer to the handler to be called.
+指向要调用的处理程序的指针</p></blockquote>
+<p>这里把sub_40157F设为第一个异常处理函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">puts</span><span class="p">(</span><span class="s">&#34;You passed level1!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">sub_4015EA</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span></code></pre></div><p>在<code>sub_4015EA</code>中有一个<code>__debugbreak();</code>函数，汇编就是<code>int 3</code>，意思就是引发一个中断，把执行权移交给调试器，如果没有调试器，那就移交给其他异常处理回调函数，如果都没有，那么程序就自己断下来，这里就是为了触发回调函数，如果没有调试器附加，那么debugbreak产生的异常会被AddVectoredExceptionHandler添加的回调函数捕获来处理，这里添加的回调函数也就是sub_40157F函数。</p>
+<p>这里顺便再提一嘴Windows的异常处理机制</p>
+<pre class="mermaid">flowchart LR
+    A["触发异常"]-->B["调试器"]-->C["向量化异常处理(VEH)"]-->D["结构化异常处理(SEH)"]-->E["顶层未处理异常过滤器(UEF)"]
+</pre>
+<p>动调可以看到<code>sub_4015EA</code>输出了<code>Please enter the second Password:</code>，然后进入了上面注册的异常处理函数sub_40157F
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-23.png" alt="alt text"></p>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-24.png" alt="alt text"><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-25.png" alt="alt text">
+很简单的逻辑，就是<code>flag2^2</code>后与<code>dword_40AD98</code>对比，已知<code>dword_40AD98 = 'u1nnf2lg'</code>，很容易推出第二段flag</p>
+<h3 id="exp-2">
+<a class="header-anchor" href="#exp-2"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">flag1</span> <span class="o">=</span> <span class="s1">&#39;r0b0RUlez!&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;u1nnf2lg&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;flag{&#39;</span> <span class="o">+</span> <span class="n">flag1</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">flag</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span> <span class="c1">#flag要用&#39;_&#39;拼接，攻防世界没给提示，看别的wp才知道</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
 </span></span></code></pre></div>
       
     </div>
@@ -711,7 +767,7 @@ exp
           
           
             <img
-              data-src="/images/my/9.jpg"
+              data-src="/images/my/4.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -734,7 +790,7 @@ exp
           
           
             <img
-              data-src="/images/my/16.jpg"
+              data-src="/images/my/13.png"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -809,6 +865,9 @@ exp
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -842,7 +901,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            15.7k
+            16.3k
           </span
         >
         &nbsp;|&nbsp;
@@ -850,7 +909,7 @@ exp
           
           
 
-          00:36
+          00:37
         </span>
       </div>
     
@@ -906,6 +965,12 @@ exp
         <li><a href="#exp-1">exp</a></li>
       </ul>
     </li>
+    <li><a href="#3-梅津美治郎n3">3. 梅津美治郎[N3]</a>
+      <ul>
+        <li><a href="#分析-2">分析</a></li>
+        <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -927,7 +992,7 @@ exp
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -1307,6 +1372,126 @@ exp
         };
       </script>
     
+    
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD/kZRD47aJ" crossorigin="anonymous"
+  ></script>
+
+
+      
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-eEu5CTj3qGvu9PdJuS&#43;YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"
+  ></script>
+
+
+      <script data-pjax>
+        if (window.mermaid) {
+          
+          const elementCode = ".mermaid";
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") == null) {
+                    element.setAttribute(
+                      "data-original-code",
+                      element.innerHTML,
+                    );
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                var els = _$$(elementCode),
+                  count = els.length;
+                els.forEach((element) => {
+                  if (element.getAttribute("data-original-code") != null) {
+                    element.removeAttribute("data-processed");
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute("data-original-code"));
+                  }
+                  count--;
+                  if (count == 0) {
+                    resolve();
+                  }
+                });
+              } catch (error) {
+                reject(error);
+              }
+            });
+          };
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({ theme });
+            window.mermaid.init({ theme }, _$$(elementCode));
+          };
+          document.body.addEventListener("dark-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          });
+          document.body.addEventListener("light-theme-set", () => {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          });
+          if (localStorage.getItem("dark_mode") == "true") {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("dark"))
+              .catch(console.error);
+          } else {
+            saveOriginalData()
+              .then(resetProcessed())
+              .then(loadMermaid("default"))
+              .catch(console.error);
+          }
+        }
+      </script>
     
     
       
