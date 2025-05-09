@@ -410,6 +410,12 @@
         <li><a href="#exp-2">exp</a></li>
       </ul>
     </li>
+    <li><a href="#4-csaw2013reversing2n4">4. csaw2013reversing2[N4]</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -431,7 +437,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -441,7 +447,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">12</div>
+    <div class="sidebar-state-number">14</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -712,7 +718,35 @@ exp
 </span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;flag{&#39;</span> <span class="o">+</span> <span class="n">flag1</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">flag</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span> <span class="c1">#flag要用&#39;_&#39;拼接，攻防世界没给提示，看别的wp才知道</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="4-csaw2013reversing2n4">
+<a class="header-anchor" href="#4-csaw2013reversing2n4"></a>
+4. csaw2013reversing2[N4]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/4.zip">csaw2013reversing2</a></p>
+<p>题目描述：听说运行就能拿到Flag，不过菜鸡运行的结果不知道为什么是乱码</p>
+<h3 id="分析-3">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-3"></a>
+分析
+</h3><p>根据题目的描述，先打开看看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-26.png" alt="alt text"></p>
+<p>确实是乱码，猜测程序内有对flag字符串的加密后输出，但那样就很容易得到flag，所以应该是有密文与解密函数，但没有执行解密</p>
+<p>IDA打开，F5查看main伪代码
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-27.png" alt="alt text"></p>
+<p>进行动调调试，断点到if语句，看到
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-28.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">00</span><span class="nf">BE108C</span> <span class="nv">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">IsDebuggerPresent</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">00</span><span class="nf">BE1092</span> <span class="nv">test</span>    <span class="nb">eax</span><span class="p">,</span> <span class="nb">eax</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">00</span><span class="nf">BE1094</span> <span class="nv">jz</span>      <span class="nv">short</span> <span class="nv">loc_BE10B9</span>
+</span></span></code></pre></div><p><code>jz      short loc_BE10B9</code>没有实现，直接执行了if外的内容
+将int 3改为nop，执行完成<code>call sub_BE1000</code>，观察堆栈
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-30.png" alt="alt text"></p>
+<p>看到在堆栈中有可疑的flag字符串，转到地址，发现flag
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-29.png" alt="alt text"></p>
+<blockquote>
+<p>flag{reversing_is_not_that_hard!}</p></blockquote>
+<h3 id="exp-3">
+<a class="header-anchor" href="#exp-3"></a>
+exp
+</h3>
       
     </div>
     <footer class="article-footer">
@@ -767,7 +801,7 @@ exp
           
           
             <img
-              data-src="/images/my/19.jpg"
+              data-src="/images/my/4.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -790,7 +824,7 @@ exp
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/12.png"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -865,6 +899,9 @@ exp
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -898,7 +935,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            15.9k
+            16.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -906,7 +943,7 @@ exp
           
           
 
-          00:36
+          00:37
         </span>
       </div>
     
@@ -968,6 +1005,12 @@ exp
         <li><a href="#exp-2">exp</a></li>
       </ul>
     </li>
+    <li><a href="#4-csaw2013reversing2n4">4. csaw2013reversing2[N4]</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -989,7 +1032,7 @@ exp
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">11</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -999,7 +1042,7 @@ exp
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">12</div>
+    <div class="sidebar-state-number">14</div>
   </div>
 </div>
 <div class="sidebar-social">
