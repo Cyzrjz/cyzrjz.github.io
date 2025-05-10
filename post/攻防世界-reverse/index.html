@@ -428,6 +428,13 @@
         <li><a href="#exp-5">exp</a></li>
       </ul>
     </li>
+    <li><a href="#7-firstn5">7. first[N5]</a>
+      <ul>
+        <li><a href="#分析-6">分析</a></li>
+        <li><a href="#知识点">知识点</a></li>
+        <li><a href="#exp-6">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -816,10 +823,10 @@ flag格式：TWCTF{}</p>
 <img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-33.png" alt="alt text"></p>
 <p><code>sub_804858D(v4)</code>应该对v4做了一些操作，进去看看
 <img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-35.png" alt="alt text">
-<strong>注意__ROR1__是循环右移，图中描述有误</strong></p>
+<strong>注意__ROR1__是循环右移.ROL才是循环左移，图中描述有误</strong></p>
 <p>以时间为种子的随机数对v4进行了位操作，需要爆破种子</p>
 <p>已知<strong>flag格式TWCTF{}</strong>，所以有</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span><span class="o">=</span><span class="mh">0xee</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">67</span><span class="p">]</span><span class="o">=</span><span class="mh">0xaf</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span><span class="o">=</span><span class="mh">0xef</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span><span class="o">=</span><span class="mh">0x94</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">125</span><span class="p">]</span><span class="o">=</span><span class="mh">0x4a</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span><span class="o">=</span><span class="mh">0xee</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">67</span><span class="p">]</span><span class="o">=</span><span class="mh">0xaf</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span><span class="o">=</span><span class="mh">0xef</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span><span class="o">=</span><span class="mh">0x94</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">125</span><span class="p">]</span><span class="o">=</span><span class="mh">0x4a</span>
 </span></span></code></pre></div><p>那就按照这个限制条件去爆破种子，见exp</p>
 <h3 id="exp-5">
 <a class="header-anchor" href="#exp-5"></a>
@@ -919,6 +926,314 @@ exp
 </span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)):</span>
 </span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="7-firstn5">
+<a class="header-anchor" href="#7-firstn5"></a>
+7. first[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/7.zip">first</a></p>
+<h3 id="分析-6">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-6"></a>
+分析
+</h3><p>IDA打开，F5查看main伪代码
+代码很长，直接从最后的判断部分往回看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-36.png" alt="alt text">
+若输入的flag正确，则输出FLAG，按下X看看FLAG来自哪里
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-37.png" alt="alt text">
+在<code>start_routine</code>里有对FLAG进行的赋值操作，赋值为输入的flag的md5值，看看<code>start_routine</code>在哪调用</p>
+<p>在main函数中，有这么一段</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 尝试创建一个线程，将线程 ID 存入 p_newthread_1[0]，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 线程入口函数为 start_routine，参数为 arg[0]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span> <span class="n">pthread_create</span><span class="p">(</span><span class="n">p_newthread_1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">start_routine</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">perror</span><span class="p">(</span><span class="s">&#34;pthread_create&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 移动到数组下一个槽
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">++</span><span class="n">arg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">++</span><span class="n">p_newthread_1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span> <span class="n">arg</span> <span class="o">!=</span> <span class="mi">6</span> <span class="p">);</span>
+</span></span></code></pre></div><p>创建了6个线程，执行<code>start_routine</code>函数，接下来分析一下<code>start_routine</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">start_routine</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">a1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">__int64</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// rbx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// rdx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// [rsp+0h] [rbp-38h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v6</span><span class="p">;</span> <span class="c1">// [rsp+18h] [rbp-20h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">v6</span> <span class="o">=</span> <span class="n">__readfsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v1</span> <span class="o">=</span> <span class="n">a1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">usleep</span><span class="p">(</span><span class="n">useconds</span><span class="p">[</span><span class="n">a1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pthread_mutex_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sub_400E10</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Input</span><span class="p">[</span><span class="n">v1</span><span class="p">],</span> <span class="mi">4u</span><span class="p">);</span>                 <span class="c1">// MD5加密输入的flag，每次加密4字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v2</span> <span class="o">=</span> <span class="n">dword_6021E8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v3</span> <span class="o">=</span> <span class="n">dword_6021E8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">v5</span> <span class="o">==</span> <span class="n">qword_602120</span><span class="p">[</span><span class="n">a1</span><span class="p">]</span> <span class="p">)</span>                 <span class="c1">// juhuhfenlapsiuerhjifdunu
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">FLAG</span><span class="p">[</span><span class="n">v3</span><span class="p">]</span> <span class="o">=</span> <span class="n">Input</span><span class="p">[</span><span class="n">v1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FLAG</span><span class="p">[</span><span class="n">v3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dword_6021E8</span> <span class="o">=</span> <span class="n">v2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pthread_mutex_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">__readfsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">)</span> <span class="o">^</span> <span class="n">v6</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>sub_400E10</code>是MD5加密函数，传入4u，每次加密4字节，就是4个字符，又知道<code>qword_602120</code>，爆破一下md5</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">hashlib</span>
+</span></span><span class="line"><span class="cl"><span class="n">check</span><span class="o">=</span><span class="s2">&#34;4746bbbd02bb590fbeac2821ece8fc5cad749265ca7503ef4386b38fc12c4227b03ecc45a7ec2da7be3c5ffe121734e8&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">123</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">123</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">123</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">				<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">123</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">					<span class="n">temp</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="nb">chr</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="nb">chr</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">+</span><span class="nb">chr</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">					<span class="n">hashvalue</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">					<span class="k">if</span> <span class="n">hashvalue</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span><span class="o">==</span><span class="n">check</span><span class="p">[</span><span class="n">w</span><span class="o">*</span><span class="mi">16</span><span class="p">:</span><span class="n">w</span><span class="o">*</span><span class="mi">16</span><span class="o">+</span><span class="mi">16</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">						<span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">temp</span><span class="p">)</span>
+</span></span></code></pre></div><p>得到</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0 juhu
+</span></span><span class="line"><span class="cl">1 hfen
+</span></span><span class="line"><span class="cl">2 laps
+</span></span><span class="line"><span class="cl">3 iuer
+</span></span><span class="line"><span class="cl">4 hjif
+</span></span><span class="line"><span class="cl">5 dunu
+</span></span></code></pre></div><p>看起来不像有flag的词，猜测在main函数中对输入的flag进行了一些操作，先把可能的加密后的flag拼接起来
+由于<strong>usleep和线程锁的存在，不知道输入的字符串的每4字节什么时候赋值给FLAG</strong>，需要爆破6!次</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span>
+</span></span><span class="line"><span class="cl"><span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;juhu&#39;</span><span class="p">,</span><span class="s1">&#39;hfen&#39;</span><span class="p">,</span><span class="s1">&#39;laps&#39;</span><span class="p">,</span><span class="s1">&#39;iuer&#39;</span><span class="p">,</span><span class="s1">&#39;hjif&#39;</span><span class="p">,</span><span class="s1">&#39;dunu&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">enc_flag</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">parts</span><span class="p">)]</span>
+</span></span></code></pre></div><p>有了所有可能的结果后，返回main函数看看对输入的flag做了什么
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-38.png" alt="alt text">
+v10不用爆破因为异或操作可以无序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">v10</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enc_flag</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v10</span> <span class="o">^=</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">enc_flag</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+</span></span></code></pre></div><p>最后又回到了末尾处
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-39.png" alt="alt text">
+提取<code>key = [0x0, 0xFE, 0xE9, 0xF4, 0xE2, 0xF1, 0xFA, 0xF4, 0xE4, 0xF0, 0xE7, 0xE4, 0xE5, 0xE3, 0xF2, 0xF5, 0xEF, 0xE8, 0xFF, 0xF6, 0xF4, 0xFD, 0xB4, 0xA5, 0xB2]</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">enc_flag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag_temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">v10</span> <span class="o">^</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="nb">ord</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">flag_temp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="s1">&#39;flag&#39;</span> <span class="ow">in</span> <span class="n">flag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div><p>筛选后得到flag</p>
+<blockquote>
+<p>goodjobyougetthisflag233</p></blockquote>
+<h3 id="知识点">
+<a class="header-anchor" href="#%e7%9f%a5%e8%af%86%e7%82%b9"></a>
+知识点
+</h3><h4 id="pthread_create">
+<a class="header-anchor" href="#pthread_create"></a>
+pthread_create
+</h4><ul>
+<li><strong>pthread_create</strong></li>
+</ul>
+<blockquote>
+<p>pthread_create是类Unix操作系统（Unix、Linux、Mac OS X等）的创建线程的函数。它的功能是创建线程（实际上就是确定调用该线程函数的入口点），在线程创建以后，就开始运行相关的线程函数。</p></blockquote>
+<ul>
+<li><strong>函数原型</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">pthread_create</span><span class="p">(</span><span class="n">pthread_t</span> <span class="o">*</span><span class="k">restrict</span> <span class="kr">thread</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                   <span class="k">const</span> <span class="n">pthread_attr_t</span> <span class="o">*</span><span class="k">restrict</span> <span class="n">attr</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                   <span class="kt">void</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">start_routine</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                   <span class="kt">void</span> <span class="o">*</span><span class="k">restrict</span> <span class="n">arg</span><span class="p">);</span>
+</span></span></code></pre></div><ul>
+<li><strong>返回值</strong>
+<ul>
+<li>成功返回 0</li>
+<li>失败返回错误号</li>
+</ul>
+</li>
+</ul>
+<p>在 POSIX 规范中，pthread_create() 之所以在成功时返回 0 而非 1，是因为它遵循<strong>C 语言与 UNIX 体系中 0 表示成功、非零表示出错</strong>的惯例；返回值直接指示函数执行状态，而非线程函数的返回值</p>
+<ul>
+<li><strong>参数说明</strong></li>
+</ul>
+<blockquote>
+<p>restrict是 C99 引入的类型限定符，用于告诉编译器：带 restrict 限定的指针在其生命周期内是该内存对象的唯一访问途径，从而消除别名（alias）可能，帮助编译器进行更激进的优化
+简单来说就是告诉<strong>编译器可以放心对这个函数做优化</strong>，程序员自己会保证这些指针所指的内存区间互不重叠</p></blockquote>
+<ol>
+<li><strong>thread</strong>：pthread_create 成功返回后，新创建的线程的 id 被填写到 thread 参数所指向的内存单元</li>
+<li><strong>attr</strong>：线程属性，可以为 NULL，表示使用默认的线程属性</li>
+<li><strong>start_routine</strong>：线程入口函数指针。该函数必须接受一个 void * 参数并返回 void *。新线程启动后即执行此函数</li>
+<li><strong>arg</strong>：传递给 start_routine 的参数指针，可用于向线程函数传递数据结构或简单值；若不需参数可传 NULL</li>
+</ol>
+<ul>
+<li><strong>举例</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">// 线程入口函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="o">*</span><span class="nf">thread_func</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;子线程：Hello, pthread!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>  <span class="c1">// 等价于 pthread_exit(NULL);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pthread_t</span> <span class="n">tid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建线程，使用默认属性（NULL），传递 NULL 作为参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">ret</span> <span class="o">=</span> <span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tid</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">thread_func</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;pthread_create 错误&#34;</span><span class="p">);</span>  <span class="c1">// 若失败，打印错误原因
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 等待子线程结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">ret</span> <span class="o">=</span> <span class="n">pthread_join</span><span class="p">(</span><span class="n">tid</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;pthread_join 错误&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;主线程：子线程已结束，程序退出。</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ gcc your_code.c -o your_program -lpthread
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">子线程：Hello, pthread!
+</span></span><span class="line"><span class="cl">主线程：子线程已结束，程序退出。
+</span></span></code></pre></div><h4 id="pthread_mutex_lock与pthread_mutex_unlock">
+<a class="header-anchor" href="#pthread_mutex_lock%e4%b8%8epthread_mutex_unlock"></a>
+pthread_mutex_lock与pthread_mutex_unlock
+</h4><ul>
+<li><strong>函数原型</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">pthread_mutex_lock</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">pthread_mutex_unlock</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+</span></span></code></pre></div><blockquote>
+<p>pthread_mutex_lock() 和 pthread_mutex_unlock() 是 POSIX 线程（pthreads）库中最基本的互斥原语，用于在多线程程序中保护共享资源，防止竞态条件。调用 pthread_mutex_lock() 时，如果互斥锁当前未被其他线程持有，则立即获得锁；否则，调用线程被阻塞直至锁可用。pthread_mutex_unlock() 则释放锁，并根据互斥锁类型及调度策略唤醒一个等待线程继续执行</p></blockquote>
+<ul>
+<li><strong>互斥锁</strong></li>
+</ul>
+<p>互斥锁是多个线程一起去抢，抢到锁的线程先执行，没抢到的等待，释放后其它等待线程再去抢，顺序无保证</p>
+<p>POSIX 标准并未规定等待队列的调度顺序，具体实现（glibc/futex、Solaris、实时策略等）各不相同，默认 SCHED_OTHER 下通常不保证FIFO，也可能出现饥饿</p>
+<h4 id="相关函数补充">
+<a class="header-anchor" href="#%e7%9b%b8%e5%85%b3%e5%87%bd%e6%95%b0%e8%a1%a5%e5%85%85"></a>
+相关函数补充
+</h4><table>
+  <thead>
+      <tr>
+          <th>函数</th>
+          <th>原型</th>
+          <th>功能说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>pthread_mutex_init</code></td>
+          <td><code>int pthread_mutex_init(pthread_mutex_t *restrict m, const pthread_mutexattr_t *restrict a);</code></td>
+          <td>初始化互斥锁对象 <code>m</code>，使其可用于加锁/解锁。若 <code>a</code> 为 <code>NULL</code> 则使用默认属性。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutexattr_init.3.html?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) - Linux manual page - man7.org">man7</a>, <a href="https://docs.oracle.com/cd/E36784_01/html/E36874/pthread-mutexattr-init-3c.html?utm_source=chatgpt.com" title="pthread_mutexattr_init - man pages section 3: Basic Library Functions">Oracle 文档</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_destroy</code></td>
+          <td><code>int pthread_mutex_destroy(pthread_mutex_t *m);</code></td>
+          <td>销毁互斥锁 <code>m</code>，使其变为未初始化状态。仅当锁未被持有且无线程等待时才安全调用。</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_lock</code></td>
+          <td><code>int pthread_mutex_lock(pthread_mutex_t *m);</code></td>
+          <td>对互斥锁加锁；若已被持有则阻塞等待，直到获得锁为止。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html?utm_source=chatgpt.com" title="pthread_mutex_lock(3p) - Linux manual page - man7.org">man7</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_trylock</code></td>
+          <td><code>int pthread_mutex_trylock(pthread_mutex_t *m);</code></td>
+          <td>尝试对互斥锁加锁；若锁已被持有，不阻塞而立即返回 <code>EBUSY</code>。</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_timedlock</code></td>
+          <td><code>int pthread_mutex_timedlock(pthread_mutex_t *restrict m, const struct timespec *restrict t);</code></td>
+          <td>带超时的加锁：阻塞至锁可用或绝对时间 <code>t</code> 到期。若超时则返回 <code>ETIMEDOUT</code>。(<a href="https://linux.die.net/man/3/pthread_mutex_timedlock?utm_source=chatgpt.com" title="pthread_mutex_timedlock(3): lock mutex - Linux man page">Linux Documentation</a>, <a href="https://docs.oracle.com/cd/E36784_01/html/E36874/pthread-mutex-timedlock-3c.html?utm_source=chatgpt.com" title="pthread_mutex_timedlock - man pages section 3">Oracle 文档</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_unlock</code></td>
+          <td><code>int pthread_mutex_unlock(pthread_mutex_t *m);</code></td>
+          <td>释放互斥锁；若有线程在等待，则唤醒其中一个再次竞争锁。(<a href="https://man.freebsd.org/cgi/man.cgi?manpath=freebsd-release-ports&amp;query=pthread_mutex_consistent&amp;sektion=&amp;utm_source=chatgpt.com" title="pthread_mutex_consistent - FreeBSD Manual Pages">FreeBSD手册</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_init</code></td>
+          <td><code>int pthread_mutexattr_init(pthread_mutexattr_t *attr);</code></td>
+          <td>初始化互斥锁属性对象 <code>attr</code>，将所有属性设置为实现的默认值。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutexattr_init.3.html?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) - Linux manual page - man7.org">man7</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_destroy</code></td>
+          <td><code>int pthread_mutexattr_destroy(pthread_mutexattr_t *attr);</code></td>
+          <td>销毁互斥锁属性对象，使其变为未初始化；不会影响已基于该属性初始化的互斥锁。(<a href="https://man.archlinux.org/man/pthread_mutexattr_init.3.en?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) — Arch manual pages">Arch手册页</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_settype</code></td>
+          <td><code>int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);</code></td>
+          <td>设置属性对象的锁类型（<code>NORMAL</code>/<code>ERRORCHECK</code>/<code>RECURSIVE</code>/<code>DEFAULT</code>）。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_settype.html?utm_source=chatgpt.com" title="pthread_mutexattr_settype">开放集团出版物目录</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_gettype</code></td>
+          <td><code>int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type);</code></td>
+          <td>获取属性对象当前的锁类型值。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_settype.html?utm_source=chatgpt.com" title="pthread_mutexattr_settype">开放集团出版物目录</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_setprotocol</code></td>
+          <td><code>int pthread_mutexattr_setprotocol(pthread_mutexattr_t *attr, int protocol);</code></td>
+          <td>设置调度协议（<code>PTHREAD_PRIO_NONE</code>/<code>_INHERIT</code>/<code>_PROTECT</code>），用于优先级继承/保护。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_setprotocol.html?utm_source=chatgpt.com" title="pthread_mutexattr_setprotocol">开放集团出版物目录</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_getprotocol</code></td>
+          <td><code>int pthread_mutexattr_getprotocol(const pthread_mutexattr_t *attr, int *protocol);</code></td>
+          <td>获取当前调度协议属性值。(<a href="https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_getprotocol.html?utm_source=chatgpt.com" title="pthread_mutexattr_getprotocol">开放集团出版物目录</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_setpshared</code></td>
+          <td><code>int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared);</code></td>
+          <td>设置锁的进程共享属性（<code>PTHREAD_PROCESS_PRIVATE</code>/<code>PTHREAD_PROCESS_SHARED</code>），决定能否跨进程使用。(<a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/mutex_options?utm_source=chatgpt.com" title="4.3. Mutex Options | Red Hat Product Documentation">docs.redhat.com</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutexattr_getpshared</code></td>
+          <td><code>int pthread_mutexattr_getpshared(const pthread_mutexattr_t *attr, int *pshared);</code></td>
+          <td>获取进程共享属性值。(<a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/mutex_options?utm_source=chatgpt.com" title="4.3. Mutex Options | Red Hat Product Documentation">docs.redhat.com</a>)</td>
+      </tr>
+      <tr>
+          <td><code>pthread_mutex_consistent</code></td>
+          <td><code>int pthread_mutex_consistent(pthread_mutex_t *m);</code></td>
+          <td>针对 <strong>ROBUST</strong> 互斥锁：若前任持有者崩溃导致锁不一致，可调用此函数将锁状态标记为一致。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutex_consistent.3.html?utm_source=chatgpt.com" title="pthread_mutex_consistent(3) - Linux manual page - man7.org">man7</a>)</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="exp-6">
+<a class="header-anchor" href="#exp-6"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># import hashlib</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># check=&#34;4746bbbd02bb590fbeac2821ece8fc5cad749265ca7503ef4386b38fc12c4227b03ecc45a7ec2da7be3c5ffe121734e8&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># for w in range(0,6):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 	for i in range(48,123):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 		for j in range(48,123):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 			for m in range(48,123):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 				for n in range(48,123):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 					temp=chr(i)+chr(j)+chr(m)+chr(n)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 					hashvalue=hashlib.md5(temp.encode()).hexdigest()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 					if hashvalue[0:16]==check[w*16:w*16+16]:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 						print(w,temp)</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">string</span> <span class="o">=</span> <span class="s2">&#34;juhuhfenlapsiuerhjifdunu&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;juhu&#39;</span><span class="p">,</span><span class="s1">&#39;hfen&#39;</span><span class="p">,</span><span class="s1">&#39;laps&#39;</span><span class="p">,</span><span class="s1">&#39;iuer&#39;</span><span class="p">,</span><span class="s1">&#39;hjif&#39;</span><span class="p">,</span><span class="s1">&#39;dunu&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">enc_flag</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0xFE</span><span class="p">,</span> <span class="mh">0xE9</span><span class="p">,</span> <span class="mh">0xF4</span><span class="p">,</span> <span class="mh">0xE2</span><span class="p">,</span> <span class="mh">0xF1</span><span class="p">,</span> <span class="mh">0xFA</span><span class="p">,</span> <span class="mh">0xF4</span><span class="p">,</span> <span class="mh">0xE4</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0xE7</span><span class="p">,</span> <span class="mh">0xE4</span><span class="p">,</span> <span class="mh">0xE5</span><span class="p">,</span> <span class="mh">0xE3</span><span class="p">,</span> <span class="mh">0xF2</span><span class="p">,</span> <span class="mh">0xF5</span><span class="p">,</span> <span class="mh">0xEF</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xF6</span><span class="p">,</span> <span class="mh">0xF4</span><span class="p">,</span> <span class="mh">0xFD</span><span class="p">,</span> <span class="mh">0xB4</span><span class="p">,</span> <span class="mh">0xA5</span><span class="p">,</span> <span class="mh">0xB2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">v10</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v10</span> <span class="o">^=</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">enc_flag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag_temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">v10</span> <span class="o">^</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="nb">ord</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">flag_temp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="s1">&#39;flag&#39;</span> <span class="ow">in</span> <span class="n">flag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
 </span></span></code></pre></div>
       
     </div>
@@ -974,7 +1289,7 @@ exp
           
           
             <img
-              data-src="/images/my/9.jpg"
+              data-src="/images/my/16.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -997,7 +1312,7 @@ exp
           
           
             <img
-              data-src="/images/my/16.jpg"
+              data-src="/images/my/1.jpg"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -1108,7 +1423,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            17.5k
+            20.2k
           </span
         >
         &nbsp;|&nbsp;
@@ -1116,7 +1431,7 @@ exp
           
           
 
-          00:39
+          00:44
         </span>
       </div>
     
@@ -1194,6 +1509,13 @@ exp
       <ul>
         <li><a href="#分析-5">分析</a></li>
         <li><a href="#exp-5">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-firstn5">7. first[N5]</a>
+      <ul>
+        <li><a href="#分析-6">分析</a></li>
+        <li><a href="#知识点">知识点</a></li>
+        <li><a href="#exp-6">exp</a></li>
       </ul>
     </li>
   </ul>
