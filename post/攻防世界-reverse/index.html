@@ -416,6 +416,18 @@
         <li><a href="#exp-3">exp</a></li>
       </ul>
     </li>
+    <li><a href="#5-mfc逆向-200n4">5. mfc逆向-200[N4]</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+        <li><a href="#exp-4">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-reverse-boxn5">6. reverse-box[N5]</a>
+      <ul>
+        <li><a href="#分析-5">分析</a></li>
+        <li><a href="#exp-5">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -746,7 +758,168 @@ exp
 <h3 id="exp-3">
 <a class="header-anchor" href="#exp-3"></a>
 exp
-</h3>
+</h3><h2 id="5-mfc逆向-200n4">
+<a class="header-anchor" href="#5-mfc%e9%80%86%e5%90%91-200n4"></a>
+5. mfc逆向-200[N4]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/5.zip">mfc逆向-200</a></p>
+<h3 id="分析-4">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-4"></a>
+分析
+</h3><p>查壳发现VMP壳，看来只能靠MFC的工具来逆向了</p>
+<p>先运行程序，发现没有任何输入和按钮，猜测要<code>SendMessage</code>某个数据来实现输入与按钮的功能
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-31.png" alt="alt text"></p>
+<p>先用xpy++分析一下，获取窗口的类名和窗口名(FindWindowA)
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-32.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">name = &#39;Flag就在控件里&#39;
+</span></span><span class="line"><span class="cl">class = &#39;944c8d100f82f0c18b682f63e4dbaa207a2f1e72581c2f1b&#39;
+</span></span></code></pre></div><p>用xspy分析程序内部调用</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">message</span> <span class="n">map</span><span class="o">=</span><span class="mh">0x00588CF4</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x188cf4</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">msg</span> <span class="n">map</span> <span class="n">entries</span> <span class="n">at</span> <span class="mh">0x00588D00</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x188d00</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nl">OnMsg</span><span class="p">:</span><span class="nf">WM_SYSCOMMAND</span><span class="p">(</span><span class="mo">0112</span><span class="p">),</span><span class="n">func</span><span class="o">=</span> <span class="mh">0x00401FD0</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x001fd0</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nl">OnMsg</span><span class="p">:</span><span class="nf">WM_PAINT</span><span class="p">(</span><span class="mf">000f</span><span class="p">),</span><span class="n">func</span><span class="o">=</span> <span class="mh">0x00402080</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x002080</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nl">OnMsg</span><span class="p">:</span><span class="mo">0464</span><span class="p">,</span><span class="n">func</span><span class="o">=</span> <span class="mh">0x00402170</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x002170</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nl">OnMsg</span><span class="p">:</span><span class="nf">WM_QUERYDRAGICON</span><span class="p">(</span><span class="mo">0037</span><span class="p">),</span><span class="n">func</span><span class="o">=</span> <span class="mh">0x00402160</span><span class="p">(</span><span class="mi">719015</span><span class="n">c9db1242fcbc1c8617ede10401</span><span class="p">.</span><span class="n">exe</span><span class="o">+</span> <span class="mh">0x002160</span> <span class="p">)</span>
+</span></span></code></pre></div><p>注意到<code>OnMsg:0464,func= 0x00402170(719015c9db1242fcbc1c8617ede10401.exe+ 0x002170 )</code>，应该是用户函数，尝试向程序发送0x464消息，看看会发生什么</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include&lt;stdio.h&gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;windows.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">HWND</span> <span class="n">hWnd</span> <span class="o">=</span> <span class="n">FindWindow</span><span class="p">(</span><span class="s">&#34;944c8d100f82f0c18b682f63e4dbaa207a2f1e72581c2f1b&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="n">hWnd</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="n">SendMessage</span><span class="p">(</span><span class="n">hWnd</span><span class="p">,</span><span class="mh">0x464</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">system</span><span class="p">(</span><span class="s">&#34;pause&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="exp-4">
+<a class="header-anchor" href="#exp-4"></a>
+exp
+</h3><h2 id="6-reverse-boxn5">
+<a class="header-anchor" href="#6-reverse-boxn5"></a>
+6. reverse-box[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/6.zip">reverse-box</a></p>
+<ul>
+<li>题目描述</li>
+</ul>
+<p>$ ./reverse_box ${FLAG}
+95eeaf95ef94234999582f722f492f72b19a7aaf72e6e776b57aee722fe77ab5ad9aaeb156729676ae7a236d99b1df4a
+flag格式：TWCTF{}</p>
+<h3 id="分析-5">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-5"></a>
+分析
+</h3><p>攻防世界没给题目描述，难怪做不出来，在别的wp里找到了描述，就是输入<code>flag</code>会输出<code>95eeaf95ef94234999582f722f492f72b19a7aaf72e6e776b57aee722fe77ab5ad9aaeb156729676ae7a236d99b1df4a</code></p>
+<p>运行程序，随便输入点东西
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-34.png" alt="alt text">
+每次输出都不一样，猜测有以<code>时间为种子的随机数</code>的生成</p>
+<p>IDA打开，F5查看main伪代码
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-33.png" alt="alt text"></p>
+<p><code>sub_804858D(v4)</code>应该对v4做了一些操作，进去看看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-35.png" alt="alt text">
+<strong>注意__ROR1__是循环右移，图中描述有误</strong></p>
+<p>以时间为种子的随机数对v4进行了位操作，需要爆破种子</p>
+<p>已知<strong>flag格式TWCTF{}</strong>，所以有</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span><span class="o">=</span><span class="mh">0xee</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">67</span><span class="p">]</span><span class="o">=</span><span class="mh">0xaf</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">=</span><span class="mh">0x95</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span><span class="o">=</span><span class="mh">0xef</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span><span class="o">=</span><span class="mh">0x94</span><span class="p">,</span><span class="n">v4</span><span class="p">[</span><span class="mi">125</span><span class="p">]</span><span class="o">=</span><span class="mh">0x4a</span>
+</span></span></code></pre></div><p>那就按照这个限制条件去爆破种子，见exp</p>
+<h3 id="exp-5">
+<a class="header-anchor" href="#exp-5"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">__ROR1__</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="n">b</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">n27</span><span class="p">;</span> <span class="c1">// al
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">n9</span><span class="p">;</span> <span class="c1">// al
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v6</span><span class="p">;</span> <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v7</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v8</span><span class="p">;</span> <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v9</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v10</span><span class="p">;</span> <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">v12</span><span class="p">;</span> <span class="c1">// [esp+1Ah] [ebp-Eh]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">v13</span><span class="p">;</span> <span class="c1">// [esp+1Bh] [ebp-Dh]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">v14</span><span class="p">;</span> <span class="c1">// [esp+1Bh] [ebp-Dh]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">v15</span><span class="p">;</span> <span class="c1">// [esp+1Bh] [ebp-Dh]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">v16</span><span class="p">;</span> <span class="c1">// [esp+1Ch] [ebp-Ch]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">a1</span><span class="p">[</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="n">memset</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">a1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v12</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v13</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span> <span class="n">v12</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="n">n27</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span>
+</span></span><span class="line"><span class="cl">              <span class="n">n27</span> <span class="o">=</span> <span class="mi">27</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v12</span> <span class="o">^=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v12</span><span class="p">)</span> <span class="o">^</span> <span class="n">n27</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v14</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v13</span><span class="p">)</span> <span class="o">^</span> <span class="n">v13</span><span class="p">))</span> <span class="o">^</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v13</span><span class="p">)</span> <span class="o">^</span> <span class="n">v13</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v15</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">v14</span><span class="p">)</span> <span class="o">^</span> <span class="n">v14</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span> <span class="n">v15</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="n">n9</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span>
+</span></span><span class="line"><span class="cl">              <span class="n">n9</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v13</span> <span class="o">=</span> <span class="n">v15</span> <span class="o">^</span> <span class="n">n9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v4</span> <span class="o">=</span> <span class="n">v13</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v4</span> <span class="o">=</span> <span class="n">__ROR1__</span><span class="p">(</span><span class="n">v13</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v5</span> <span class="o">=</span> <span class="n">v4</span> <span class="o">^</span> <span class="p">(</span><span class="n">v13</span> <span class="o">^</span> <span class="o">*</span><span class="n">a1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v6</span> <span class="o">=</span> <span class="n">v13</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v6</span> <span class="o">=</span> <span class="n">__ROR1__</span><span class="p">(</span><span class="n">v13</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v7</span> <span class="o">=</span> <span class="n">v6</span> <span class="o">^</span> <span class="n">v5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v8</span> <span class="o">=</span> <span class="n">v13</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v8</span> <span class="o">=</span> <span class="n">__ROR1__</span><span class="p">(</span><span class="n">v13</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v9</span> <span class="o">=</span> <span class="n">v8</span> <span class="o">^</span> <span class="n">v7</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v10</span> <span class="o">=</span> <span class="n">v13</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">v10</span> <span class="o">=</span> <span class="n">__ROR1__</span><span class="p">(</span><span class="n">v13</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">=</span> <span class="n">v10</span> <span class="o">^</span> <span class="n">v9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">a1</span><span class="p">[</span><span class="n">v12</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span><span class="k">while</span> <span class="p">(</span> <span class="n">v12</span> <span class="o">!=</span> <span class="mi">1</span> <span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">a1</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">==</span><span class="mh">0x95</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span><span class="o">==</span><span class="mh">0xee</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">67</span><span class="p">]</span><span class="o">==</span><span class="mh">0xaf</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">84</span><span class="p">]</span><span class="o">==</span><span class="mh">0x95</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span><span class="o">==</span><span class="mh">0xef</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span><span class="o">==</span><span class="mh">0x94</span> <span class="o">&amp;&amp;</span> <span class="n">a1</span><span class="p">[</span><span class="mi">125</span><span class="p">]</span><span class="o">==</span><span class="mh">0x4a</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">j</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">%</span> <span class="mi">16</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;0x%02x,&#34;</span><span class="p">,</span><span class="n">a1</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xd6</span><span class="p">,</span><span class="mh">0xc9</span><span class="p">,</span><span class="mh">0xc2</span><span class="p">,</span><span class="mh">0xce</span><span class="p">,</span><span class="mh">0x47</span><span class="p">,</span><span class="mh">0xde</span><span class="p">,</span><span class="mh">0xda</span><span class="p">,</span><span class="mh">0x70</span><span class="p">,</span><span class="mh">0x85</span><span class="p">,</span><span class="mh">0xb4</span><span class="p">,</span><span class="mh">0xd2</span><span class="p">,</span><span class="mh">0x9e</span><span class="p">,</span><span class="mh">0x4b</span><span class="p">,</span><span class="mh">0x62</span><span class="p">,</span><span class="mh">0x1e</span><span class="p">,</span><span class="mh">0xc3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x7f</span><span class="p">,</span><span class="mh">0x37</span><span class="p">,</span><span class="mh">0x7c</span><span class="p">,</span><span class="mh">0xc8</span><span class="p">,</span><span class="mh">0x4f</span><span class="p">,</span><span class="mh">0xec</span><span class="p">,</span><span class="mh">0xf2</span><span class="p">,</span><span class="mh">0x45</span><span class="p">,</span><span class="mh">0x18</span><span class="p">,</span><span class="mh">0x61</span><span class="p">,</span><span class="mh">0x17</span><span class="p">,</span><span class="mh">0x1a</span><span class="p">,</span><span class="mh">0x29</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0xc7</span><span class="p">,</span><span class="mh">0x75</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x02</span><span class="p">,</span><span class="mh">0x48</span><span class="p">,</span><span class="mh">0x26</span><span class="p">,</span><span class="mh">0x93</span><span class="p">,</span><span class="mh">0x83</span><span class="p">,</span><span class="mh">0x8a</span><span class="p">,</span><span class="mh">0x42</span><span class="p">,</span><span class="mh">0x79</span><span class="p">,</span><span class="mh">0x81</span><span class="p">,</span><span class="mh">0x10</span><span class="p">,</span><span class="mh">0x50</span><span class="p">,</span><span class="mh">0x44</span><span class="p">,</span><span class="mh">0xc4</span><span class="p">,</span><span class="mh">0x6d</span><span class="p">,</span><span class="mh">0x84</span><span class="p">,</span><span class="mh">0xa0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xb1</span><span class="p">,</span><span class="mh">0x72</span><span class="p">,</span><span class="mh">0x96</span><span class="p">,</span><span class="mh">0x76</span><span class="p">,</span><span class="mh">0xad</span><span class="p">,</span><span class="mh">0x23</span><span class="p">,</span><span class="mh">0xb0</span><span class="p">,</span><span class="mh">0x2f</span><span class="p">,</span><span class="mh">0xb2</span><span class="p">,</span><span class="mh">0xa7</span><span class="p">,</span><span class="mh">0x35</span><span class="p">,</span><span class="mh">0x57</span><span class="p">,</span><span class="mh">0x5e</span><span class="p">,</span><span class="mh">0x92</span><span class="p">,</span><span class="mh">0x07</span><span class="p">,</span><span class="mh">0xc0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xbc</span><span class="p">,</span><span class="mh">0x36</span><span class="p">,</span><span class="mh">0x99</span><span class="p">,</span><span class="mh">0xaf</span><span class="p">,</span><span class="mh">0xae</span><span class="p">,</span><span class="mh">0xdb</span><span class="p">,</span><span class="mh">0xef</span><span class="p">,</span><span class="mh">0x15</span><span class="p">,</span><span class="mh">0xe7</span><span class="p">,</span><span class="mh">0x8e</span><span class="p">,</span><span class="mh">0x63</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x9c</span><span class="p">,</span><span class="mh">0x56</span><span class="p">,</span><span class="mh">0x9a</span><span class="p">,</span><span class="mh">0x31</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xe6</span><span class="p">,</span><span class="mh">0x64</span><span class="p">,</span><span class="mh">0xb5</span><span class="p">,</span><span class="mh">0x58</span><span class="p">,</span><span class="mh">0x95</span><span class="p">,</span><span class="mh">0x49</span><span class="p">,</span><span class="mh">0x04</span><span class="p">,</span><span class="mh">0xee</span><span class="p">,</span><span class="mh">0xdf</span><span class="p">,</span><span class="mh">0x7e</span><span class="p">,</span><span class="mh">0x0b</span><span class="p">,</span><span class="mh">0x8c</span><span class="p">,</span><span class="mh">0xff</span><span class="p">,</span><span class="mh">0xf9</span><span class="p">,</span><span class="mh">0xed</span><span class="p">,</span><span class="mh">0x7a</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x65</span><span class="p">,</span><span class="mh">0x5a</span><span class="p">,</span><span class="mh">0x1f</span><span class="p">,</span><span class="mh">0x4e</span><span class="p">,</span><span class="mh">0xf6</span><span class="p">,</span><span class="mh">0xf8</span><span class="p">,</span><span class="mh">0x86</span><span class="p">,</span><span class="mh">0x30</span><span class="p">,</span><span class="mh">0xf0</span><span class="p">,</span><span class="mh">0x4c</span><span class="p">,</span><span class="mh">0xb7</span><span class="p">,</span><span class="mh">0xca</span><span class="p">,</span><span class="mh">0xe5</span><span class="p">,</span><span class="mh">0x89</span><span class="p">,</span><span class="mh">0x2a</span><span class="p">,</span><span class="mh">0x1d</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0xe4</span><span class="p">,</span><span class="mh">0x16</span><span class="p">,</span><span class="mh">0xf5</span><span class="p">,</span><span class="mh">0x3a</span><span class="p">,</span><span class="mh">0x27</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="mh">0x8d</span><span class="p">,</span><span class="mh">0x40</span><span class="p">,</span><span class="mh">0x09</span><span class="p">,</span><span class="mh">0x03</span><span class="p">,</span><span class="mh">0x6f</span><span class="p">,</span><span class="mh">0x94</span><span class="p">,</span><span class="mh">0xa5</span><span class="p">,</span><span class="mh">0x4a</span><span class="p">,</span><span class="mh">0x46</span><span class="p">,</span><span class="mh">0x67</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x00</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">enc</span> <span class="o">=</span> <span class="s1">&#39;95eeaf95ef94234999582f722f492f72b19a7aaf72e6e776b57aee722fe77ab5ad9aaeb156729676ae7a236d99b1df4a&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">index</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="p">:</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -801,7 +974,7 @@ exp
           
           
             <img
-              data-src="/images/my/4.jpg"
+              data-src="/images/my/9.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -824,7 +997,7 @@ exp
           
           
             <img
-              data-src="/images/my/12.png"
+              data-src="/images/my/16.jpg"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -935,7 +1108,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            16.6k
+            17.5k
           </span
         >
         &nbsp;|&nbsp;
@@ -943,7 +1116,7 @@ exp
           
           
 
-          00:37
+          00:39
         </span>
       </div>
     
@@ -1009,6 +1182,18 @@ exp
       <ul>
         <li><a href="#分析-3">分析</a></li>
         <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-mfc逆向-200n4">5. mfc逆向-200[N4]</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+        <li><a href="#exp-4">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-reverse-boxn5">6. reverse-box[N5]</a>
+      <ul>
+        <li><a href="#分析-5">分析</a></li>
+        <li><a href="#exp-5">exp</a></li>
       </ul>
     </li>
   </ul>
