@@ -435,6 +435,12 @@
         <li><a href="#exp-6">exp</a></li>
       </ul>
     </li>
+    <li><a href="#8-asongn5">8. asong[N5]</a>
+      <ul>
+        <li><a href="#分析-7">分析</a></li>
+        <li><a href="#exp-7">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -456,7 +462,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">11</div>
+    <div class="sidebar-state-number">12</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -1126,7 +1132,7 @@ pthread_mutex_lock与pthread_mutex_unlock
       <tr>
           <td><code>pthread_mutex_init</code></td>
           <td><code>int pthread_mutex_init(pthread_mutex_t *restrict m, const pthread_mutexattr_t *restrict a);</code></td>
-          <td>初始化互斥锁对象 <code>m</code>，使其可用于加锁/解锁。若 <code>a</code> 为 <code>NULL</code> 则使用默认属性。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutexattr_init.3.html?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) - Linux manual page - man7.org">man7</a>, <a href="https://docs.oracle.com/cd/E36784_01/html/E36874/pthread-mutexattr-init-3c.html?utm_source=chatgpt.com" title="pthread_mutexattr_init - man pages section 3: Basic Library Functions">Oracle 文档</a>)</td>
+          <td>初始化互斥锁对象 <code>m</code>，使其可用于加锁/解锁。若 <code>a</code> 为 <code>NULL</code> 则使用默认属性。</td>
       </tr>
       <tr>
           <td><code>pthread_mutex_destroy</code></td>
@@ -1136,7 +1142,7 @@ pthread_mutex_lock与pthread_mutex_unlock
       <tr>
           <td><code>pthread_mutex_lock</code></td>
           <td><code>int pthread_mutex_lock(pthread_mutex_t *m);</code></td>
-          <td>对互斥锁加锁；若已被持有则阻塞等待，直到获得锁为止。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html?utm_source=chatgpt.com" title="pthread_mutex_lock(3p) - Linux manual page - man7.org">man7</a>)</td>
+          <td>对互斥锁加锁；若已被持有则阻塞等待，直到获得锁为止。</td>
       </tr>
       <tr>
           <td><code>pthread_mutex_trylock</code></td>
@@ -1146,57 +1152,57 @@ pthread_mutex_lock与pthread_mutex_unlock
       <tr>
           <td><code>pthread_mutex_timedlock</code></td>
           <td><code>int pthread_mutex_timedlock(pthread_mutex_t *restrict m, const struct timespec *restrict t);</code></td>
-          <td>带超时的加锁：阻塞至锁可用或绝对时间 <code>t</code> 到期。若超时则返回 <code>ETIMEDOUT</code>。(<a href="https://linux.die.net/man/3/pthread_mutex_timedlock?utm_source=chatgpt.com" title="pthread_mutex_timedlock(3): lock mutex - Linux man page">Linux Documentation</a>, <a href="https://docs.oracle.com/cd/E36784_01/html/E36874/pthread-mutex-timedlock-3c.html?utm_source=chatgpt.com" title="pthread_mutex_timedlock - man pages section 3">Oracle 文档</a>)</td>
+          <td>带超时的加锁：阻塞至锁可用或绝对时间 <code>t</code> 到期。若超时则返回 <code>ETIMEDOUT</code>。</td>
       </tr>
       <tr>
           <td><code>pthread_mutex_unlock</code></td>
           <td><code>int pthread_mutex_unlock(pthread_mutex_t *m);</code></td>
-          <td>释放互斥锁；若有线程在等待，则唤醒其中一个再次竞争锁。(<a href="https://man.freebsd.org/cgi/man.cgi?manpath=freebsd-release-ports&amp;query=pthread_mutex_consistent&amp;sektion=&amp;utm_source=chatgpt.com" title="pthread_mutex_consistent - FreeBSD Manual Pages">FreeBSD手册</a>)</td>
+          <td>释放互斥锁；若有线程在等待，则唤醒其中一个再次竞争锁。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_init</code></td>
           <td><code>int pthread_mutexattr_init(pthread_mutexattr_t *attr);</code></td>
-          <td>初始化互斥锁属性对象 <code>attr</code>，将所有属性设置为实现的默认值。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutexattr_init.3.html?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) - Linux manual page - man7.org">man7</a>)</td>
+          <td>初始化互斥锁属性对象 <code>attr</code>，将所有属性设置为实现的默认值。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_destroy</code></td>
           <td><code>int pthread_mutexattr_destroy(pthread_mutexattr_t *attr);</code></td>
-          <td>销毁互斥锁属性对象，使其变为未初始化；不会影响已基于该属性初始化的互斥锁。(<a href="https://man.archlinux.org/man/pthread_mutexattr_init.3.en?utm_source=chatgpt.com" title="pthread_mutexattr_init(3) — Arch manual pages">Arch手册页</a>)</td>
+          <td>销毁互斥锁属性对象，使其变为未初始化；不会影响已基于该属性初始化的互斥锁。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_settype</code></td>
           <td><code>int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);</code></td>
-          <td>设置属性对象的锁类型（<code>NORMAL</code>/<code>ERRORCHECK</code>/<code>RECURSIVE</code>/<code>DEFAULT</code>）。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_settype.html?utm_source=chatgpt.com" title="pthread_mutexattr_settype">开放集团出版物目录</a>)</td>
+          <td>设置属性对象的锁类型（<code>NORMAL</code>/<code>ERRORCHECK</code>/<code>RECURSIVE</code>/<code>DEFAULT</code>）</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_gettype</code></td>
           <td><code>int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type);</code></td>
-          <td>获取属性对象当前的锁类型值。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_settype.html?utm_source=chatgpt.com" title="pthread_mutexattr_settype">开放集团出版物目录</a>)</td>
+          <td>获取属性对象当前的锁类型值。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_setprotocol</code></td>
           <td><code>int pthread_mutexattr_setprotocol(pthread_mutexattr_t *attr, int protocol);</code></td>
-          <td>设置调度协议（<code>PTHREAD_PRIO_NONE</code>/<code>_INHERIT</code>/<code>_PROTECT</code>），用于优先级继承/保护。(<a href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/pthread_mutexattr_setprotocol.html?utm_source=chatgpt.com" title="pthread_mutexattr_setprotocol">开放集团出版物目录</a>)</td>
+          <td>设置调度协议（<code>PTHREAD_PRIO_NONE</code>/<code>_INHERIT</code>/<code>_PROTECT</code>），用于优先级继承/保护。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_getprotocol</code></td>
           <td><code>int pthread_mutexattr_getprotocol(const pthread_mutexattr_t *attr, int *protocol);</code></td>
-          <td>获取当前调度协议属性值。(<a href="https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_getprotocol.html?utm_source=chatgpt.com" title="pthread_mutexattr_getprotocol">开放集团出版物目录</a>)</td>
+          <td>获取当前调度协议属性值。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_setpshared</code></td>
           <td><code>int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared);</code></td>
-          <td>设置锁的进程共享属性（<code>PTHREAD_PROCESS_PRIVATE</code>/<code>PTHREAD_PROCESS_SHARED</code>），决定能否跨进程使用。(<a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/mutex_options?utm_source=chatgpt.com" title="4.3. Mutex Options | Red Hat Product Documentation">docs.redhat.com</a>)</td>
+          <td>设置锁的进程共享属性（<code>PTHREAD_PROCESS_PRIVATE</code>/<code>PTHREAD_PROCESS_SHARED</code>），决定能否跨进程使用。</td>
       </tr>
       <tr>
           <td><code>pthread_mutexattr_getpshared</code></td>
           <td><code>int pthread_mutexattr_getpshared(const pthread_mutexattr_t *attr, int *pshared);</code></td>
-          <td>获取进程共享属性值。(<a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/mutex_options?utm_source=chatgpt.com" title="4.3. Mutex Options | Red Hat Product Documentation">docs.redhat.com</a>)</td>
+          <td>获取进程共享属性值。</td>
       </tr>
       <tr>
           <td><code>pthread_mutex_consistent</code></td>
           <td><code>int pthread_mutex_consistent(pthread_mutex_t *m);</code></td>
-          <td>针对 <strong>ROBUST</strong> 互斥锁：若前任持有者崩溃导致锁不一致，可调用此函数将锁状态标记为一致。(<a href="https://man7.org/linux/man-pages/man3/pthread_mutex_consistent.3.html?utm_source=chatgpt.com" title="pthread_mutex_consistent(3) - Linux manual page - man7.org">man7</a>)</td>
+          <td>针对 <strong>ROBUST</strong> 互斥锁：若前任持有者崩溃导致锁不一致，可调用此函数将锁状态标记为一致。</td>
       </tr>
   </tbody>
 </table>
@@ -1234,6 +1240,143 @@ exp
 </span></span><span class="line"><span class="cl">        <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">flag_temp</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="s1">&#39;flag&#39;</span> <span class="ow">in</span> <span class="n">flag</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="8-asongn5">
+<a class="header-anchor" href="#8-asongn5"></a>
+8. asong[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/8.zip">asong</a></p>
+<h3 id="分析-7">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-7"></a>
+分析
+</h3><p>IDA载入，F5反编译main函数
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-40.png" alt="alt text"></p>
+<p>在main函数中，首先read_input读取输入，然后在check_input里检查是否是QCTF{开头，并且提取QCTF{}包裹的内容
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-41.png" alt="alt text">
+再看frequency函数，在这个函数里对文件that_girl进行字符统计，存入a2，也就是main函数传入的v4</p>
+<p>先看看是怎么统计的，在change_bytes函数里
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-45.png" alt="alt text"></p>
+<p>change_bytes函数将that_girl的字符进行了映射，将26个字母不区分大小写归到<strong>下标10-35</strong>，其他字符也做了相应的变化</p>
+<p>特别的，将'0&rsquo;转为了下标0</p>
+<p>写个脚本统计一下，转为dict字典，便于后续计算</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;that_girl&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span><span class="p">:</span><span class="n">fs</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">i</span><span class="p">)})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">104</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="mi">169</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">19</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="mi">38</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="mi">67</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="mi">39</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="mi">118</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">165</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">26</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">61</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="mi">133</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="mi">45</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">34</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="mi">62</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">66</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">71</span><span class="p">),</span> <span class="p">(</span><span class="s2">&#34;&#39;&#34;</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">245</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl"><span class="n">out_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">))}</span>
+</span></span></code></pre></div><p>最后看encode函数，这是本题的核心难点</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len_input</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="mi">4LL</span> <span class="o">*</span> <span class="n">change_bytes</span><span class="p">(</span><span class="n">Input</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">a2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// enc[i] = a2[Input[i]]
+</span></span></span></code></pre></div><p>这一步将输入的字符映射到了a2的下标，得到了enc的值</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// sub_400D33(enc);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">sub_400D33</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="o">*</span><span class="n">enc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__int64</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">_BYTE</span> <span class="n">v2</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span> <span class="c1">// [rsp+13h] [rbp-5h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> 
+</span></span><span class="line"><span class="cl">    <span class="n">v2</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">v2</span> <span class="o">=</span> <span class="o">*</span><span class="n">enc</span><span class="p">;</span> <span class="c1">//v2[0] = enc[0]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">enc</span><span class="p">[</span><span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]]];</span>
+</span></span><span class="line"><span class="cl">      <span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc</span><span class="p">[</span><span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里有点混淆，<code>*&amp;v2[1]</code>中v2[1]取了值，&amp;取了这个值的地址，*取了这个地址的值，那不就是v2[1]的值吗？</p>
+<p>获取<code>data = [22, 0, 6, 2, 30, 24, 9, 1, 21, 7, 18, 10, 8, 12, 17, 23, 13, 4, 3, 14, 19, 11, 20, 16, 15, 5, 25, 36, 27, 28, 29, 37, 31, 32, 33, 26, 34, 35]</code></p>
+<p>模拟一下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">v2<span class="o">[</span>0<span class="o">]</span> <span class="o">=</span> enc<span class="o">[</span>0<span class="o">]</span>
+</span></span><span class="line"><span class="cl">enc<span class="o">[</span>0<span class="o">]</span> <span class="o">=</span> enc<span class="o">[</span>22<span class="o">]</span>
+</span></span><span class="line"><span class="cl">enc<span class="o">[</span>22<span class="o">]</span> <span class="o">=</span> enc<span class="o">[</span>20<span class="o">]</span>
+</span></span><span class="line"><span class="cl">enc<span class="o">[</span>20<span class="o">]</span> <span class="o">=</span> enc<span class="o">[</span>19<span class="o">]</span>
+</span></span><span class="line"><span class="cl">......
+</span></span><span class="line"><span class="cl">enc<span class="o">[</span>1<span class="o">]</span> <span class="o">=</span> v2<span class="o">[</span>0<span class="o">]</span>
+</span></span></code></pre></div><p>能看出来这个函数对enc进行了以data为表的<strong>特殊的&quot;循环左移&quot;操作</strong></p>
+<p>逆向</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">new_map</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">ori_map</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">v1</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">ori_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="n">data</span><span class="p">[</span><span class="n">v1</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">new_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">v1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ori_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">v1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">v1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">new_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">v1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">new_map</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">ori_map</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_map</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span><span class="p">[</span><span class="n">new_map</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="n">ori_map</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</span></span></code></pre></div><p>最后来看真正的加密函数<code>sub_400DB4</code>，整理后是</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">_BYTE</span> <span class="o">*</span><span class="kr">__fastcall</span> <span class="nf">sub_400DB4</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="n">enc</span><span class="p">,</span> <span class="kt">int</span> <span class="n">len_Input</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len_Input</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc</span><span class="p">[</span><span class="n">len_Input</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">len_Input</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>逆向</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">renc</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">tmp</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x7</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ttmp</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x7</span>
+</span></span><span class="line"><span class="cl">    <span class="n">renc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span> <span class="o">|</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tmp</span> <span class="o">=</span> <span class="n">ttmp</span>
+</span></span></code></pre></div><p>最后再处理enc的构建</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len_input</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="mi">4LL</span> <span class="o">*</span> <span class="n">change_bytes</span><span class="p">(</span><span class="n">Input</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">a2</span><span class="p">);</span>
+</span></span></code></pre></div><p><code>enc[i] = a2[Input[i]]</code>，所以逆向为<code>Input[i] = a2.index(enc[i])</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">renc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">out_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="nb">list</span><span class="p">(</span><span class="n">out_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span>
+</span></span></code></pre></div><blockquote>
+<p>QCTF{that_girl_saying_no_for_your_vindicate}</p></blockquote>
+<h3 id="exp-7">
+<a class="header-anchor" href="#exp-7"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;that_girl&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span><span class="p">:</span><span class="n">fs</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">i</span><span class="p">)})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">out</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">104</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="mi">169</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">19</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="mi">38</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="mi">67</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="mi">39</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="mi">118</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">165</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">26</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">61</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="mi">133</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="mi">45</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="mi">34</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="mi">62</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">66</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">71</span><span class="p">),</span> <span class="p">(</span><span class="s2">&#34;&#39;&#34;</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">245</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl"><span class="n">out_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">))}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">enc</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0xEC</span><span class="p">,</span> <span class="mh">0x29</span><span class="p">,</span> <span class="mh">0xE3</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xE1</span><span class="p">,</span> <span class="mh">0xF7</span><span class="p">,</span> <span class="mh">0xAA</span><span class="p">,</span> <span class="mh">0x1D</span><span class="p">,</span> <span class="mh">0x29</span><span class="p">,</span> <span class="mh">0xED</span><span class="p">,</span> <span class="mh">0x29</span><span class="p">,</span> <span class="mh">0x99</span><span class="p">,</span> <span class="mh">0x39</span><span class="p">,</span> <span class="mh">0xF3</span><span class="p">,</span> <span class="mh">0xB7</span><span class="p">,</span> <span class="mh">0xA9</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">	<span class="mh">0xE7</span><span class="p">,</span> <span class="mh">0xAC</span><span class="p">,</span> <span class="mh">0x2B</span><span class="p">,</span> <span class="mh">0xB7</span><span class="p">,</span> <span class="mh">0xAB</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x9F</span><span class="p">,</span> <span class="mh">0xA9</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x35</span><span class="p">,</span> <span class="mh">0x2C</span><span class="p">,</span> <span class="mh">0x29</span><span class="p">,</span> <span class="mh">0xEF</span><span class="p">,</span> <span class="mh">0xA8</span><span class="p">,</span> <span class="mh">0x3D</span><span class="p">,</span> <span class="mh">0x4B</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">	<span class="mh">0xB0</span><span class="p">,</span> <span class="mh">0xE9</span><span class="p">,</span> <span class="mh">0xE1</span><span class="p">,</span> <span class="mh">0x68</span><span class="p">,</span> <span class="mh">0x7B</span><span class="p">,</span> <span class="mh">0x41</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">renc</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">tmp</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x7</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">renc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span> <span class="o">|</span> <span class="p">(</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tmp</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x7</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mmap</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="mi">21</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">tmp</span> <span class="o">=</span> <span class="n">renc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mmap</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">renc</span><span class="p">[</span><span class="n">mmap</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">renc</span><span class="p">[</span><span class="n">mmap</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="n">renc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span> 
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">renc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">out_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="nb">list</span><span class="p">(</span><span class="n">out_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flag</span><span class="p">))</span>
 </span></span></code></pre></div>
       
     </div>
@@ -1289,7 +1432,7 @@ exp
           
           
             <img
-              data-src="/images/my/16.jpg"
+              data-src="/images/my/14.png"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -1312,7 +1455,7 @@ exp
           
           
             <img
-              data-src="/images/my/1.jpg"
+              data-src="/images/my/3.jpg"
               data-sizes="auto"
               alt="JQCTF2025"
               class="lazyload"
@@ -1390,6 +1533,9 @@ exp
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -1423,7 +1569,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            20.2k
+            22.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -1431,7 +1577,7 @@ exp
           
           
 
-          00:44
+          00:48
         </span>
       </div>
     
@@ -1518,6 +1664,12 @@ exp
         <li><a href="#exp-6">exp</a></li>
       </ul>
     </li>
+    <li><a href="#8-asongn5">8. asong[N5]</a>
+      <ul>
+        <li><a href="#分析-7">分析</a></li>
+        <li><a href="#exp-7">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -1539,7 +1691,7 @@ exp
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">11</div>
+    <div class="sidebar-state-number">12</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>

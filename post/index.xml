@@ -6,8 +6,15 @@
     <description>Recent content on W31c0me t0 My610g</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 04 May 2025 18:15:53 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 14 May 2025 20:38:19 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Angr符号执行</title>
+      <link>https://cyzrjz.github.io/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/</link>
+      <pubDate>Wed, 14 May 2025 20:38:19 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/</guid>
+      <description>&lt;h2 id=&#34;基础知识点&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%e7%82%b9&#34;&gt;&lt;/a&gt;&#xA;基础知识点&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://docs.angr.io/en/latest/index.html&#34;&gt;angr-documentation&lt;/a&gt;&#xA;这个文档描述已经很详细，我只做后续常用的笔记&lt;/p&gt;&#xA;&lt;h3 id=&#34;angrproject&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#angrproject&#34;&gt;&lt;/a&gt;&#xA;angr.Project&#xA;&lt;/h3&gt;&lt;p&gt;初始化一个 Project，它是 angr 的核心对象，管理整个二进制分析流程&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;加载二进制文件&lt;/strong&gt;：解析 ELF（或 PE、Mach-O 等格式），建立基础结构。&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;反汇编（可选）&lt;/strong&gt;：构建控制流图（CFG）或加载符号表。&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;加载函数、段落、地址空间等&lt;/strong&gt;：为后续分析提供基础。&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;自动加载库（默认开启）&lt;/strong&gt;：比如 libc.so，除非你传了 auto_load_libs=False&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;factory&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#factory&#34;&gt;&lt;/a&gt;&#xA;.factory&#xA;&lt;/h3&gt;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;blank_state()&lt;/strong&gt;：创建一个空的状态，可以用来作为初始状态，没有前置执行（手动设置寄存器、内存）&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;state&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;project&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;factory&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;blank_state&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;addr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x400000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;创建一个空状态（不执行 main），可以手动设置寄存器、栈、内存。适合特定函数分析或构造特殊状态&lt;/p&gt;</description>
+    </item>
     <item>
       <title>链表</title>
       <link>https://cyzrjz.github.io/post/%E9%93%BE%E8%A1%A8/</link>
