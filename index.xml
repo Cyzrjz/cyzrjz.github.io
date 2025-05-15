@@ -6,8 +6,15 @@
     <description>Recent content on W31c0me t0 My610g</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 14 May 2025 20:38:19 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 15 May 2025 10:59:22 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C语言</title>
+      <link>https://cyzrjz.github.io/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/</link>
+      <pubDate>Thu, 15 May 2025 10:59:22 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%89%8d%e8%a8%80&#34;&gt;&lt;/a&gt;&#xA;前言&#xA;&lt;/h2&gt;&lt;p&gt;大多数情况下，开发者并不了解C语言，只是了解如何使用C语言编写程序，但是，了解C语言的底层原理，可以帮助我们更好地理解程序的运行机制，以及如何优化程序的性能&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Angr符号执行</title>
       <link>https://cyzrjz.github.io/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/</link>
