@@ -403,6 +403,8 @@
     <li><a href="#实战案例angr_ctf">实战案例(angr_ctf)</a>
       <ul>
         <li><a href="#1-00_angr_find">1. 00_angr_find</a></li>
+        <li><a href="#2-01_angr_avoid">2. 01_angr_avoid</a></li>
+        <li><a href="#3-02_angr_find_condition">3. 02_angr_find_condition</a></li>
       </ul>
     </li>
   </ul>
@@ -652,7 +654,85 @@ angr.Project
 </span></span><span class="line"><span class="cl"><span class="n">simulation</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">simgr</span><span class="p">(</span><span class="n">init_state</span><span class="p">)</span> <span class="c1">#创建模拟器 simgr是simulation_manager的缩写</span>
 </span></span><span class="line"><span class="cl"><span class="n">simulation</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">find</span><span class="o">=</span><span class="mh">0x80492E0</span><span class="p">)</span> <span class="c1">#explore()方法用于执行模拟器，直到找到目标地址或达到最大步数</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">posix</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-</span></span></code></pre></div>
+</span></span></code></pre></div><h3 id="2-01_angr_avoid">
+<a class="header-anchor" href="#2-01_angr_avoid"></a>
+2. 01_angr_avoid
+</h3><p>IDA无法反编译，直接查看字符串，找到<code>Good Job</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">maybe_good</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s1</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">should_succeed</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">strncmp</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="mi">8u</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Good Job.&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Try again.&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>成功需要两个条件，一个是<code>should_succeed</code>为真，另一个是<code>strncmp(s1, s2, 8u)</code>返回真</p>
+<p>先看看<code>should_succeed</code>是否被其他函数改变
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-1.png" alt="alt text">
+看到被<code>avoid_me</code>函数给设置为0了，再次查看<code>avoid_me</code>函数的交叉调用，发现在main函数里有大量调用</p>
+<p>这就是需要avoid的地址，为<code>0x8049233</code></p>
+<p>查看<code>Good Job</code>的调用</p>
+<p><img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-2.png" alt="alt text"></p>
+<p>查看<code>Try again</code>的调用
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-3.png" alt="alt text"></p>
+<p>有两个函数调用了<code>Try again</code>，其中一个是<code>complex_function</code>，在main函数里有一次调用，检查发现这个函数是必定执行的
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-4.png" alt="alt text">
+但是有判断跳转语句，只要避免进入<code>Try again</code>所在语句就行，也就是<code>0x80491E6</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">angr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">angr</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="s1">&#39;./01_angr_avoid&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">state</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">entry_state</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">simgr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">simgr</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">succ_addr</span> <span class="o">=</span> <span class="mh">0x804926B</span> 
+</span></span><span class="line"><span class="cl"><span class="n">avoid_addr</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0x80491E6</span><span class="p">,</span><span class="mh">0x804927A</span><span class="p">,</span><span class="mh">0x8049233</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">simgr</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">find</span><span class="o">=</span><span class="n">succ_addr</span><span class="p">,</span> <span class="n">avoid</span><span class="o">=</span><span class="n">avoid_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simgr</span><span class="o">.</span><span class="n">found</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Found path: &#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">simgr</span><span class="o">.</span><span class="n">found</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">posix</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No path found&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>代码理论是可行的，但是攻击用我自己的环境编译的程序无法打通，攻击angr_ctf给出的编译程序可以成功</p>
+<p>包括我用angr_ctf给出的题解代码修改地址后也无法攻击成功自己的程序，所以后续我会全部使用angr_ctf给出的编译好的程序</p>
+<h3 id="3-02_angr_find_condition">
+<a class="header-anchor" href="#3-02_angr_find_condition"></a>
+3. 02_angr_find_condition
+</h3><p>IDA打开，查找字符串找到<code>Good Job</code>，查看交叉引用，发现有大量的引用，随便进入一个F5查看</p>
+<p>发现只有如图短短几句
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-5.png" alt="alt text">
+解题像上一题一样就行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">angr</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">angr</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="s1">&#39;./02_angr_find_condition&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">state</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">entry_state</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">simgr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">simgr</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">succ_addr</span> <span class="o">=</span> <span class="mh">0x804BA96</span>
+</span></span><span class="line"><span class="cl"><span class="n">avoid_addr</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0x804BA81</span><span class="p">,</span><span class="mh">0x8048592</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">simgr</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">find</span><span class="o">=</span><span class="n">succ_addr</span><span class="p">,</span> <span class="n">avoid</span><span class="o">=</span><span class="n">avoid_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simgr</span><span class="o">.</span><span class="n">found</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">simgr</span><span class="o">.</span><span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">posix</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No path found&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>接下来调查一下为什么有无数的引用，却只有短短几行有用，动调开始</p>
+<p>首先为了过掉<code>complex_function</code>的判断，需要输入8个大写字母，所以可以尝试输入<code>ABCDEFGH</code>
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-6.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">0804869</span><span class="nf">C</span> <span class="nv">cmp</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_38</span><span class="p">],</span> <span class="mh">0DEADBEEFh</span> 
+</span></span><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">080486</span><span class="nf">A3</span> <span class="nv">jz</span>      <span class="nv">loc_804AC9C</span>            <span class="c1">;比较[ebp+var_38]是否等于0DEADBEEF</span>
+</span></span></code></pre></div><p>做逆向应该要知道<strong>cmp a,b的含义就是返回a - b</strong>，<code>jz</code>就是<strong>jmp if zero</strong>，也就是<strong>如果比较结果为0，则跳转</strong></p>
+<p>类推<code>jnz</code>和<code>jne</code>就是<strong>jmp if not zero</strong>和<strong>jmp if not equal</strong>，也就是<strong>如果比较结果不为0，则跳转</strong></p>
+<p>查看<code>[ebp+var_38]</code>的内容
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-7.png" alt="alt text">
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-8.png" alt="alt text"></p>
+<p>在main函数一开始就已经给<code>[ebp+var_38]</code>赋值了0DEADBEEF，所以这个条件一定会成立</p>
+<p>也就是<strong>jz语句必定执行</strong>，再往后调试会发现所有的cmp都是与0DEADBEEF比较</p>
+<p>也就是<strong>每逢jz语句可以视为jmp，每逢jnz语句直接无视</strong>，一步一步跟到最后
+<img src="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/img/image-9.png" alt="alt text">
+找到了真正有用的<code>Good Job</code>的引用</p>
+
       
     </div>
     <footer class="article-footer">
@@ -716,7 +796,7 @@ angr.Project
           
           
             <img
-              data-src="/images/my/11.png"
+              data-src="/images/my/16.jpg"
               data-sizes="auto"
               alt="链表"
               class="lazyload"
@@ -832,7 +912,7 @@ angr.Project
       <div>
         <span class="icon-brush"
           >&nbsp;
-            22.1k
+            23.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -840,7 +920,7 @@ angr.Project
           
           
 
-          00:48
+          00:50
         </span>
       </div>
     
@@ -895,6 +975,8 @@ angr.Project
     <li><a href="#实战案例angr_ctf">实战案例(angr_ctf)</a>
       <ul>
         <li><a href="#1-00_angr_find">1. 00_angr_find</a></li>
+        <li><a href="#2-01_angr_avoid">2. 01_angr_avoid</a></li>
+        <li><a href="#3-02_angr_find_condition">3. 02_angr_find_condition</a></li>
       </ul>
     </li>
   </ul>
