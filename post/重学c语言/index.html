@@ -579,8 +579,8 @@
 </span></span><span class="line"><span class="cl">    <span class="nf">func</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>关闭所有保护编译</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ gcc -fno-stack-protector -D_FORTIFY_SOURCE<span class="o">=</span><span class="m">0</span> -fno-pie -no-pie example1.c -o example1 -Wl,-z,norelro -z execstack
+</span></span></code></pre></div><p>关闭所有保护编译为32位程序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ gcc -m32 -fno-stack-protector -D_FORTIFY_SOURCE<span class="o">=</span><span class="m">0</span> -fno-pie -no-pie example1.c -o example1 -Wl,-z,norelro -z execstack
 </span></span><span class="line"><span class="cl">$ ./example1
 </span></span></code></pre></div><ul>
 <li><strong>会输出什么？</strong></li>
@@ -589,23 +589,23 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">0x8049176
 </span></span><span class="line"><span class="cl">Hello, world!
 </span></span><span class="line"><span class="cl"><span class="o">[</span>1<span class="o">]</span>    <span class="m">6676</span> segmentation fault <span class="o">(</span>core dumped<span class="o">)</span>  ./example1
-</span></span></code></pre></div><p>这个例子中，<code>printf_hello()</code>是一个函数，它的作用是打印<code>Hello, world!</code>到控制台，然后返回0。<code>func()</code>函数中有一个数组<code>a</code>，它的大小为5，并初始化为{1,2,3,4,5}。然后，<code>a[5]</code>的值被赋值为<code>printf_hello()</code></p>
+</span></span></code></pre></div><p>这个例子中，<code>printf_hello()</code>是一个函数，它的作用是打印<code>Hello, world!</code>到控制台，然后返回0。<code>func()</code>函数中有一个数组<code>a</code>，它的大小为5，并初始化为<code>{1,2,3,4,5}</code>。然后，<code>a[5]</code>的值被赋值为<code>printf_hello()</code></p>
 <ul>
 <li><strong>只是一个赋值操作，为什么会输出<code>Hello, world!</code>，而且是在func函数输出printf后才输出的?</strong></li>
 </ul>
 <p>我们试试调试程序，我使用GDB</p>
-<p>下断点main函数，单步执行到func函数</p>
+<p>下断点<code>main</code>函数，单步执行到<code>func</code>函数</p>
 <p><img src="/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/img/image-1.png" alt="alt text">
 看到关键位置</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x80491b8</span> <span class="o">&lt;</span><span class="nv">func</span><span class="o">+</span><span class="mi">41</span><span class="o">&gt;</span>    <span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span> <span class="nv">printf_hello</span>             <span class="nb">EAX</span> <span class="err">=</span><span class="o">&gt;</span> <span class="mh">0x8049176</span> <span class="p">(</span><span class="nv">printf_hello</span><span class="p">)</span> <span class="err">◂—</span> <span class="nv">push</span> <span class="nb">ebp</span>
 </span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x80491bd</span> <span class="o">&lt;</span><span class="nv">func</span><span class="o">+</span><span class="mi">46</span><span class="o">&gt;</span>    <span class="nv">mov</span>    <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span> <span class="o">+</span> <span class="mi">4</span><span class="p">],</span> <span class="nb">eax</span>      <span class="p">[</span><span class="mh">0xffffca3c</span><span class="p">]</span> <span class="o">&lt;</span><span class="err">=</span> <span class="mh">0x8049176</span> <span class="p">(</span><span class="nv">printf_hello</span><span class="p">)</span> <span class="err">◂—</span> <span class="nv">push</span> <span class="nb">ebp</span>
 </span></span><span class="line"><span class="cl"><span class="err">0</span><span class="nf">x80491c0</span> <span class="o">&lt;</span><span class="nv">func</span><span class="o">+</span><span class="mi">49</span><span class="o">&gt;</span>    <span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span> <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>      <span class="nb">EAX</span><span class="p">,</span> <span class="p">[</span><span class="mh">0xffffca3c</span><span class="p">]</span> <span class="err">=</span><span class="o">&gt;</span> <span class="mh">0x8049176</span> <span class="p">(</span><span class="nv">printf_hello</span><span class="p">)</span> <span class="err">◂—</span> <span class="nv">push</span> <span class="nb">ebp</span>
-</span></span></code></pre></div><p><code>eax</code>被赋值<code>printf_hello</code>的地址，然后将eax的地址赋值给<code>[ebp+4]</code>，画过堆栈图的都知道，<code>ebp</code>指向当前栈帧的栈底，存放<strong>上一个栈帧的栈底的地址</strong></p>
+</span></span></code></pre></div><p><code>eax</code>被赋值<code>printf_hello</code>的地址，然后将<code>eax</code>的地址赋值给<code>[ebp+4]</code>，画过堆栈图的都知道，<code>ebp</code>指向当前栈帧的栈底，存放<strong>上一个栈帧的栈底的地址</strong></p>
 <p><code>ebp+4</code>存放<strong>call函数调用的返回地址</strong>，比如</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">080491</span><span class="kd">DD</span>                 <span class="nv">call</span>    <span class="nv">func</span>
 </span></span><span class="line"><span class="cl"><span class="nl">.text:</span><span class="err">080491</span><span class="nf">E2</span>                 <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="mi">0</span>
-</span></span></code></pre></div><p>在函数调用的时候会将<code>0x80491E2</code>的地址入栈，也就是执行func函数时<code>ebp+4</code>的位置</p>
-<p>而call调用的函数在执行完成之后就会<code>ret</code>返回，<code>ret</code>操作相当于<code>pop eip</code>，也就是将<code>0x80491E2</code>传递给eip，然后程序就会执行call之后的语句，也就是<code>mov eax, 0</code></p>
+</span></span></code></pre></div><p>在函数调用的时候会将<code>0x80491E2</code>的地址入栈，也就是执行<code>func</code>函数时<code>ebp+4</code>的位置</p>
+<p>而<code>call</code>调用的函数在执行完成之后就会<code>ret</code>返回，<code>ret</code>操作相当于<code>pop eip</code>，也就是将<code>0x80491E2</code>传递给<code>eip</code>，然后程序就会执行call之后的语句，也就是<code>mov eax, 0</code></p>
 <p><img src="/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/img/image-1.png" alt="alt text"></p>
 <p>也就是原先执行完成<code>func</code>函数后应该返回到<code>main</code>函数的，然后结束程序，但由于<strong>返回地址被修改，所以执行了<code>printf_hello()</code>，打印出<code>Hello, world!</code></strong></p>
 <p><img src="/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/img/image.png" alt="alt text"></p>
@@ -666,7 +666,7 @@
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/1.jpg"
               data-sizes="auto"
               alt="Angr符号执行"
               class="lazyload"
@@ -785,7 +785,7 @@
       <div>
         <span class="icon-brush"
           >&nbsp;
-            23.9k
+            24.0k
           </span
         >
         &nbsp;|&nbsp;
