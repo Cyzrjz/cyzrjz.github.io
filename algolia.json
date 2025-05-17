@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1747360760",
+    "permalink": "/post/dll%E6%B3%A8%E5%85%A5%E5%AE%9E%E7%8E%B0%E5%8F%8D%E6%88%AA%E5%B1%8F/",
+    "title": "DLL注入实现反截屏",
+    
+    "content": " 思路 SetWindowDisplayAffinity函数，可以设定窗口的显示属性，只能用于调用进程拥有的窗口——否则调用会失败但不报告特定错误 将SetWindowDisplayAffinity封装为DLL 利用注入器将DLL注入目标进程实现反截屏 基础函数 DLL部分 SetWindowDisplayAffinity 语法 BOOL SetWindowDisplayAffinity( [in] HWND hWnd, [in] DWORD dwAffinity ); 参数 hWnd：顶级窗口的句柄。 窗口必须属于当前进程 dwAffinity：指定窗口内容的显示位置的显示相关性设置。 值 含义 WDA_NONE 对窗口的显示位置没有限制 WDA_MONITOR 窗口内容仅显示在监视器上。 在其他任何位置，窗口都会显示，其中不显示任何内容 WDA_EXCLUDEFROMCAPTURE 窗口仅显示在监视器上。 在其他任何位置，窗口根本不显示 返回值 如果函数成功，则返回TRUE;例如，在非顶级窗口上进行函数调用时，它将返回FALSE 。 要获得更多的错误信息，请调用 GetLastError\nDllMain 语法 BOOL WINAPI DllMain( _In_ HINSTANCE hinstDLL, _In_ DWORD fdwReason, _In_ LPVOID lpvReserved ); 参数\nhinstDLL: DLL 模块的句柄，值是 DLL 的基址，DLL 的 HINSTANCE 与 DLL 的 HMODULE 相同，因此可以在调用需要模块句柄的函数时使用 hinstDLL fdwReason: 指示调用 DLL 入口点函数的原因代码, 可能的值为： DLL_PROCESS_ATTACH：进程正在加载 DLL，使用这个 DLL_THREAD_ATTACH：线程正在附加到 DLL，每个新线程都触发，导致高频重复调用 DLL_THREAD_DETACH：线程正在分离 DLL DLL_PROCESS_DETACH：进程正在卸载 DLL lpvReserved: 如果DLL_PROCESS_ATTACH fdwReason，则 lpvReserved 对于动态加载为 NULL，对于静态加载为非 NULL，一般不关心这个 框架\nBOOL WINAPI …",
+    
+    "date": "2025-05-16 09:59:20",
+    "updated": "2025-05-16 09:59:20"
+  }
+  
+  , 
+  {
     "objectID": "1747277962",
     "permalink": "/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/",
     "title": "C语言",
@@ -151,7 +163,7 @@
     "permalink": "/post/c++%E8%BF%9B%E7%A8%8B%E9%81%8D%E5%8E%86/",
     "title": "C++进程遍历",
     
-    "content": " 遍历进程 获取系统快照 CreateToolhelp32Snapshot 函数原型 HANDLE WINAPI CreateToolhelp32Snapshot( DWORD dwFlags, DWORD th32ProcessID ); 参数 dwFlags 描述 TH32CS_INHERIT 进程的创建者可以访问进程的子进程 TH32CS_SNAPALL 在快照中包含系统中的所有进程和线程 TH32CS_SNAPHEAPLIST 在快照中包含在th32ProcessID中指定的进程的所有的堆 TH32CS_SNAPMODULE 在快照中包含在th32ProcessID中指定的进程的所有的模块 TH32CS_SNAPPROCESS 在快照中包含系统中所有的进程 TH32CS_SNAPTHREAD 在快照中包含系统中所有的线程 返回值 如果成功，则返回一个进程快照的句柄；如果失败，则返回INVALID_HANDLE_VALUE\n举例 int main() { HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0); //核心函数 if(hSnapshot == INVALID_HANDLE_VALUE) { _tprintf(_T(\u0026amp;#34;CreateToolhelp32Snapshot error: %u\\n\u0026amp;#34;), GetLastError()); /* _tprintf无法输出中文，需要使用 #include \u0026amp;lt;locale.h\u0026amp;gt; setlocale(LC_ALL, \u0026amp;#34;\u0026amp;#34;); //设置本地化 */ return 0; } } 遍历进程信息 在调用 CreateToolhelp32Snapshot 创建系统快照后，首先需要用 Process32First 函数获取快照中的第一个进程信息 然后用 Process32Next 函数依次获取快照中的下一个进程信息，直到没有更多的进程信息为止。\nProcess32First和Process32Next 函数原型 BOOL WINAPI Process32First( HANDLE hSnapshot, LPPROCESSENTRY32 lppe ); BOOL WINAPI Process32Next( …",
+    "content": " 遍历进程 1. 获取系统快照 CreateToolhelp32Snapshot 定义 HANDLE WINAPI CreateToolhelp32Snapshot( DWORD dwFlags, DWORD th32ProcessID ); 参数 dwFlags 描述 TH32CS_INHERIT 进程的创建者可以访问进程的子进程 TH32CS_SNAPALL 在快照中包含系统中的所有进程和线程 TH32CS_SNAPHEAPLIST 在快照中包含在th32ProcessID中指定的进程的所有的堆 TH32CS_SNAPMODULE 在快照中包含在th32ProcessID中指定的进程的所有的模块 TH32CS_SNAPPROCESS 在快照中包含系统中所有的进程 TH32CS_SNAPTHREAD 在快照中包含系统中所有的线程 返回值 如果成功，则返回一个进程快照的句柄；如果失败，则返回INVALID_HANDLE_VALUE 2. 遍历进程信息 在调用 CreateToolhelp32Snapshot 创建系统快照后，首先需要用 Process32First 函数获取快照中的第一个进程信息 然后用 Process32Next 函数依次获取快照中的下一个进程信息，直到没有更多的进程信息为止\nProcess32First和Process32Next 定义 BOOL WINAPI Process32First( HANDLE hSnapshot, LPPROCESSENTRY32 lppe ); BOOL WINAPI Process32Next( HANDLE hSnapshot, LPPROCESSENTRY32 lppe ); 参数\n参数 描述 hSnapshot 进程快照的句柄 lppe 指向PROCESSENTRY32结构的指针，用于接收进程信息 返回值 如果成功，则返回TRUE；如果失败，则返回FALSE\nPROCESSENTRY32结构 PROCESSENTRY32结构用于保存有关系统中单个进程的快照信息。它定义在头文件 \u0026amp;lt;tlhelp32.h\u0026amp;gt; 中，是使用 ToolHelp32 API（如 CreateToolhelp32Snapshot、Process32First、Process32Next 等）遍历系统进程时的重要数据结构。 …",
     
     "date": "2025-04-16 13:34:43",
     "updated": "2025-04-16 13:34:43"

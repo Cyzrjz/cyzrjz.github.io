@@ -394,8 +394,8 @@
   <ul>
     <li><a href="#遍历进程">遍历进程</a>
       <ul>
-        <li><a href="#获取系统快照">获取系统快照</a></li>
-        <li><a href="#遍历进程信息">遍历进程信息</a></li>
+        <li><a href="#1-获取系统快照">1. 获取系统快照</a></li>
+        <li><a href="#2-遍历进程信息">2. 遍历进程信息</a></li>
       </ul>
     </li>
     <li><a href="#遍历线程">遍历线程</a>
@@ -425,7 +425,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -435,7 +435,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">15</div>
+    <div class="sidebar-state-number">16</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -569,23 +569,21 @@
         <h2 id="遍历进程">
 <a class="header-anchor" href="#%e9%81%8d%e5%8e%86%e8%bf%9b%e7%a8%8b"></a>
 遍历进程
-</h2><h3 id="获取系统快照">
-<a class="header-anchor" href="#%e8%8e%b7%e5%8f%96%e7%b3%bb%e7%bb%9f%e5%bf%ab%e7%85%a7"></a>
-获取系统快照
-</h3><h4 id="createtoolhelp32snapshot">
-<a class="header-anchor" href="#createtoolhelp32snapshot"></a>
-CreateToolhelp32Snapshot
-</h4><h5 id="函数原型">
-<a class="header-anchor" href="#%e5%87%bd%e6%95%b0%e5%8e%9f%e5%9e%8b"></a>
-函数原型
-</h5><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">HANDLE</span> <span class="n">WINAPI</span> <span class="nf">CreateToolhelp32Snapshot</span><span class="p">(</span>
+</h2><h3 id="1-获取系统快照">
+<a class="header-anchor" href="#1-%e8%8e%b7%e5%8f%96%e7%b3%bb%e7%bb%9f%e5%bf%ab%e7%85%a7"></a>
+1. 获取系统快照
+</h3><ul>
+<li><strong>CreateToolhelp32Snapshot</strong></li>
+<li><strong>定义</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">HANDLE</span> <span class="n">WINAPI</span> <span class="nf">CreateToolhelp32Snapshot</span><span class="p">(</span>
 </span></span><span class="line"><span class="cl">    <span class="n">DWORD</span> <span class="n">dwFlags</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">    <span class="n">DWORD</span> <span class="n">th32ProcessID</span>
 </span></span><span class="line"><span class="cl"><span class="p">);</span>
-</span></span></code></pre></div><h5 id="参数">
-<a class="header-anchor" href="#%e5%8f%82%e6%95%b0"></a>
-参数
-</h5><table>
+</span></span></code></pre></div><ul>
+<li><strong>参数</strong></li>
+</ul>
+<table>
   <thead>
       <tr>
           <th style="text-align: left">dwFlags</th>
@@ -619,39 +617,20 @@ CreateToolhelp32Snapshot
       </tr>
   </tbody>
 </table>
-<h5 id="返回值">
-<a class="header-anchor" href="#%e8%bf%94%e5%9b%9e%e5%80%bc"></a>
-返回值
-</h5><p>如果成功，则返回一个进程快照的句柄；如果失败，则返回INVALID_HANDLE_VALUE</p>
-<h5 id="举例">
-<a class="header-anchor" href="#%e4%b8%be%e4%be%8b"></a>
-举例
-</h5><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">HANDLE</span> <span class="n">hSnapshot</span> <span class="o">=</span> <span class="n">CreateToolhelp32Snapshot</span><span class="p">(</span><span class="n">TH32CS_SNAPPROCESS</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>        <span class="c1">//核心函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">hSnapshot</span> <span class="o">==</span> <span class="n">INVALID_HANDLE_VALUE</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">_tprintf</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">&#34;CreateToolhelp32Snapshot error: %u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">),</span> <span class="n">GetLastError</span><span class="p">());</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">        _tprintf无法输出中文，需要使用
-</span></span></span><span class="line"><span class="cl"><span class="cm">        #include &lt;locale.h&gt;
-</span></span></span><span class="line"><span class="cl"><span class="cm">        setlocale(LC_ALL, &#34;&#34;); //设置本地化
-</span></span></span><span class="line"><span class="cl"><span class="cm">        */</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h3 id="遍历进程信息">
-<a class="header-anchor" href="#%e9%81%8d%e5%8e%86%e8%bf%9b%e7%a8%8b%e4%bf%a1%e6%81%af"></a>
-遍历进程信息
-</h3><p>在调用 CreateToolhelp32Snapshot 创建系统快照后，首先需要用 <strong>Process32First</strong> 函数获取快照中的第一个进程信息
-然后用 <strong>Process32Next</strong> 函数依次获取快照中的下一个进程信息，直到没有更多的进程信息为止。</p>
-<h4 id="process32first和process32next">
-<a class="header-anchor" href="#process32first%e5%92%8cprocess32next"></a>
-Process32First和Process32Next
-</h4><h5 id="函数原型-1">
-<a class="header-anchor" href="#%e5%87%bd%e6%95%b0%e5%8e%9f%e5%9e%8b-1"></a>
-函数原型
-</h5><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="n">WINAPI</span> <span class="nf">Process32First</span><span class="p">(</span>
+<ul>
+<li><strong>返回值</strong>
+如果成功，则返回一个进程快照的句柄；如果失败，则返回INVALID_HANDLE_VALUE</li>
+</ul>
+<h3 id="2-遍历进程信息">
+<a class="header-anchor" href="#2-%e9%81%8d%e5%8e%86%e8%bf%9b%e7%a8%8b%e4%bf%a1%e6%81%af"></a>
+2. 遍历进程信息
+</h3><p>在调用 <code>CreateToolhelp32Snapshot</code> 创建系统快照后，首先需要用 <code>Process32First</code> 函数获取快照中的第一个进程信息
+然后用 <code>Process32Next</code> 函数依次获取快照中的下一个进程信息，直到没有更多的进程信息为止</p>
+<ul>
+<li><strong>Process32First和Process32Next</strong></li>
+<li><strong>定义</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="n">WINAPI</span> <span class="nf">Process32First</span><span class="p">(</span>
 </span></span><span class="line"><span class="cl">    <span class="n">HANDLE</span> <span class="n">hSnapshot</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">    <span class="n">LPPROCESSENTRY32</span> <span class="n">lppe</span>
 </span></span><span class="line"><span class="cl"><span class="p">);</span>
@@ -660,10 +639,10 @@ Process32First和Process32Next
 </span></span><span class="line"><span class="cl">    <span class="n">HANDLE</span> <span class="n">hSnapshot</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">    <span class="n">LPPROCESSENTRY32</span> <span class="n">lppe</span>
 </span></span><span class="line"><span class="cl"><span class="p">);</span>
-</span></span></code></pre></div><h5 id="参数-1">
-<a class="header-anchor" href="#%e5%8f%82%e6%95%b0-1"></a>
-参数
-</h5><table>
+</span></span></code></pre></div><ul>
+<li>
+<p><strong>参数</strong></p>
+<table>
   <thead>
       <tr>
           <th style="text-align: left">参数</th>
@@ -681,15 +660,17 @@ Process32First和Process32Next
       </tr>
   </tbody>
 </table>
-<h5 id="返回值-1">
-<a class="header-anchor" href="#%e8%bf%94%e5%9b%9e%e5%80%bc-1"></a>
-返回值
-</h5><p>如果成功，则返回TRUE；如果失败，则返回FALSE</p>
-<h4 id="processentry32结构">
-<a class="header-anchor" href="#processentry32%e7%bb%93%e6%9e%84"></a>
-PROCESSENTRY32结构
-</h4><p>PROCESSENTRY32结构用于保存有关系统中单个进程的快照信息。它定义在头文件 &lt;tlhelp32.h&gt; 中，是使用 ToolHelp32 API（如 CreateToolhelp32Snapshot、Process32First、Process32Next 等）遍历系统进程时的重要数据结构。
+</li>
+<li>
+<p><strong>返回值</strong>
+如果成功，则返回TRUE；如果失败，则返回FALSE</p>
+</li>
+<li>
+<p><strong>PROCESSENTRY32结构</strong>
+PROCESSENTRY32结构用于保存有关系统中单个进程的快照信息。它定义在头文件 &lt;tlhelp32.h&gt; 中，是使用 ToolHelp32 API（如 CreateToolhelp32Snapshot、Process32First、Process32Next 等）遍历系统进程时的重要数据结构。
 PROCESSENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问这些成员。</p>
+</li>
+</ul>
 <ol>
 <li>dwSize
 描述：
@@ -742,33 +723,8 @@ PROCESSENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访�
 用途：
 常用于进程过滤与定位，比如通过比较 szExeFile 的值来确定是否找到了目标进程。</li>
 </ol>
-<h5 id="举例-1">
-<a class="header-anchor" href="#%e4%b8%be%e4%be%8b-1"></a>
-举例
-</h5><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">PROCESSENTRY32</span> <span class="n">pe32</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="n">pe32</span><span class="p">.</span><span class="n">dwSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">PROCESSENTRY32</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">pe32.dwSize = sizeof(PROCESSENTRY32);作用
-</span></span></span><span class="line"><span class="cl"><span class="cm">1. 告知 API 结构体的大小
-</span></span></span><span class="line"><span class="cl"><span class="cm">当你调用诸如 Process32First 或 Process32Next 等 API 时，系统需要知道提供给它的数据结构占用多少内存。将 dwSize 设置为 sizeof(PROCESSENTRY32)，相当于向这些函数说明“这里传入的数据结构大小是这么多”。这样有助于 API 正确解析并填充该结构体中的各个成员数据。
-</span></span></span><span class="line"><span class="cl"><span class="cm">2. 保证兼容性和正确性
-</span></span></span><span class="line"><span class="cl"><span class="cm">Windows API 可能会随着版本的升级而扩充或修改结构体的内容。通过检查 dwSize，API 能判断所传入的结构体与当前调用所期望的版本是否匹配，从而避免因结构体大小不符导致内存越界或者数据读取不完整的问题。
-</span></span></span><span class="line"><span class="cl"><span class="cm">3. 安全性
-</span></span></span><span class="line"><span class="cl"><span class="cm">正确设置 dwSize 可以防止函数试图写入超出数据结构实际分配的内存区域，从而减少由于内存写越界产生的程序崩溃或安全隐患。
-</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// 获取第一个进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">Process32First</span><span class="p">(</span><span class="n">hSnapshot</span><span class="p">,</span><span class="o">&amp;</span><span class="n">pe32</span><span class="p">)){</span>
-</span></span><span class="line"><span class="cl">    <span class="n">_tprintf</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">&#34;Process32First error: %u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">),</span> <span class="n">GetLastError</span><span class="p">());</span>
-</span></span><span class="line"><span class="cl">    <span class="n">CloseHandle</span><span class="p">(</span><span class="n">hSnapshot</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="c1">// 遍历所有进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">do</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">_tprintf</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">&#34;找到进程信息：%s, PID: %u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">),</span><span class="n">pe32</span><span class="p">.</span><span class="n">szExeFile</span><span class="p">,</span><span class="n">pe32</span><span class="p">.</span><span class="n">th32ProcessID</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">Process32Next</span><span class="p">(</span><span class="n">hSnapshot</span><span class="p">,</span><span class="o">&amp;</span><span class="n">pe32</span><span class="p">));</span>
-</span></span></code></pre></div><ul>
-<li>疑问
+<ul>
+<li><strong>疑问</strong>
 <ol>
 <li>为什么要用结构体而不是数组？
 <ol>
@@ -777,7 +733,14 @@ PROCESSENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访�
 </li>
 <li>pe32.dwSize = sizeof(PROCESSENTRY32); 为什么要设置这个值？
 <ol>
-<li>这个值是必须要设置的，因为结构体的大小是固定的，而 dwSize 成员变量记录了结构体的大小。</li>
+<li>在文档<a href="https://learn.microsoft.com/zh-cn/windows/win32/api/tlhelp32/ns-tlhelp32-processentry32">PROCESSENTRY32结构</a>指出
+<ol>
+<li>
+<blockquote>
+<p>在调用 Process32First 函数之前，请将此成员设置为 sizeof(PROCESSENTRY32)。 如果未初始化 dwSize， 则 Process32First 将失败。</p></blockquote>
+</li>
+</ol>
+</li>
 </ol>
 </li>
 </ol>
@@ -981,6 +944,9 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
   
   
 
+  
+  
+
 
 
 <footer id="footer">
@@ -1014,7 +980,7 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
       <div>
         <span class="icon-brush"
           >&nbsp;
-            24.0k
+            25.5k
           </span
         >
         &nbsp;|&nbsp;
@@ -1022,7 +988,7 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
           
           
 
-          00:52
+          00:56
         </span>
       </div>
     
@@ -1068,8 +1034,8 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
   <ul>
     <li><a href="#遍历进程">遍历进程</a>
       <ul>
-        <li><a href="#获取系统快照">获取系统快照</a></li>
-        <li><a href="#遍历进程信息">遍历进程信息</a></li>
+        <li><a href="#1-获取系统快照">1. 获取系统快照</a></li>
+        <li><a href="#2-遍历进程信息">2. 遍历进程信息</a></li>
       </ul>
     </li>
     <li><a href="#遍历线程">遍历线程</a>
@@ -1099,7 +1065,7 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -1109,7 +1075,7 @@ THREADENTRY32结构包含以下成员,可以使用<code>.成员名</code> 访问
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">15</div>
+    <div class="sidebar-state-number">16</div>
   </div>
 </div>
 <div class="sidebar-social">

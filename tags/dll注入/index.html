@@ -20,13 +20,15 @@
 
 
   
+    
+  
 
 <title>
-  Ret2libc(未完成) | Cyzrjz
+  DLL注入 | Cyzrjz
 </title>
 <meta
   name="description"
-  content="基础ROP"
+  content="静籁永恒"
 />
 
 
@@ -114,12 +116,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Ret2libc(未完成) | Cyzrjz" />
+  <meta property="og:title" content="DLL注入 | Cyzrjz" />
   <meta
     property="og:description"
-    content="基础ROP"
+    content="静籁永恒"
   />
-  <meta property="og:url" content="https://cyzrjz.github.io/post/ret2libc/" />
+  <meta property="og:url" content="https://cyzrjz.github.io/tags/dll%E6%B3%A8%E5%85%A5/" />
   <meta
     property="og:site_name"
     content="W31c0me t0 My610g"
@@ -129,10 +131,8 @@
     content="/"
   />
   <meta property="article:author" content="Cyzrjz" />
-  <meta property="article:published_time" content="2025-04-19T14:13:28&#43;08:00" />
-  <meta property="article:modified_time" content="2025-04-19T14:13:28&#43;08:00" />
-  
-    <meta property="article:tag" content="pwn基础理论" />
+  <meta property="article:published_time" content="2025-05-16T09:59:20&#43;08:00" />
+  <meta property="article:modified_time" content="2025-05-16T09:59:20&#43;08:00" />
   
   
   <meta name="twitter:card" content="summary" />
@@ -144,6 +144,7 @@
   
 
 
+<link rel="alternate" type="application/rss+xml" href="https://cyzrjz.github.io/tags/dll%E6%B3%A8%E5%85%A5/index.xml" title="W31c0me t0 My610g">
 
 
 <link rel="shortcut icon" href="/favicon.ico">
@@ -327,6 +328,7 @@
     <a id="main-nav-toggle" class="nav-icon"></a>
   </nav>
   <nav id="sub-nav">
+    <a id="nav-rss-link" class="nav-icon" href="/tags/dll%E6%B3%A8%E5%85%A5/index.xml" title="RSS 订阅" target="_blank"></a>
     
     
       <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
@@ -336,13 +338,11 @@
 <header id="header">
   
     
+      <picture>
+        
+      </picture>
       
-        <picture>
-          
-        </picture>
-        
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="Ret2libc(未完成)">
-        
+        <img  fetchpriority="high" src="/images/my/banner.png" alt="DLL注入">
       
     
   
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">Ret2libc(未完成)</h1>
+            <h1 data-aos="slide-up">标签</h1>
           </a>
         
       
@@ -365,7 +365,11 @@
       
         
         
+          
+        
         <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+            <a href="/" id="subtitle">DLL注入</a>
           
         </h2>
       
@@ -379,40 +383,13 @@
   
   
   
-  <div class="sidebar-wrapper wrap-sticky">
+  <div class="sidebar-wrapper ">
     <div
       class="sidebar-wrap"
       data-aos="fade-up"
     >
       
         
-          <div class="sidebar-toc-sidebar">
-            <div class="sidebar-toc">
-  <h3 class="toc-title">文章目录</h3>
-  <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#前置知识">前置知识</a>
-      <ul>
-        <li><a href="#re2syscall">re2syscall</a></li>
-        <li><a href="#got表和plt表">GOT表和PLT表</a></li>
-        <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
-        <li><a href="#动态链接过程">动态链接过程</a></li>
-        <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
-      </ul>
-    </li>
-    <li><a href="#举例">举例</a>
-      <ul>
-        <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-</div>
-          </div>
-          <div class="sidebar-common-sidebar hidden">
-            
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar.png"
@@ -511,285 +488,634 @@
   
 </div>
 
-          </div>
-        
       
 
-      
-        
-          <div class="sidebar-btn-wrapper" style="position:static">
-            <div class="sidebar-toc-btn current"></div>
-            <div class="sidebar-common-btn"></div>
-          </div>
-        
       
     </div>
   </div>
 
   <div class="sidebar-widget">
     
+      
+        
+
+      
+        
+  <div class="widget-wrapper">
+    <div
+      class="widget-wrap"
+      data-aos="fade-up"
+    >
+      <div style="display: flex; justify-content: space-between;">
+        <h3 class="widget-title">标签</h3>
+        
+          <a class="widget-link" href="/tags/">查看更多</a>
+        
+      </div>
+      <div class="widget">
+        <ul class="tag-list" itemprop="keywords">
+          
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/c/c&#43;&#43;/"
+                  aria-label="标签: C/C&#43;&#43;"
+                >
+                  C/C&#43;&#43;
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/c/c&#43;&#43;/"
+                  aria-label="标签: C/C&#43;&#43;"
+                >
+                  C/C&#43;&#43;
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/dll%E6%B3%A8%E5%85%A5/"
+                  aria-label="标签: DLL注入"
+                >
+                  DLL注入
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/pwn/"
+                  aria-label="标签: Pwn"
+                >
+                  Pwn
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/python/"
+                  aria-label="标签: Python"
+                >
+                  Python
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/reverse/"
+                  aria-label="标签: Reverse"
+                >
+                  Reverse
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/see/"
+                  aria-label="标签: SEE"
+                >
+                  SEE
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/windows/"
+                  aria-label="标签: Windows"
+                >
+                  Windows
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
+                  aria-label="标签: 基础理论"
+                >
+                  基础理论
+                </a>
+              </li>
+              
+            
+          
+            
+            <li class="tag-item">
+                <a
+                  class="tag-link"
+                  href="/tags/%E5%B7%A5%E5%85%B7/"
+                  aria-label="标签: 工具"
+                >
+                  工具
+                </a>
+              </li>
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+      
+        
+<div class="widget-wrapper">
+  <div
+    class="widget-wrap"
+    data-aos="fade-up"
+  >
+    <h3 class="widget-title">标签云</h3>
+    
+    <div class="widget tagcloud">
+      
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/c/c&#43;&#43;/"
+            aria-label="标签: C/C&#43;&#43;"
+            >C/C&#43;&#43;</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/c/c&#43;&#43;/"
+            aria-label="标签: C/C&#43;&#43;"
+            >C/C&#43;&#43;</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/dll%E6%B3%A8%E5%85%A5/"
+            aria-label="标签: DLL注入"
+            >DLL注入</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/pwn/"
+            aria-label="标签: Pwn"
+            >Pwn</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/python/"
+            aria-label="标签: Python"
+            >Python</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/reverse/"
+            aria-label="标签: Reverse"
+            >Reverse</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/see/"
+            aria-label="标签: SEE"
+            >SEE</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/windows/"
+            aria-label="标签: Windows"
+            >Windows</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
+            aria-label="标签: 基础理论"
+            >基础理论</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E5%B7%A5%E5%85%B7/"
+            aria-label="标签: 工具"
+            >工具</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E6%8C%87%E4%BB%A4%E9%9B%86/"
+            aria-label="标签: 指令集"
+            >指令集</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+            aria-label="标签: 数据结构"
+            >数据结构</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E7%BA%BF%E4%B8%8A%E8%B5%9B/"
+            aria-label="标签: 线上赛"
+            >线上赛</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E8%AE%AD%E7%BB%83/"
+            aria-label="标签: 训练"
+            >训练</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E9%80%86%E5%90%91/"
+            aria-label="标签: 逆向"
+            >逆向</a
+          >
+          
+        
+      
+        
+          
+          <a
+            style="font-size:10px"
+            href="/tags/%E9%93%BE%E8%A1%A8/"
+            aria-label="标签: 链表"
+            >链表</a
+          >
+          
+        
+      
+    </div>
+  </div>
+</div>
+
+      
+        
+  
+  <div class="widget-wrapper">
+    <div
+      class="widget-wrap"
+      data-aos="fade-up"
+    >
+      <h3 class="widget-title">最新文章</h3>
+      <div class="widget">
+        <ul>
+          
+            <li>
+              <a href="/post/dll%E6%B3%A8%E5%85%A5%E5%AE%9E%E7%8E%B0%E5%8F%8D%E6%88%AA%E5%B1%8F/">DLL注入实现反截屏</a>
+            </li>
+          
+            <li>
+              <a href="/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/">C语言</a>
+            </li>
+          
+            <li>
+              <a href="/post/angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C/">Angr符号执行</a>
+            </li>
+          
+            <li>
+              <a href="/post/%E9%93%BE%E8%A1%A8/">链表</a>
+            </li>
+          
+            <li>
+              <a href="/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/">SSE指令集学习</a>
+            </li>
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+      
+    
   </div>
   
 </aside>
 
           <section id="main">
-  <article
-  class="h-entry article"
-  itemprop="blogPost"
-  itemscope
-  itemtype="https://schema.org/BlogPosting"
->
   <div
-    class="article-inner"
+    class="archives-outer-wrap"
     data-aos="fade-up"
   >
-    <div class="article-meta">
-      <div class="article-date">
-  <span
-    class="article-date-link"
-    data-aos="zoom-in"
-  >
-    <time datetime="2025-04-19 14:13:28 &#43;0800 &#43;0800" itemprop="datePublished"
-      >2025-04-19</time
-    >
-    <time style="display: none;" id="post-update-time"
-      >2025-04-19</time
-    >
-  </span>
-</div>
-
-      <div class="article-category">
-  
-</div>
-
-    </div>
-    <div class="hr-line"></div>
     
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-      
-        <h2 id="前置知识">
-<a class="header-anchor" href="#%e5%89%8d%e7%bd%ae%e7%9f%a5%e8%af%86"></a>
-前置知识
-</h2><h3 id="re2syscall">
-<a class="header-anchor" href="#re2syscall"></a>
-re2syscall
-</h3><h3 id="got表和plt表">
-<a class="header-anchor" href="#got%e8%a1%a8%e5%92%8cplt%e8%a1%a8"></a>
-GOT表和PLT表
-</h3><ul>
-<li>GOT: Global Offset Table, 全局偏移表，包含所有需要动态链接的外部函数的地址(在第一次执行后)</li>
-<li>PLT: Procedure Link Table, 过程链接表，包含调用外部函数的跳转指令(跳转到GOT表中)，以及初始化外部调用指令(用于链接器动态绑定dl_runtime_resolve)</li>
-</ul>
-<h3 id="延迟绑定机制">
-<a class="header-anchor" href="#%e5%bb%b6%e8%bf%9f%e7%bb%91%e5%ae%9a%e6%9c%ba%e5%88%b6"></a>
-延迟绑定机制
-</h3><p>在 Linux 下，动态链接采用“懒绑定”（lazy binding）策略：<strong>编译器将对外部函数（如 foo）的调用编译进 PLT（Procedure Linkage Table） 中的伪代码，而函数真正的地址保存在 GOT（Global Offset Table） 中。首次调用时，通过 PLT0 跳入动态链接器执行符号解析（即 _dl_runtime_resolve），并将解析结果回写到 GOT 条目；后续调用则直接通过 GOT 跳转到实际函数地址，省去额外解析开销。</strong></p>
-<h3 id="动态链接过程">
-<a class="header-anchor" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5%e8%bf%87%e7%a8%8b"></a>
-动态链接过程
-</h3><p><img src="/post/ret2libc/img/image-7.png" alt="alt text">
-<img src="/post/ret2libc/img/image-6.png" alt="alt text">
-以调用system为例</p>
-<ul>
-<li><strong>首次调用</strong></li>
-</ul>
-<pre class="mermaid">flowchart LR
-    A["call system"] --> B["system@plt"]
-    B --> C["system@got"]
-    C --> D["glibc中的system函数地址"]
-    D -->|"存储地址"| C
-    D --> E["调用system"]
-</pre>
-<ul>
-<li><strong>后续调用</strong></li>
-</ul>
-<pre class="mermaid">flowchart LR
-    A["call system"] --> B["system@plt"]
-    B --> C["system@got"] --> D["调用system"]
-</pre>
-<p>由于<code>.got</code>中已经有了<code>system</code>的地址，所以后续调用时直接从<code>.got</code>中取地址即可，而不需要再去<code>.got.plt</code>中寻找。</p>
-<h3 id="漏洞利用原理">
-<a class="header-anchor" href="#%e6%bc%8f%e6%b4%9e%e5%88%a9%e7%94%a8%e5%8e%9f%e7%90%86"></a>
-漏洞利用原理
-</h3><p>通过栈溢出返回system函数的<strong>真实地址</strong>，执行<code>/bin/sh</code>命令获取shell
-现在面临两个问题</p>
-<ol>
-<li>如何获取system函数的真实地址？</li>
-<li><code>/bin/sh</code>命令的地址如何获取？</li>
-</ol>
-<ul>
-<li><strong>system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的</strong></li>
-<li><strong>即使程序有 ASLR 保护，也只是针对于地址中间位进行随机，最低的 12 位并不会发生改变</strong></li>
-<li><strong>函数的真实地址 = 函数的偏移 + libc.so中的基址</strong></li>
-</ul>
-<p>可以划分为以下步骤:</p>
-<ol>
-<li>填充无用数据覆盖缓冲区</li>
-<li>调用puts等函数,<strong>泄露已执行函数的真实地址</strong></li>
-<li>通过<strong>真实地址低12位确定libc版本</strong></li>
-<li>查表得到<strong>已执行函数对于libc的偏移</strong></li>
-<li>通过<strong>基址 = 函数的真实地址 - 函数的偏移得到libc的基址</strong></li>
-<li>查表计算所需<strong>函数的真实地址 = 函数的偏移 + libc的基址</strong></li>
-</ol>
-<h2 id="举例">
-<a class="header-anchor" href="#%e4%b8%be%e4%be%8b"></a>
-举例
-</h2><h3 id="ctf-wiki-ret2libc3">
-<a class="header-anchor" href="#ctf-wiki-ret2libc3"></a>
-CTF-Wiki ret2libc3
-</h3><p><a href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2libc/ret2libc3/ret2libc3">ret2libc3</a></p>
-<p>ida打开可以看到没有system和<code>/bin/sh</code>给我们利用
-<img src="/post/ret2libc/img/image.png" alt="alt text">
-<img src="/post/ret2libc/img/image-1.png" alt="alt text">
-gdb调试，输入长字符串，查看栈布局
-<img src="/post/ret2libc/img/image-2.png" alt="alt text">
-可以看到字符串开始写入的地址是
-0xffffca7c
-ebp的地址是
-0xffffcae8
-所以要先构造无用数据<code>b'a'*(0xffffcae8-0xffffca7c+4)</code>
-为了实现第二步:调用puts等函数,<strong>泄露已执行函数的真实地址</strong>
-需要先找到put函数的plt地址，可以在ida中直接看，也可以在gdb中输入plt查看
-<img src="/post/ret2libc/img/image-4.png" alt="alt text">
-得到put的plt地址为0x8048460，接下来应该回顾之前学过的堆栈空间的知识</p>
-<blockquote>
-<p>在调用一个call时，当进入call内，堆栈空间会自动压入call的返回地址，也就是call的下一行命令的地址
-所以在调用puts函数时，堆栈空间会自动压入返回地址，也就是puts函数的下一行命令的地址
-为了更方便调试，可以直接把start函数地址压进去，等执行完puts函数后，再把start函数地址pop到eip出来，继续执行程序
-接着就是对puts函数传递要输出的参数，也就是用来确定libc版本的函数(真实地址,也就是got表已经存储的地址)，任意一个或几个都行，越多越精准</p></blockquote>
-<p>要找到got表已经存储的地址,可以在gdb中输入got查看
-<img src="/post/ret2libc/img/image-5.png" alt="alt text">
-可得got_start的地址为0x804a024</p>
-<p>在ida中找到start的地址0x080484D0</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">put_plt</span> <span class="o">=</span> <span class="mh">0x08048460</span>
-</span></span><span class="line"><span class="cl"><span class="n">start_addr</span> <span class="o">=</span> <span class="mh">0x080484D0</span>
-</span></span><span class="line"><span class="cl"><span class="n">got_start</span> <span class="o">=</span> <span class="mh">0x804a024</span>
-</span></span><span class="line"><span class="cl"><span class="n">payload1</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="p">(</span><span class="mh">0xffffcae8</span><span class="o">-</span><span class="mh">0xffffca7c</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">put_plt</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">start_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">got_start</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">libc_start_addr</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">sh</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl"><span class="n">success</span><span class="p">(</span><span class="s2">&#34;__libc_start_main is:&#34;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">libc_start_addr</span><span class="p">))</span>
-</span></span></code></pre></div><ul>
-<li><strong>流程图</strong>
-<img src="/post/ret2libc/img/image-3.png" alt="alt text"></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-      <ul class="article-tag-list" itemprop="keywords">
+      <div class="tag-wrap">
   
-    <li class="article-tag-list-item" data-aos="zoom-in">
-      <a
-        class="article-tag-list-link"
-        href="/tags/pwn"
-        rel="tag"
-        >PWN</a
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/c/c&#43;&#43;/"
+        >C/C&#43;&#43;</a
       >
-    </li>
+    </div>
   
-    <li class="article-tag-list-item" data-aos="zoom-in">
-      <a
-        class="article-tag-list-link"
-        href="/tags/%e5%9f%ba%e7%a1%80%e7%90%86%e8%ae%ba"
-        rel="tag"
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/c/c&#43;&#43;/"
+        >C/C&#43;&#43;</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/dll%E6%B3%A8%E5%85%A5/"
+        >DLL注入</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/pwn/"
+        >Pwn</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/python/"
+        >Python</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/reverse/"
+        >Reverse</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/see/"
+        >SEE</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/windows/"
+        >Windows</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/"
         >基础理论</a
       >
-    </li>
+    </div>
   
-</ul>
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/"
+        >工具</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E6%8C%87%E4%BB%A4%E9%9B%86/"
+        >指令集</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+        >数据结构</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E7%BA%BF%E4%B8%8A%E8%B5%9B/"
+        >线上赛</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E8%AE%AD%E7%BB%83/"
+        >训练</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E9%80%86%E5%90%91/"
+        >逆向</a
+      >
+    </div>
+  
+    <div
+      class="archives-tag-list-item"
+      data-aos="zoom-in"
+    >
+      <a class="archives-tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/"
+        >链表</a
+      >
+    </div>
+  
+</div>
+<div class="category-wrap">
+  
+</div>
+    
+    
 
-    </footer>
+
+
+  <section class="archives-wrap" data-aos="fade-up">
+    <div class="archive-year-wrap">
+      <a href="" class="archive-year">2025</a>
+    </div>
+    <ul>
+      
+        <li class="archive-article">
+          <div class="archive-article-date-wrap">
+            <span>
+              <time
+                class="dt-published"
+                datetime="2025-05-16 09:59:20 &#43;0800 &#43;0800"
+                itemprop="datePublished"
+                >2025-05</time
+              >
+            </span>
+          </div>
+          
+            <a class="archive-article-title" href="/post/dll%E6%B3%A8%E5%85%A5%E5%AE%9E%E7%8E%B0%E5%8F%8D%E6%88%AA%E5%B1%8F/"
+              >DLL注入实现反截屏</a
+            >
+          
+        </li>
+      
+    </ul>
+  </section>
+
+
   </div>
   
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+<nav id="page-nav" data-aos="fade-up">
+  
+  
     
-  <nav
-    id="article-nav"
-    data-aos="fade-up"
-  >
+      
+        <span class="page-number current">1</span>
+      
     
-      <div class="article-nav-link-wrap article-nav-link-left">
-        
-          
-          
-            <img
-              data-src="/images/my/11.png"
-              data-sizes="auto"
-              alt="Z3约束求解"
-              class="lazyload"
-            />
-          
-        
-        <a href="/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/"></a>
-        <div class="article-nav-caption">前一篇</div>
-        <h3 class="article-nav-title">
-          
-            Z3约束求解
-          
-        </h3>
-      </div>
-    
-
-    
-      <div class="article-nav-link-wrap article-nav-link-right">
-        
-          
-          
-            <img
-              data-src="/images/my/10.jpg"
-              data-sizes="auto"
-              alt="Ret2syscall"
-              class="lazyload"
-            />
-          
-        
-        <a href="/post/ret2syscall/"></a>
-        <div class="article-nav-caption">后一篇</div>
-        <h3 class="article-nav-title">
-          
-            Ret2syscall
-          
-        </h3>
-      </div>
-    
-  </nav>
-
-
   
-</article>
-
-
-
-
-
-
   
-
-  
-
-  
-
-  
-
-  
-
-
+</nav>
 
 </section>
         </div>
@@ -918,33 +1244,6 @@ ebp的地址是
   <div class="sidebar-wrap">
     
       
-        <div class="sidebar-toc-sidebar">
-          <div class="sidebar-toc">
-  <h3 class="toc-title">文章目录</h3>
-  <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#前置知识">前置知识</a>
-      <ul>
-        <li><a href="#re2syscall">re2syscall</a></li>
-        <li><a href="#got表和plt表">GOT表和PLT表</a></li>
-        <li><a href="#延迟绑定机制">延迟绑定机制</a></li>
-        <li><a href="#动态链接过程">动态链接过程</a></li>
-        <li><a href="#漏洞利用原理">漏洞利用原理</a></li>
-      </ul>
-    </li>
-    <li><a href="#举例">举例</a>
-      <ul>
-        <li><a href="#ctf-wiki-ret2libc3">CTF-Wiki ret2libc3</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-</div>
-        </div>
-        <div class="sidebar-common-sidebar hidden">
-          
 <div class="sidebar-author">
   <img
     data-src="/avatar/avatar.png"
@@ -1043,17 +1342,8 @@ ebp的地址是
   
 </div>
 
-        </div>
-      
     
   </div>
-  
-    
-      <div class="sidebar-btn-wrapper">
-        <div class="sidebar-toc-btn current"></div>
-        <div class="sidebar-common-btn"></div>
-      </div>
-    
   
 </nav>
 
@@ -1332,133 +1622,13 @@ ebp的地址是
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Ret2libc(未完成)",
-          url: "https:\/\/cyzrjz.github.io\/post\/ret2libc\/",
-          description: "基础ROP",
+          title: "DLL注入",
+          url: "https:\/\/cyzrjz.github.io\/tags\/dll%E6%B3%A8%E5%85%A5\/",
+          description: "",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>
     
-    
-      
-
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-  <script
-    src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js"
-    
-    
-    data-pjax
-    
-    integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD/kZRD47aJ" crossorigin="anonymous"
-  ></script>
-
-
-      
-
-  
-  
-    
-  
-  
-  
-  
-  
-  
-  
-  <script
-    src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js"
-    
-    
-    data-pjax
-    
-    integrity="sha384-eEu5CTj3qGvu9PdJuS&#43;YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"
-  ></script>
-
-
-      <script data-pjax>
-        if (window.mermaid) {
-          
-          const elementCode = ".mermaid";
-          const saveOriginalData = () => {
-            return new Promise((resolve, reject) => {
-              try {
-                var els = _$$(elementCode),
-                  count = els.length;
-                els.forEach((element) => {
-                  if (element.getAttribute("data-original-code") == null) {
-                    element.setAttribute(
-                      "data-original-code",
-                      element.innerHTML,
-                    );
-                  }
-                  count--;
-                  if (count == 0) {
-                    resolve();
-                  }
-                });
-              } catch (error) {
-                reject(error);
-              }
-            });
-          };
-          const resetProcessed = () => {
-            return new Promise((resolve, reject) => {
-              try {
-                var els = _$$(elementCode),
-                  count = els.length;
-                els.forEach((element) => {
-                  if (element.getAttribute("data-original-code") != null) {
-                    element.removeAttribute("data-processed");
-                    element.innerHTML = DOMPurify.sanitize(element.getAttribute("data-original-code"));
-                  }
-                  count--;
-                  if (count == 0) {
-                    resolve();
-                  }
-                });
-              } catch (error) {
-                reject(error);
-              }
-            });
-          };
-          const loadMermaid = (theme) => {
-            window.mermaid.initialize({ theme });
-            window.mermaid.init({ theme }, _$$(elementCode));
-          };
-          document.body.addEventListener("dark-theme-set", () => {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("dark"))
-              .catch(console.error);
-          });
-          document.body.addEventListener("light-theme-set", () => {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("default"))
-              .catch(console.error);
-          });
-          if (localStorage.getItem("dark_mode") == "true") {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("dark"))
-              .catch(console.error);
-          } else {
-            saveOriginalData()
-              .then(resetProcessed())
-              .then(loadMermaid("default"))
-              .catch(console.error);
-          }
-        }
-      </script>
     
     
       
