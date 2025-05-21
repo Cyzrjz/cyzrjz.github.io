@@ -6,8 +6,15 @@
     <description>Recent content in C/C&#43;&#43; on W31c0me t0 My610g</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 16 May 2025 09:59:20 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 21 May 2025 15:15:46 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/tags/c/c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>滴水逆向三期留档</title>
+      <link>https://cyzrjz.github.io/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/</link>
+      <pubDate>Wed, 21 May 2025 15:15:46 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://cyzrjz.github.io/data/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E8%AF%BE%E4%BB%B6.zip&#34;&gt;滴水逆向三期课件&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
     <item>
       <title>DLL注入实现反截屏</title>
       <link>https://cyzrjz.github.io/post/dll%E6%B3%A8%E5%85%A5%E5%AE%9E%E7%8E%B0%E5%8F%8D%E6%88%AA%E5%B1%8F/</link>

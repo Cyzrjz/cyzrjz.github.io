@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1747811746",
+    "permalink": "/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/",
+    "title": "滴水逆向三期留档",
+    
+    "content": "滴水逆向三期课件\n",
+    
+    "date": "2025-05-21 15:15:46",
+    "updated": "2025-05-21 15:15:46"
+  }
+  
+  , 
+  {
     "objectID": "1747360760",
     "permalink": "/post/dll%E6%B3%A8%E5%85%A5%E5%AE%9E%E7%8E%B0%E5%8F%8D%E6%88%AA%E5%B1%8F/",
     "title": "DLL注入实现反截屏",
@@ -16,7 +28,7 @@
   , 
   {
     "objectID": "1747277962",
-    "permalink": "/post/%E9%87%8D%E5%AD%A6c%E8%AF%AD%E8%A8%80/",
+    "permalink": "/post/c%E8%AF%AD%E8%A8%80/",
     "title": "C语言",
     
     "content": " 前言 大多数情况下，开发者并不了解C语言，只是了解如何使用C语言编写程序，但是，了解C语言的底层原理，可以帮助我们更好地理解程序的运行机制，以及如何优化程序的性能\n而逆向的学习是离不开C语言的底层的，所以，本文将从逆向角度学习C语言，希望能更好地理解C语言的底层原理，以及如何优化程序的性能\n需要注意的是，这篇文章不会更新太多，因为个人能力有限，如果有自己都无法解释的地方是不会写上来的\n正文 先来看一个例子\n#include \u0026lt;stdio.h\u0026gt; void printf_hello(){ printf(\u0026#34;Hello, world!\\n\u0026#34;); } void func(){ int a[5] = {1,2,3,4,5}; a[8] = (int)printf_hello; printf(\u0026#34;0x%x\\n\u0026#34;,a[8]); } int main(){ func(); return 0; } 关闭所有保护编译为32位程序\n$ gcc -m32 -fno-stack-protector -D_FORTIFY_SOURCE=0 -fno-pie -no-pie example1.c -o example1 -Wl,-z,norelro -z execstack $ ./example1 会输出什么？ 答案是：会输出\n0x8049176 Hello, world! [1] 6676 segmentation fault (core dumped) ./example1 这个例子中，printf_hello()是一个函数，它的作用是打印Hello, world!到控制台，然后返回0。func()函数中有一个数组a，它的大小为5，并初始化为{1,2,3,4,5}。然后，a[5]的值被赋值为printf_hello()\n只是一个赋值操作，为什么会输出Hello, world!，而且是在func函数输出printf后才输出的? 我们试试调试程序，我使用GDB\n下断点main函数，单步执行到func函数\n看到关键位置\n0x80491b8 \u0026lt;func+41\u0026gt; mov eax, printf_hello EAX =\u0026gt; 0x8049176 (printf_hello) ◂— push ebp 0x80491bd \u0026lt;func+46\u0026gt; mov dword ptr [ebp + 4], eax [0xffffca3c] \u0026lt;= 0x8049176 (printf_hello) ◂— push ebp 0x80491c0 \u0026lt;func+49\u0026gt; mov eax, dword ptr [ebp + 4] EAX, [0xffffca3c] =\u0026gt; 0x8049176 (printf_hello) ◂— push ebp eax被赋值printf_hello的地址，然后将eax的地址赋值给[ebp+4]，画过堆栈图的都知道，ebp指向当前栈帧的栈底，存放上一个栈帧的栈底的地址\nebp+4存放call函数调用的返回地址，比如\n.text:080491DD call func .text:080491E2 mov eax, 0 在函数调用的时候会将0x80491E2的地址入栈，也就是执行func函数时ebp+4的位置\n而call调用的函数在执行完成之后就会ret返回，ret操作相当于pop eip，也就是将0x80491E2传递给eip，然后程序就会执行call之后的语句，也就是mov eax, 0\n也就是原先执行完成func函数后应该返回到main函数的，然后结束程序，但由于返回地址被修改，所以执行了printf_hello()，打印出Hello, world!\n这就是一个典型的基于栈溢出的程序执行\n",
