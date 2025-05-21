@@ -5,9 +5,9 @@
   {
     "objectID": "1747811746",
     "permalink": "/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/",
-    "title": "滴水逆向三期留档",
+    "title": "滴水逆向三期",
     
-    "content": "滴水逆向三期课件\n",
+    "content": " 0x00 前言 滴水三期课程 滴水逆向三期课件\n0x01 汇编 均使用c语言的内联汇编实现，解法不唯一\nfor void __declspec(naked) mywhile() { __asm { push ebp mov ebp, esp sub esp, 4 push ebx push esi push edi mov dword ptr[ebp - 4], 0 xor eax, eax loop_start: cmp dword ptr[ebp - 4], 7 //\u0026lt;=7 jge loop_end //功能区 add eax,dword ptr[ebp - 4] //sum += i add dword ptr[ebp - 4], 1 //i++ jmp loop_start loop_end: pop edi pop esi pop ebx mov esp,ebp pop ebp ret } } while int __declspec(naked) myfor() { __asm { //保留调用前栈底 push ebp //提升堆栈 mov ebp, esp sub esp, 4 //保留现场 push ebx push esi push edi push ecx //核心功能 mov eax,0 mov dword ptr [ebp - 0x4],0 start_loop: cmp dword ptr [ebp - 0x4],5 jge end_loop // 功能区 add eax, dword ptr[ebp - 0x4] //sum += i add dword ptr[ebp - 0x4],1 //i++ jmp start_loop end_loop: //恢复现场 pop ecx pop edi pop esi pop ebx //恢复堆栈 mov esp, ebp pop ebp ret } } ",
     
     "date": "2025-05-21 15:15:46",
     "updated": "2025-05-21 15:15:46"
@@ -103,7 +103,7 @@
     "permalink": "/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/",
     "title": "攻防世界 Reverse",
     
-    "content": " 1. echo-server[N3] echo-server\n分析 本题主要考察花指令分析 执行程序，发现没有环境，使用下面的指令安装环境\nyay -S lib32-openssl-1.0 IDA查看 查看反汇编 将爆红的call转为数据，可以看到有db 0E8h，是常见的花指令，用NOP填充后重新用IDA打开，后续大多是这样操作 选中第一段按下P，注意不要选到nop了 可以成功反编译了，但是还有一处异常 查看反汇编窗口，这里应该是一个判断，不应该跳转到自己的开头，然后判断失败后直接执行exit，\n结合上一段汇编代码，这里应该是上一段的接续，直接nop掉不应该存在的跳转指令 nop掉后，逻辑就清晰了，再次F5反汇编 如图，反汇编正常了 接下来分析程序逻辑，开始动调，输入F1@gA，查看汇编代码 这里应该跳转的，但是没跳转，直接执行exit，试试直接修改为jmp\n输出F8C60EB40BF66919A77C4BD88D45DEF4 提交，发现这就是flag\nexp F8C60EB40BF66919A77C4BD88D45DEF4 2. catch-me[N3] catch-me\n分析 拖入IDA，查看反汇编\n从byte_6012A8到dword_6012AC占用连续的空间，猜测是同一个数组\n动调得到v3的值为0xB11924E1 得到 getenv(\u0026amp;quot;CTF\u0026amp;quot;) = v3 ^ 0xFEEBFEEB 猜测 getenv(\u0026amp;quot;ASIS\u0026amp;quot;) == getenv(\u0026amp;quot;CTF\u0026amp;quot;)\n中间一大堆的SSE指令没对haystack做修改，先跳过，想了解可以看\nSSE指令集学习\n解法1 程序通过getenv函数获取环境变量的值，那么直接往环境变量里写入正确的值就行了\n可以通过export设置临时环境变量，终端关闭后自动清除\n(通过printf可以导入十六进制整数类型，值得积累) export ASIS=\u0026amp;#34;$(printf \u0026amp;#34;\\x0a\\xda\\xf2\\x4f\u0026amp;#34;)\u0026amp;#34; #注意参数是从低位到高位的 export CTF=\u0026amp;#34;$(printf \u0026amp;#34;\\x0a\\xda\\xf2\\x4f\u0026amp;#34;)\u0026amp;#34; 解法2 纯逆向，下面贴出exp\nexp key1 = 0xFEEBFEEB key2 = …",
+    "content": " 0x01 echo-server[N3] echo-server\n分析 本题主要考察花指令分析 执行程序，发现没有环境，使用下面的指令安装环境\nyay -S lib32-openssl-1.0 IDA查看 查看反汇编 将爆红的call转为数据，可以看到有db 0E8h，是常见的花指令，用NOP填充后重新用IDA打开，后续大多是这样操作 选中第一段按下P，注意不要选到nop了 可以成功反编译了，但是还有一处异常 查看反汇编窗口，这里应该是一个判断，不应该跳转到自己的开头，然后判断失败后直接执行exit，\n结合上一段汇编代码，这里应该是上一段的接续，直接nop掉不应该存在的跳转指令 nop掉后，逻辑就清晰了，再次F5反汇编 如图，反汇编正常了 接下来分析程序逻辑，开始动调，输入F1@gA，查看汇编代码 这里应该跳转的，但是没跳转，直接执行exit，试试直接修改为jmp\n输出F8C60EB40BF66919A77C4BD88D45DEF4 提交，发现这就是flag\nexp F8C60EB40BF66919A77C4BD88D45DEF4 0x02 catch-me[N3] catch-me\n分析 拖入IDA，查看反汇编\n从byte_6012A8到dword_6012AC占用连续的空间，猜测是同一个数组\n动调得到v3的值为0xB11924E1 得到 getenv(\u0026amp;quot;CTF\u0026amp;quot;) = v3 ^ 0xFEEBFEEB 猜测 getenv(\u0026amp;quot;ASIS\u0026amp;quot;) == getenv(\u0026amp;quot;CTF\u0026amp;quot;)\n中间一大堆的SSE指令没对haystack做修改，先跳过，想了解可以看\nSSE指令集学习\n解法1 程序通过getenv函数获取环境变量的值，那么直接往环境变量里写入正确的值就行了\n可以通过export设置临时环境变量，终端关闭后自动清除\n(通过printf可以导入十六进制整数类型，值得积累) export ASIS=\u0026amp;#34;$(printf \u0026amp;#34;\\x0a\\xda\\xf2\\x4f\u0026amp;#34;)\u0026amp;#34; #注意参数是从低位到高位的 export CTF=\u0026amp;#34;$(printf \u0026amp;#34;\\x0a\\xda\\xf2\\x4f\u0026amp;#34;)\u0026amp;#34; 解法2 纯逆向，下面贴出exp\nexp key1 = 0xFEEBFEEB key2 = …",
     
     "date": "2025-04-25 20:36:13",
     "updated": "2025-04-25 20:36:13"

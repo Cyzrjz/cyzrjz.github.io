@@ -22,11 +22,11 @@
   
 
 <title>
-  滴水逆向三期留档 | Cyzrjz
+  滴水逆向三期 | Cyzrjz
 </title>
 <meta
   name="description"
-  content="滴水逆向三期"
+  content="滴水逆向三期课程与课件"
 />
 
 
@@ -114,10 +114,10 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="滴水逆向三期留档 | Cyzrjz" />
+  <meta property="og:title" content="滴水逆向三期 | Cyzrjz" />
   <meta
     property="og:description"
-    content="滴水逆向三期"
+    content="滴水逆向三期课程与课件"
   />
   <meta property="og:url" content="https://cyzrjz.github.io/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/" />
   <meta
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="滴水逆向三期留档">
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="滴水逆向三期">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">滴水逆向三期留档</h1>
+            <h1 data-aos="slide-up">滴水逆向三期</h1>
           </a>
         
       
@@ -390,7 +390,17 @@
             <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-前言">0x00 前言</a></li>
+    <li><a href="#0x01-汇编">0x01 汇编</a>
+      <ul>
+        <li><a href="#for">for</a></li>
+        <li><a href="#while">while</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   </div>
 </div>
           </div>
@@ -551,8 +561,93 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <p><a href="/data/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E8%AF%BE%E4%BB%B6.zip">滴水逆向三期课件</a></p>
-
+        <h2 id="0x00-前言">
+<a class="header-anchor" href="#0x00-%e5%89%8d%e8%a8%80"></a>
+0x00 前言
+</h2><p><a href="https://pan.baidu.com/s/1Ckc1Q6dDN50RuVJ2A2JArA?pwd=AAAA">滴水三期课程</a>
+<a href="/data/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E8%AF%BE%E4%BB%B6.zip">滴水逆向三期课件</a></p>
+<h2 id="0x01-汇编">
+<a class="header-anchor" href="#0x01-%e6%b1%87%e7%bc%96"></a>
+0x01 汇编
+</h2><p>均使用c语言的内联汇编实现，解法不唯一</p>
+<h3 id="for">
+<a class="header-anchor" href="#for"></a>
+for
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="nf">mywhile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">ebp</span><span class="p">,</span> <span class="n">esp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sub</span> <span class="n">esp</span><span class="p">,</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">esi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">edi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">		<span class="n">xor</span> <span class="n">eax</span><span class="p">,</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">loop_start</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cmp</span> <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">7</span> <span class="c1">//&lt;=7
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">jge</span> <span class="n">loop_end</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">        <span class="c1">//功能区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">add</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mi">4</span><span class="p">]</span> <span class="c1">//sum += i
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">		<span class="n">add</span> <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">1</span> <span class="c1">//i++
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">jmp</span> <span class="n">loop_start</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">	<span class="nl">loop_end</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span> <span class="n">edi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span> <span class="n">esi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span> <span class="n">esp</span><span class="p">,</span><span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span> <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ret</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="while">
+<a class="header-anchor" href="#while"></a>
+while
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="nf">myfor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//保留调用前栈底
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">push</span> <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//提升堆栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">mov</span>  <span class="n">ebp</span><span class="p">,</span> <span class="n">esp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sub</span>  <span class="n">esp</span><span class="p">,</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//保留现场
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">push</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">esi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">edi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">push</span> <span class="n">ecx</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//核心功能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">mov</span>  <span class="n">eax</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mov</span>  <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mh">0x4</span><span class="p">],</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nl">start_loop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cmp</span>  <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mh">0x4</span><span class="p">],</span><span class="mi">5</span>
+</span></span><span class="line"><span class="cl">		<span class="n">jge</span>  <span class="n">end_loop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 功能区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">add</span>  <span class="n">eax</span><span class="p">,</span> <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mh">0x4</span><span class="p">]</span> <span class="c1">//sum += i
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">		<span class="n">add</span>  <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">ebp</span> <span class="o">-</span> <span class="mh">0x4</span><span class="p">],</span><span class="mi">1</span> <span class="c1">//i++
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">jmp</span>  <span class="n">start_loop</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">end_loop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//恢复现场
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">pop</span>  <span class="n">ecx</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span>  <span class="n">edi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span>  <span class="n">esi</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span>  <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//恢复堆栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">mov</span>  <span class="n">esp</span><span class="p">,</span> <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pop</span>  <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ret</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -607,7 +702,7 @@
           
           
             <img
-              data-src="/images/my/11.png"
+              data-src="/images/my/15.png"
               data-sizes="auto"
               alt="DLL注入实现反截屏"
               class="lazyload"
@@ -732,7 +827,7 @@
       <div>
         <span class="icon-brush"
           >&nbsp;
-            25.5k
+            26.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -740,7 +835,7 @@
           
           
 
-          00:57
+          00:59
         </span>
       </div>
     
@@ -782,7 +877,17 @@
           <div class="sidebar-toc">
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class">
-    <nav id="TableOfContents"></nav>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-前言">0x00 前言</a></li>
+    <li><a href="#0x01-汇编">0x01 汇编</a>
+      <ul>
+        <li><a href="#for">for</a></li>
+        <li><a href="#while">while</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   </div>
 </div>
         </div>
@@ -1175,9 +1280,9 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "滴水逆向三期留档",
+          title: "滴水逆向三期",
           url: "https:\/\/cyzrjz.github.io\/post\/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3\/",
-          description: "滴水逆向三期",
+          description: "滴水逆向三期课程与课件",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>
