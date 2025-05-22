@@ -7,7 +7,7 @@
     "permalink": "/post/%E6%BB%B4%E6%B0%B4%E9%80%86%E5%90%91%E4%B8%89%E6%9C%9F%E7%95%99%E6%A1%A3/",
     "title": "滴水逆向三期",
     
-    "content": " 0x00 前言 滴水三期课程 滴水逆向三期课件\n0x01 汇编 均使用c语言的内联汇编实现，解法不唯一\nfor void __declspec(naked) mywhile() { __asm { push ebp mov ebp, esp sub esp, 4 push ebx push esi push edi mov dword ptr[ebp - 4], 0 xor eax, eax loop_start: cmp dword ptr[ebp - 4], 7 //\u0026lt;=7 jge loop_end //功能区 add eax,dword ptr[ebp - 4] //sum += i add dword ptr[ebp - 4], 1 //i++ jmp loop_start loop_end: pop edi pop esi pop ebx mov esp,ebp pop ebp ret } } while int __declspec(naked) myfor() { __asm { //保留调用前栈底 push ebp //提升堆栈 mov ebp, esp sub esp, 4 //保留现场 push ebx push esi push edi push ecx //核心功能 mov eax,0 mov dword ptr [ebp - 0x4],0 start_loop: cmp dword ptr [ebp - 0x4],5 jge end_loop // 功能区 add eax, dword ptr[ebp - 0x4] //sum += i add dword ptr[ebp - 0x4],1 //i++ jmp start_loop end_loop: //恢复现场 pop ecx pop edi pop esi pop ebx //恢复堆栈 mov esp, ebp pop ebp ret } } ",
+    "content": " 0x00 前言 滴水三期课程 滴水逆向三期课件\n",
     
     "date": "2025-05-21 15:15:46",
     "updated": "2025-05-21 15:15:46"
