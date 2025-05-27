@@ -51,6 +51,18 @@
   
   , 
   {
+    "objectID": "1745854940",
+    "permalink": "/post/sse%E6%8C%87%E4%BB%A4%E9%9B%86%E5%AD%A6%E4%B9%A0/",
+    "title": "SSE指令集学习",
+    
+    "content": " SSE 数据类型 SSE提供了以下新的数据类型：\nTechnology _m64 _m128 _m128d _m128i _m256 _m256d _m256i _m512 _m512d _m512i Intel® MMX™ Technology Intrinsics Yes NA NA NA NA NA NA NA NA NA Intel® Streaming SIMD Extensions Intrinsics Yes Yes NA NA NA NA NA NA NA NA Intel® Streaming SIMD Extensions 2 Intrinsics Yes Yes Yes Yes NA NA NA NA NA NA Intel® Streaming SIMD Extensions 3 Intrinsics Yes Yes Yes Yes NA NA NA NA NA NA Advanced Encryption Standard Intrinsics + Carry-less Multiplication Intrinsic Yes Yes Yes Yes NA NA NA NA NA NA Half-Float Intrinsics Yes Yes Yes Yes NA NA NA NA NA NA Intel® Advanced Vector Extensions Intrinsics Yes Yes Yes Yes Yes Yes Yes NA NA NA Intel® Advanced Vector Extensions 512 Intrinsics Yes Yes Yes Yes Yes Yes Yes Yes Yes Yes __m128i: 128位整型向量，可以容纳 16 个 8 位、8 个 16 位、4 个 32 位或 2 个 64 位整数值 __m128d: 128位浮点型向量 __m128: 容纳四个32位浮点值 对于__m128d和__m128i，编译器自动把局部和全局变量在栈上对齐16字节。若需要对齐整型、float和double数组，使用__declspec(align)\n要访问8位数据 __m128i a = _mm_set1_epi8(1); // 在目标 __m128i 向量中将 每个 8-位整型元素（共 16 …",
+    
+    "date": "2025-04-28 23:42:20",
+    "updated": "2025-04-28 23:42:20"
+  }
+  
+  , 
+  {
     "objectID": "1745584573",
     "permalink": "/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/",
     "title": "攻防世界 Reverse",
@@ -59,6 +71,30 @@
     
     "date": "2025-04-25 20:36:13",
     "updated": "2025-04-25 20:36:13"
+  }
+  
+  , 
+  {
+    "objectID": "1745246559",
+    "permalink": "/post/buuctf-reverse/",
+    "title": "BUU-Reverse",
+    
+    "content": " [安洵杯 2019]crackMe [安洵杯 2019]crackMe\n分析 MessageBoxW被hook跳转到了别的函数，这部分在拓展再说，先分析程序\n跳转到了sub_C02AB0，进行了两步操作 base64表的大小写互换 注册VEH 然后回到main函数，安装了一个SEH,然后将eax清零，在地址0(eax)写入数据，触发 EXCEPTION_ACCESS_VIOLATION异常，执行异常处理 以下是Windows 用户态异常处理的四个主要阶段\nflowchart LR A[\u0026#34;触发异常\u0026#34;]--\u0026gt;B[\u0026#34;调试器\u0026#34;]--\u0026gt;C[\u0026#34;向量化异常处理(VEH)\u0026#34;]--\u0026gt;D[\u0026#34;结构化异常处理(SEH)\u0026#34;]--\u0026gt;E[\u0026#34;顶层未处理异常过滤器(UEF)\u0026#34;] 由于已经注册了VEH，所以先进入VEH处理\nVEH中进行了两步操作\n用where_are_u_now?初始化sm4加密 设置 UEF 为 TopLevelExceptionFilter SEH中对输入进行sm4加密，返回值为 1，继续进行错误处理 进入UEF(TopLevelExceptionFilter)\n对str2每两位进行置换，然后对str1进行变种base64加密 进入sub_C0126C\n这里将str1进行变种base64加密，加密算法为base64换表，base64有两处换表\n大小写互换 整个表想左移动24字符 最终表为yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvwx 最后str1和str2在sub_C01136进行对比\nexp import base64 from pysm4 import decrypt from Crypto.Util.number import long_to_bytes key = \u0026amp;#34;where_are_u_now?\u0026amp;#34; key = key.encode().hex() Str2 = \u0026amp;#34;1UTAOIkpyOSWGv/mOYFY4R==\u0026amp;#34; # !要改成= temp = list(Str2) for i in range(0,len(temp),2): temp[i],temp[i+1] = temp[i+1],temp[i] res = \u0026amp;#34;\u0026amp;#34;.join(temp) …",
+    
+    "date": "2025-04-21 22:42:39",
+    "updated": "2025-04-21 22:42:39"
+  }
+  
+  , 
+  {
+    "objectID": "1744885519",
+    "permalink": "/post/z3%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3/",
+    "title": "Z3约束求解",
+    
+    "content": " Z3约束求解 pip install z3-solver 函数介绍与使用 数据类型 数据类型 示例 解释 Bool x = Bool(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个布尔变量x Bools x, y, z = Bools(\u0026amp;lsquo;x y z\u0026amp;rsquo;) 创建三个布尔变量x,y,z,以此类推,后面的Ints,Reals,BitVecs等都可以用这种方式创建 BitVec x = BitVec(\u0026amp;lsquo;x\u0026amp;rsquo;, 8) 创建一个8位的二进制向量变量x Int x = Int(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个整数变量x Real x = Real(\u0026amp;lsquo;x\u0026amp;rsquo;) 创建一个实数变量x 常用函数 函数 功能 And(a, b) 逻辑与，返回a和b的逻辑与,表示同时满足a和b Or(a, b) 逻辑或，返回a和b的逻辑或,表示满足a或b Not(a) 逻辑非，返回a的逻辑非,表示不满足a Xor(a, b) 逻辑异或，返回a和b的逻辑异或,表示满足a或b，但不同时满足 If(a, b, c) 条件选择，返回a和b的条件选择，表示满足a时返回b，否则返回c Distinct(a, b, c) 不同，返回a、b、c的不同关系，表示a、b、c中没有相同的值 Sum(a, b, c) 求和，返回a、b、c的求和，表示a、b、c的和 Implies(a, b) 蕴含，返回a和b的蕴含关系，表示a成立那b必然成立，否则无所谓 PbEq([(x, 1), (y, 2), (z, 3)] , n) 伪布尔约束,x,y,z为布尔变量,1,2,3为权重,n为目标值，表示满足x*1+y*2+z*3=n 函数详解 PbEq 用于表示多个布尔变量中恰好有几个为真 s.add(PbEq([(x, 1), (y, 2), (z, 3)], 6)) # 约束条件是x*1+y*2+z*3=6 这里约束的表达式是 变量真值 * 权重 = 目标值 当所有权重为1时，表示多个目标只有一个成立 s.add(PbEq([(x, 1), (y, 1), (z, 1)], 1)) 表示条件x,y,z中只有一个为真 创建Solver对象 创建Solver对象，用于添加约束条件 Solver用来“管理”和“求解”你添加进去的逻辑约束条件 他能做三件事\n接收你的逻辑条 …",
+    
+    "date": "2025-04-17 18:25:19",
+    "updated": "2025-04-17 18:25:19"
   }
   
   , 
