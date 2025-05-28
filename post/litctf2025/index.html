@@ -22,7 +22,7 @@
   
 
 <title>
-  LitCTF2025(未完成) | Cyzrjz
+  LitCTF2025 | Cyzrjz
 </title>
 <meta
   name="description"
@@ -114,7 +114,7 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="LitCTF2025(未完成) | Cyzrjz" />
+  <meta property="og:title" content="LitCTF2025 | Cyzrjz" />
   <meta
     property="og:description"
     content="LitCTF2025逆向题解(2题复现)"
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="LitCTF2025(未完成)">
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="LitCTF2025">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">LitCTF2025(未完成)</h1>
+            <h1 data-aos="slide-up">LitCTF2025</h1>
           </a>
         
       
@@ -392,10 +392,36 @@
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#easy_rc4">easy_rc4</a></li>
-    <li><a href="#pickle">pickle</a></li>
-    <li><a href="#easy_tea">easy_tea</a></li>
+    <li><a href="#easy_rc4">easy_rc4</a>
+      <ul>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#pickle">pickle</a>
+      <ul>
+        <li><a href="#分析-1">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#easy_tea">easy_tea</a>
+      <ul>
+        <li><a href="#分析-2">分析</a></li>
+        <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
     <li><a href="#test_your_nc">test_your_nc</a></li>
+    <li><a href="#featureextraction复现">FeatureExtraction(复现)</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#robbie_wanna_revenge复现">Robbie_Wanna_Revenge(复现)</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -561,18 +587,27 @@
         <h2 id="easy_rc4">
 <a class="header-anchor" href="#easy_rc4"></a>
 easy_rc4
-</h2><p><img src="/post/litctf2025/img/image.png" alt="alt text">
+</h2><h3 id="分析">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90"></a>
+分析
+</h3><p><img src="/post/litctf2025/img/image.png" alt="alt text">
 一眼<code>key = FenKey!!</code>，提取出密文后直接在线网站解码
 <img src="/post/litctf2025/img/2eedfd9164d94537b02793b04d5c1193-1.png" alt="alt text"></p>
 <p>后面还有个<code>xor 0x20的操作</code></p>
 <p><img src="/post/litctf2025/img/image-1.png" alt="alt text"></p>
 <p><img src="/post/litctf2025/img/5442ef9b27e5e9231e78133cd0598430.png" alt="alt text"></p>
-<blockquote>
+<h3 id="exp">
+<a class="header-anchor" href="#exp"></a>
+exp
+</h3><blockquote>
 <p>LitCTF{71bb2a06417a5306ba297ddcfce7b1b0}</p></blockquote>
 <h2 id="pickle">
 <a class="header-anchor" href="#pickle"></a>
 pickle
-</h2><p>python的Pickle反序列化，用pickletools提取字节流反汇编</p>
+</h2><h3 id="分析-1">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-1"></a>
+分析
+</h3><p>python的Pickle反序列化，用pickletools提取字节流反汇编</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pickletools</span>
 </span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;challenge.pickle&#34;</span><span class="p">,</span> <span class="s2">&#34;rb&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -594,8 +629,10 @@ pickle
 </span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Nah, don&#39;t give up!&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">False</span>
 </span></span></code></pre></div><p>提取出<code>encrypted_flag</code>和<code>key_ints</code></p>
-<p>逆向</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+<h3 id="exp-1">
+<a class="header-anchor" href="#exp-1"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
@@ -637,7 +674,10 @@ pickle
 <h2 id="easy_tea">
 <a class="header-anchor" href="#easy_tea"></a>
 easy_tea
-</h2><p>看题目带有tea，猜测tea模板题，解压出来文件名为&quot;花&quot;，猜测有花指令</p>
+</h2><h3 id="分析-2">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-2"></a>
+分析
+</h3><p>看题目带有tea，猜测tea模板题，解压出来文件名为&quot;花&quot;，猜测有花指令</p>
 <p>IDA载入无法直接F5，直接分析反汇编大体内容</p>
 <p><img src="/post/litctf2025/img/image-2.png" alt="alt text">
 找到疑似key和密文的数据，再找找TEA算法在哪实现</p>
@@ -653,7 +693,10 @@ easy_tea
 NOP掉上图红框部分和上面的<code>db 0</code>，再nop掉<code>jmp     short loc_4150A9</code></p>
 <p><img src="/post/litctf2025/img/image-8.png" alt="alt text">
 还是有点问题，但没影响了，解密时记得小端序存储问题就行了</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+<h3 id="exp-2">
+<a class="header-anchor" href="#exp-2"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
 </span></span><span class="line"><span class="cl"><span class="c1">// TEA 解密模板（delta=0x114514）
@@ -714,7 +757,85 @@ test_your_nc
 </h2><p>没过滤Tab键，在shell中Tab键可以当作分隔符</p>
 <p>利用python读取文件并打印就行了</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3&lt;TAB&gt;-c&lt;TAB&gt;<span class="s2">&#34;print(open(&#39;flag&#39;).read())&#34;</span>
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="featureextraction复现">
+<a class="header-anchor" href="#featureextraction%e5%a4%8d%e7%8e%b0"></a>
+FeatureExtraction(复现)
+</h2><h3 id="分析-3">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-3"></a>
+分析
+</h3><h3 id="exp-3">
+<a class="header-anchor" href="#exp-3"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="n">key</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x43</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x46</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x30</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x35</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="n">encflag</span><span class="p">[</span><span class="mi">53</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0x1690</span><span class="p">,</span> <span class="mh">0x3E58</span><span class="p">,</span> <span class="mh">0x6FF1</span><span class="p">,</span> <span class="mh">0x86F0</span><span class="p">,</span> <span class="mh">0x9D66</span><span class="p">,</span> <span class="mh">0xAB30</span><span class="p">,</span> <span class="mh">0xCA71</span><span class="p">,</span> <span class="mh">0xCF29</span><span class="p">,</span> <span class="mh">0xE335</span><span class="p">,</span> <span class="mh">0xE492</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0xF1FD</span><span class="p">,</span> <span class="mh">0xDE80</span><span class="p">,</span> <span class="mh">0xD0C8</span><span class="p">,</span> <span class="mh">0xC235</span><span class="p">,</span> <span class="mh">0xB9B5</span><span class="p">,</span> <span class="mh">0xB1CF</span><span class="p">,</span> <span class="mh">0x9E9F</span><span class="p">,</span> <span class="mh">0x9E86</span><span class="p">,</span> <span class="mh">0x96B4</span><span class="p">,</span> <span class="mh">0xA550</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0xA0D3</span><span class="p">,</span> <span class="mh">0xA135</span><span class="p">,</span> <span class="mh">0x99CA</span><span class="p">,</span> <span class="mh">0xACC0</span><span class="p">,</span> <span class="mh">0xBE78</span><span class="p">,</span> <span class="mh">0xC196</span><span class="p">,</span> <span class="mh">0xBC00</span><span class="p">,</span> <span class="mh">0xB5C3</span><span class="p">,</span> <span class="mh">0xB7F0</span><span class="p">,</span> <span class="mh">0xB465</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0xB673</span><span class="p">,</span> <span class="mh">0xB71F</span><span class="p">,</span> <span class="mh">0xBBE2</span><span class="p">,</span> <span class="mh">0xCB4F</span><span class="p">,</span> <span class="mh">0xD2AD</span><span class="p">,</span> <span class="mh">0xDE20</span><span class="p">,</span> <span class="mh">0xEC94</span><span class="p">,</span> <span class="mh">0xFC30</span><span class="p">,</span> <span class="mh">0x104B8</span><span class="p">,</span> <span class="mh">0xF6EE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0xEDC9</span><span class="p">,</span> <span class="mh">0xE385</span><span class="p">,</span> <span class="mh">0xD78B</span><span class="p">,</span> <span class="mh">0xDE19</span><span class="p">,</span> <span class="mh">0xC94C</span><span class="p">,</span> <span class="mh">0xAD14</span><span class="p">,</span> <span class="mh">0x7E88</span><span class="p">,</span> <span class="mh">0x6BB9</span><span class="p">,</span> <span class="mh">0x4CC6</span><span class="p">,</span> <span class="mh">0x3806</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="mh">0x2DC9</span><span class="p">,</span> <span class="mh">0x2398</span><span class="p">,</span> <span class="mh">0x19E1</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">flag</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">44</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">pre</span> <span class="o">+=</span> <span class="n">flag</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">pre</span><span class="p">)</span> <span class="o">/</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">44</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>附上对源码的猜测</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">OriProcess</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">szFlag</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;LitCTF{1e5a6230-308c-47cf-907c-4bfafdec8296}&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">TestEncflag</span><span class="p">[</span><span class="mi">53</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">44</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pre</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pre</span> <span class="o">=</span> <span class="n">szFlag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">key</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">TestEncflag</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pre</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">53</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;0x%x</span><span class="se">\t</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">TestEncflag</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><blockquote>
+<p>LitCTF{1e5a6230-308c-47cf-907c-4bfafdec8296}</p></blockquote>
+<h2 id="robbie_wanna_revenge复现">
+<a class="header-anchor" href="#robbie_wanna_revenge%e5%a4%8d%e7%8e%b0"></a>
+Robbie_Wanna_Revenge(复现)
+</h2><h3 id="分析-4">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-4"></a>
+分析
+</h3><p>Unity游戏逆向，一般可以开个无敌过去，但是先找找有没有捷径</p>
+<p>用CE附加游戏，开启Mono</p>
+<p>展开所有条目，保存为文件
+<img src="/post/litctf2025/img/image-9.png" alt="alt text"></p>
+<p>有一个PlayerWon关键词，尝试调用
+<img src="/post/litctf2025/img/image-10.png" alt="alt text"></p>
+<p>得到flag
+<img src="/post/litctf2025/img/image-11.png" alt="alt text"></p>
+
       
     </div>
     <footer class="article-footer">
@@ -760,7 +881,7 @@ test_your_nc
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/2.jpg"
               data-sizes="auto"
               alt="滴水逆向三期"
               class="lazyload"
@@ -867,7 +988,7 @@ test_your_nc
       <div>
         <span class="icon-brush"
           >&nbsp;
-            21.3k
+            21.7k
           </span
         >
         &nbsp;|&nbsp;
@@ -875,7 +996,7 @@ test_your_nc
           
           
 
-          00:47
+          00:48
         </span>
       </div>
     
@@ -919,10 +1040,36 @@ test_your_nc
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#easy_rc4">easy_rc4</a></li>
-    <li><a href="#pickle">pickle</a></li>
-    <li><a href="#easy_tea">easy_tea</a></li>
+    <li><a href="#easy_rc4">easy_rc4</a>
+      <ul>
+        <li><a href="#分析">分析</a></li>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#pickle">pickle</a>
+      <ul>
+        <li><a href="#分析-1">分析</a></li>
+        <li><a href="#exp-1">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#easy_tea">easy_tea</a>
+      <ul>
+        <li><a href="#分析-2">分析</a></li>
+        <li><a href="#exp-2">exp</a></li>
+      </ul>
+    </li>
     <li><a href="#test_your_nc">test_your_nc</a></li>
+    <li><a href="#featureextraction复现">FeatureExtraction(复现)</a>
+      <ul>
+        <li><a href="#分析-3">分析</a></li>
+        <li><a href="#exp-3">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#robbie_wanna_revenge复现">Robbie_Wanna_Revenge(复现)</a>
+      <ul>
+        <li><a href="#分析-4">分析</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -1317,7 +1464,7 @@ test_your_nc
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "LitCTF2025(未完成)",
+          title: "LitCTF2025",
           url: "https:\/\/cyzrjz.github.io\/post\/litctf2025\/",
           description: "LitCTF2025逆向题解(2题复现)",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
