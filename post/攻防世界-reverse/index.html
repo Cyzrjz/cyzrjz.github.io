@@ -453,6 +453,19 @@
         <li><a href="#exp-9">exp</a></li>
       </ul>
     </li>
+    <li><a href="#0x0b-polyren5">0x0B polyre[N5]</a>
+      <ul>
+        <li><a href="#分析-10">分析</a></li>
+        <li><a href="#扩展">扩展</a></li>
+        <li><a href="#exp-10">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0c-goodren5">0x0C GoodRe[N5]</a>
+      <ul>
+        <li><a href="#分析-11">分析</a></li>
+        <li><a href="#exp-11">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -1637,7 +1650,183 @@ exp
 <h3 id="exp-9">
 <a class="header-anchor" href="#exp-9"></a>
 exp
-</h3>
+</h3><h2 id="0x0b-polyren5">
+<a class="header-anchor" href="#0x0b-polyren5"></a>
+0x0B polyre[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/11.zip">polyre</a></p>
+<h3 id="分析-10">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-10"></a>
+分析
+</h3><p>本题应该是控制流平坦化的题目，但我用的IDA9.1，直接自动处理了平坦化，真王朝了吧</p>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-57.png" alt="alt text"></p>
+<p>核心加密在这
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-58.png" alt="alt text"></p>
+<p>左移一位后最后一位必为1，若原来的数小于0，则异或<code>0xB0004B7679FA26B3</code>，所得到的最后一位为1</p>
+<p>可以通过这个来判断原来的数是小于0还是大于0，进而解密</p>
+<ul>
+<li><strong>判断最后一位</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x1</span><span class="p">)</span> 
+</span></span></code></pre></div><ul>
+<li><strong>若原来的数小于0</strong></li>
+</ul>
+<p>有符号整数正负数分界是0x8000000000000000，若为小数，则十六进制为<code>0xFFFFFFFFFFFFFFFF ~ 0x7FFFFFFFFFFFFFFF</code>，其中<code>0xFFFFFFFFFFFFFFFF</code>为-1</p>
+<p>转换为2进制后，若为负数，则二进制最高位为1，若为正数，则二进制最高位为0</p>
+<p>右移后最高位丢失，需要手动补上</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="mh">0xB0004B7679FA26B3</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x8000000000000000</span><span class="p">;</span>
+</span></span></code></pre></div><ul>
+<li><strong>若原来的数大于0</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span></code></pre></div><h3 id="扩展">
+<a class="header-anchor" href="#%e6%89%a9%e5%b1%95"></a>
+扩展
+</h3><p><a href="https://security.tencent.com/index.php/blog/msg/112">利用符号执行去除控制流平坦化</a>
+<a href="https://www.cnblogs.com/Heyyy/p/15514085.html">idapython脚本解决法</a>
+<a href="https://github.com/SnowGirls/deflat">deflat</a>
+<a href="https://github.com/cq674350529/deflat?tab=readme-ov-file">deflat改版</a></p>
+<h3 id="exp-10">
+<a class="header-anchor" href="#exp-10"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint64_t</span> <span class="n">encflag</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">		<span class="mh">0xBC8FF26D43536296LL</span><span class="p">,</span> <span class="mh">0x520100780530EE16LL</span><span class="p">,</span> <span class="mh">0x4DC0B5EA935F08ECLL</span><span class="p">,</span> <span class="mh">0x342B90AFD853F450LL</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">		<span class="mh">0x8B250EBCAA2C3681LL</span><span class="p">,</span> <span class="mh">0x55759F81A2C68AE4LL</span>
+</span></span><span class="line"><span class="cl">	<span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">flag</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="mh">0xB0004B7679FA26B3</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="mh">0x8000000000000000</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">else</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">memcpy</span><span class="p">(</span><span class="n">flag</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span><span class="o">&amp;</span><span class="n">encflag</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">flag</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="0x0c-goodren5">
+<a class="header-anchor" href="#0x0c-goodren5"></a>
+0x0C GoodRe[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/12.zip"></a></p>
+<ul>
+<li><strong>题目来源</strong> : [津门杯2021]GoodRe</li>
+</ul>
+<h3 id="分析-11">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-11"></a>
+分析
+</h3><p>IDA载入，初步分析有三个主要的函数，每个进去仔细看看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-59.png" alt="alt text"></p>
+<p>我先将其命名为<code>fun1,fun2,fun3</code></p>
+<ul>
+<li><strong>fun1</strong></li>
+<li></li>
+</ul>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-60.png" alt="alt text">
+结合图中的解释和外层调用，这个函数将输入的字符分段处理为16进制，例如</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; 123AABBC
+</span></span><span class="line"><span class="cl">转化为
+</span></span><span class="line"><span class="cl">0x123AABBC
+</span></span></code></pre></div><p>所以大概是个初始化函数，而处理后的数据会在后面的函数中使用</p>
+<ul>
+<li><strong>fun2</strong></li>
+<li></li>
+</ul>
+<p>这个函数有三处调用</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">fun2</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v10</span><span class="p">[</span><span class="n">v5</span><span class="p">],</span> <span class="n">v6</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">fun2</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v14</span><span class="p">[</span><span class="n">v5</span><span class="p">],</span> <span class="mi">17</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">v8</span> <span class="o">=</span> <span class="n">v15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">fun2</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v15</span><span class="p">[</span><span class="n">v5</span><span class="p">],</span> <span class="o">*</span><span class="n">p_enc</span><span class="p">);</span>
+</span></span></code></pre></div><p>其中<code>v10,v14,v15</code>都是在最开始就已经初始化的数组，通过动调可以看到</p>
+<p>动调进入<code>fun2</code>分析
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-61.png" alt="alt text"></p>
+<p>可以看到<code>fun2</code>就是将第二个参数写入第一个参数(数组)中，数组分为8字节一组，其中前4字节存储写了多少字节的数据，后四字节存储数据</p>
+<p>例如</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; 1230ABCD
+</span></span><span class="line"><span class="cl">经过fun1处理后
+</span></span><span class="line"><span class="cl">0x1230ABCD
+</span></span><span class="line"><span class="cl">经过fun2处理后
+</span></span><span class="line"><span class="cl">v10[] = {4,0,0,0,0xCD,0xAB,0x30,0x12}
+</span></span></code></pre></div><ul>
+<li><strong>fun3</strong></li>
+</ul>
+<p>在动调<code>fun3</code>的时候发现了一个特殊点
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-62.png" alt="alt text">
+可以看到有<code>0x9e3779b9</code>，这个值是<code>TEA</code>算法的默认<code>delta</code>，所以猜测fun3就是个TEA相关的函数</p>
+<p>再找找TEA的特征进行验算，拿出一份TEA的实现代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">encrypt</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span> <span class="n">v</span><span class="p">,</span> <span class="kt">uint32_t</span><span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">v0</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v1</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>           <span class="cm">/* set up */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">delta</span><span class="o">=</span><span class="mh">0x9e3779b9</span><span class="p">;</span>                     <span class="cm">/* a key schedule constant */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">k0</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k1</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k2</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">k3</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>   <span class="cm">/* cache key */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>                       <span class="cm">/* basic cycle start */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sum</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v0</span> <span class="o">+=</span> <span class="p">((</span><span class="n">v1</span><span class="o">&lt;&lt;</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">k0</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="n">v1</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">^</span> <span class="p">((</span><span class="n">v1</span><span class="o">&gt;&gt;</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="n">k1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v1</span> <span class="o">+=</span> <span class="p">((</span><span class="n">v0</span><span class="o">&lt;&lt;</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">k2</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="n">v0</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">^</span> <span class="p">((</span><span class="n">v0</span><span class="o">&gt;&gt;</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="n">k3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>                                              <span class="cm">/* end cycle */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">v0</span><span class="p">;</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">v1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>看到</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">现有
+</span></span><span class="line"><span class="cl">v0=v[0], v1=v[1]
+</span></span><span class="line"><span class="cl">k0=k[0], k1=k[1], k2=k[2], k3=k[3]
+</span></span><span class="line"><span class="cl">最后
+</span></span><span class="line"><span class="cl">v[0]=v0; v[1]=v1;
+</span></span></code></pre></div><p>对比伪代码
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-63.png" alt="alt text">
+那么中间的函数先不分析，直接套TEA的实现代码，看看能不能解密</p>
+<p>在那之前，需要找Key在哪
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-64.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">key</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">};</span>
+</span></span></code></pre></div><h3 id="exp-11">
+<a class="header-anchor" href="#exp-11"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">tea_decrypt</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">k</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">v0</span>    <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">v1</span>    <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">delta</span> <span class="o">=</span> <span class="mh">0x9e3779b9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">sum</span>   <span class="o">=</span> <span class="n">delta</span> <span class="o">*</span> <span class="mi">32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v1</span> <span class="o">-=</span> <span class="p">((</span><span class="n">v0</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">^</span> <span class="p">(</span><span class="n">v0</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">^</span> <span class="p">((</span><span class="n">v0</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v0</span> <span class="o">-=</span> <span class="p">((</span><span class="n">v1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">^</span> <span class="p">(</span><span class="n">v1</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">^</span> <span class="p">((</span><span class="n">v1</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sum</span> <span class="o">-=</span> <span class="n">delta</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">.</span><span class="n">setf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">uppercase</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">enc</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="mh">0x79AE1A3B</span><span class="p">,</span> <span class="mh">0x596080D3</span><span class="p">,</span> <span class="mh">0x80E03E80</span><span class="p">,</span> <span class="mh">0x846C8D73</span><span class="p">,</span> <span class="mh">0x21A01CF7</span><span class="p">,</span> <span class="mh">0xC7CACA32</span><span class="p">,</span> <span class="mh">0x45F9AC14</span><span class="p">,</span> <span class="mh">0xC5F5F22F</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">key</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span><span class="mh">0x11</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">uint32_t</span> <span class="n">v</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">enc</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">],</span> <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]};</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tea_decrypt</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>输出</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">7DEA3F6D3B3D6C0C620864ADD2FA2AE1A61F2736F0060DA0B97E8356D017CE59
+</span></span></code></pre></div><p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-65.png" alt="alt text"></p>
+
       
     </div>
     <footer class="article-footer">
@@ -1692,7 +1881,7 @@ exp
           
           
             <img
-              data-src="/images/my/15.png"
+              data-src="/images/my/19.jpg"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -1715,7 +1904,7 @@ exp
           
           
             <img
-              data-src="/images/my/11.png"
+              data-src="/images/my/14.png"
               data-sizes="auto"
               alt="SSE指令集学习"
               class="lazyload"
@@ -1820,7 +2009,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            21.8k
+            23.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -1828,7 +2017,7 @@ exp
           
           
 
-          00:48
+          00:50
         </span>
       </div>
     
@@ -1931,6 +2120,19 @@ exp
       <ul>
         <li><a href="#分析-9">分析</a></li>
         <li><a href="#exp-9">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0b-polyren5">0x0B polyre[N5]</a>
+      <ul>
+        <li><a href="#分析-10">分析</a></li>
+        <li><a href="#扩展">扩展</a></li>
+        <li><a href="#exp-10">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0c-goodren5">0x0C GoodRe[N5]</a>
+      <ul>
+        <li><a href="#分析-11">分析</a></li>
+        <li><a href="#exp-11">exp</a></li>
       </ul>
     </li>
   </ul>
