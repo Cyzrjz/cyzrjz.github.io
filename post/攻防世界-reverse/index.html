@@ -472,6 +472,17 @@
         <li><a href="#exp-12">exp</a></li>
       </ul>
     </li>
+    <li><a href="#0x0e-babyarmn5">0x0E babyarm[N5]</a>
+      <ul>
+        <li><a href="#分析-13">分析</a></li>
+        <li><a href="#exp-13">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0f-easy_mazen6">0x0F easy_Maze[N6]</a>
+      <ul>
+        <li><a href="#exp-14">exp</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -1723,7 +1734,7 @@ exp
 </span></span></code></pre></div><h2 id="0x0c-goodren5">
 <a class="header-anchor" href="#0x0c-goodren5"></a>
 0x0C GoodRe[N5]
-</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/12.zip"></a></p>
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/12.zip">GoodRe</a></p>
 <ul>
 <li><strong>题目来源</strong> : [津门杯2021]GoodRe</li>
 </ul>
@@ -1835,7 +1846,8 @@ exp
 <h2 id="0x0d-reverse_re2n5">
 <a class="header-anchor" href="#0x0d-reverse_re2n5"></a>
 0x0D reverse_re2[N5]
-</h2><h3 id="分析-12">
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/13.zip">reverse_re2</a></p>
+<h3 id="分析-12">
 <a class="header-anchor" href="#%e5%88%86%e6%9e%90-12"></a>
 分析
 </h3><p>IDA载入，先定位<code>main</code>函数地址<code>0x004116A0</code></p>
@@ -1903,7 +1915,339 @@ exp
 <h3 id="exp-12">
 <a class="header-anchor" href="#exp-12"></a>
 exp
-</h3>
+</h3><h2 id="0x0e-babyarmn5">
+<a class="header-anchor" href="#0x0e-babyarmn5"></a>
+0x0E babyarm[N5]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/14.zip">babyarm</a></p>
+<h3 id="分析-13">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-13"></a>
+分析
+</h3><p>IDA支持ARM架构，直接载入IDA，main函数无法反编译，有花指令</p>
+<p>先对main函数生成函数，再按下F5反编译，找到错误点在哪</p>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-75.png" alt="alt text">
+第一个出错发生在<code>0x1094C</code>处
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-76.png" alt="alt text">
+按照往常经验，直接nop填充掉前4字节
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-77.png" alt="alt text">
+成功了，后续进行相同的操作就行</p>
+<p>最终效果，可以分析程序了
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-78.png" alt="alt text"></p>
+<p>注意到一处不同寻常的写法
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-79.png" alt="alt text"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">v11</span> <span class="o">=</span> <span class="n">v8</span><span class="p">[</span><span class="n">n12</span> <span class="o">%</span> <span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">v11</span><span class="p">(</span><span class="n">v9</span><span class="p">[</span><span class="n">n12</span><span class="p">],</span> <span class="n">byte_2103C</span><span class="p">[</span><span class="n">n12</span><span class="p">])</span>
+</span></span></code></pre></div><p>那么<code>v8</code>就是个存储函数指针的数组，往前找<code>v8</code>来自<code>memcpy(dest, &amp;src_, 0xC0u);</code>，那么src_一定是个函数</p>
+<p>来到<code>src_</code>的地址，是一堆未定义的数据，按下P生成函数
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-80.png" alt="alt text">
+反编译后就是</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__fastcall</span> <span class="nf">src_</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">a1</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">a2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">((</span><span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="n">a2</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">a2</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">))</span> <span class="o">^</span> <span class="p">((</span><span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="n">a1</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">a1</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里就出现问题了，我的最终目标是三个函数，分别是<code>0x21088</code>,<code>0x210C8</code>,<code>0x21108</code>，但是这里直接分析为了一整个函数</p>
+<p>并且我尝试分段解析也无效，所以我来到<code>sub_10684((int)dest);</code>，这应该对函数进行了修改
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-81.png" alt="alt text">
+很明显对函数字节修改了，尝试进行模拟，写一个idc脚本</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">ea</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">patched</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">start</span> <span class="o">=</span> <span class="mh">0x21088</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">end</span>   <span class="o">=</span> <span class="mh">0x21147</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">ea</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span> <span class="n">ea</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">;</span> <span class="n">ea</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">orig</span> <span class="o">=</span> <span class="n">Byte</span><span class="p">(</span><span class="n">ea</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">idx</span>  <span class="o">=</span> <span class="p">(</span><span class="n">ea</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;S&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;E&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;C&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;R&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;E&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;T&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">patched</span> <span class="o">=</span> <span class="n">orig</span> <span class="o">^</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PatchByte</span><span class="p">(</span><span class="n">ea</span><span class="p">,</span> <span class="n">patched</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>运行后变成混乱数据了，这不符合我们预期，那么我们还有最后一条路可以走，那就是这里看到的<code>src_</code>实际上在<code>main</code>函数之前就已经进行了初始化</p>
+<p>对<code>src_</code>查找交叉引用
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-82.png" alt="alt text">
+果然在别的地方进行了调用
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-83.png" alt="alt text">
+跟过去发现和我所想一样，<code>src_</code>已经被初始化了，先按照他的初始化来模拟一遍</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">src_start</span><span class="p">,</span> <span class="n">dest_start</span><span class="p">,</span> <span class="n">len</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">src_byte</span><span class="p">,</span> <span class="n">dest_byte</span><span class="p">,</span> <span class="n">patched</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">src_start</span>  <span class="o">=</span> <span class="mh">0x10D28</span><span class="p">;</span>    <span class="c1">// src__0 起始地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">dest_start</span> <span class="o">=</span> <span class="mh">0x21088</span><span class="p">;</span>    <span class="c1">// sub_21088 起始地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">len</span>        <span class="o">=</span> <span class="mh">0xC0</span><span class="p">;</span>       <span class="c1">// 192 字节长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">src_byte</span>  <span class="o">=</span> <span class="n">Byte</span><span class="p">(</span><span class="n">src_start</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>    <span class="c1">// 读取 src__0 数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">dest_byte</span> <span class="o">=</span> <span class="n">Byte</span><span class="p">(</span><span class="n">dest_start</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>   <span class="c1">// 读取当前 dest 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">patched</span>   <span class="o">=</span> <span class="n">dest_byte</span> <span class="o">^</span> <span class="n">src_byte</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PatchByte</span><span class="p">(</span><span class="n">dest_start</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">patched</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>再按照<code>sub_10684((int)dest);</code>来模拟</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;idc.idc&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">ea</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">patched</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">start</span> <span class="o">=</span> <span class="mh">0x21088</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">end</span>   <span class="o">=</span> <span class="mh">0x21147</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">ea</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span> <span class="n">ea</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">;</span> <span class="n">ea</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">orig</span> <span class="o">=</span> <span class="n">Byte</span><span class="p">(</span><span class="n">ea</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">idx</span>  <span class="o">=</span> <span class="p">(</span><span class="n">ea</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;S&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;E&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;C&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;R&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;E&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="n">k</span> <span class="o">=</span> <span class="sc">&#39;T&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">patched</span> <span class="o">=</span> <span class="n">orig</span> <span class="o">^</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PatchByte</span><span class="p">(</span><span class="n">ea</span><span class="p">,</span> <span class="n">patched</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>最终可以分析为3个函数了
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-84.png" alt="alt text"></p>
+<ul>
+<li><strong>sub_21088(a1,a2)</strong> ： a1 + a2</li>
+<li><strong>sub_210C8(a1,a2)</strong> ： a1 - a2</li>
+<li><strong>sub_21108(a1,a2)</strong> ： a1 ^ a2</li>
+</ul>
+<p>这三个函数功能很简单，再往后看吧</p>
+<p>来到第一处判断，如图所示
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-85.png" alt="alt text">
+写个脚本先把这一段解决了</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">flag</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">cip</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mh">0x63</span><span class="p">,</span><span class="mh">0xd2</span><span class="p">,</span><span class="mh">0xfe</span><span class="p">,</span><span class="mh">0x4f</span><span class="p">,</span><span class="mh">0xb9</span><span class="p">,</span><span class="mh">0xd9</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x3f</span><span class="p">,</span><span class="mh">0xa0</span><span class="p">,</span><span class="mh">0x80</span><span class="p">,</span><span class="mh">0x43</span><span class="p">,</span><span class="mh">0x50</span><span class="p">,</span><span class="mh">0x55</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">key</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mh">0xFD</span><span class="p">,</span> <span class="mh">0x9A</span><span class="p">,</span> <span class="mh">0x9F</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span> <span class="mh">0xC2</span><span class="p">,</span> <span class="mh">0xAE</span><span class="p">,</span> <span class="mh">0x9B</span><span class="p">,</span> <span class="mh">0x2D</span><span class="p">,</span> <span class="mh">0xC3</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2A</span><span class="p">,</span> <span class="mh">0x35</span><span class="p">,</span> <span class="mh">0xF6</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">flag</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">flag</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>输出是乱码，不符合预期</p>
+<p>再看后面的部分
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-86.png" alt="alt text">
+进入<code>sub_10770</code>函数看看
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-87.png" alt="alt text">
+这下看懂了，本题为迷宫题，那么前面第二处for就是用来初始化迷宫的，运行一下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">cip2</span><span class="p">[</span><span class="mi">61</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;TTTTTT:000U:T@TTTT:0::::T@TTTT:0000:TTTT@T::::0:TTTT&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">cip2</span><span class="p">[</span><span class="mi">52</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x88</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">tmp</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;T::::::&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cip2</span><span class="p">[</span><span class="mi">53</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">block</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">block</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">block</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">block</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">cip2</span><span class="p">[</span><span class="n">block</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">cip2</span><span class="p">[</span><span class="n">block</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">^=</span> <span class="mh">0x10</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-88.png" alt="alt text">
+由于只初始化了6块，所以这是个6*6的迷宫，迷宫从<code>E</code>开始，碰到<code>@</code>成功，碰到<code>*</code>错误，那路线就是</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">aaassssddds
+</span></span></code></pre></div><p>并且这不是明文，在选择路线之前就已经进行了异或操作
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-89.png" alt="alt text">
+异或回去就行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">cip3</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mh">0x53</span><span class="p">,</span><span class="mh">0x3e</span><span class="p">,</span><span class="mh">0x20</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x1e</span><span class="p">,</span><span class="mh">0x2c</span><span class="p">,</span><span class="mh">0x24</span><span class="p">,</span><span class="mh">0xb</span><span class="p">,</span><span class="mh">0x36</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="mh">0x37</span><span class="p">,</span><span class="mh">0x52</span><span class="p">,</span><span class="mh">0xe</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">key2</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;aaassssddds&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">key2</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">tmp_</span> <span class="o">=</span> <span class="n">key2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">cip3</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">tmp_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>输出</p>
+<blockquote>
+<p>2_A2m_WoRLD</p></blockquote>
+<p>这明显是后半段，还有前半段应该就是之前第一部分解出来的乱码，那一部分应该有问题，再回去看看</p>
+<p>查阅别的wp，发现调用顺序是<code>-，+，xor</code>，这一处不明白，留个标签，后续尝试一下动态调试</p>
+<blockquote>
+<p>flag{welcome_2_A2m_WoRLD}</p></blockquote>
+<h3 id="exp-13">
+<a class="header-anchor" href="#exp-13"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">flag</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">cip</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mh">0x63</span><span class="p">,</span><span class="mh">0xd2</span><span class="p">,</span><span class="mh">0xfe</span><span class="p">,</span><span class="mh">0x4f</span><span class="p">,</span><span class="mh">0xb9</span><span class="p">,</span><span class="mh">0xd9</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mh">0x3f</span><span class="p">,</span><span class="mh">0xa0</span><span class="p">,</span><span class="mh">0x80</span><span class="p">,</span><span class="mh">0x43</span><span class="p">,</span><span class="mh">0x50</span><span class="p">,</span><span class="mh">0x55</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">key1</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mh">0xFD</span><span class="p">,</span> <span class="mh">0x9A</span><span class="p">,</span> <span class="mh">0x9F</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span> <span class="mh">0xC2</span><span class="p">,</span> <span class="mh">0xAE</span><span class="p">,</span> <span class="mh">0x9B</span><span class="p">,</span> <span class="mh">0x2D</span><span class="p">,</span> <span class="mh">0xC3</span><span class="p">,</span><span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2A</span><span class="p">,</span> <span class="mh">0x35</span><span class="p">,</span> <span class="mh">0xF6</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">key1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">key1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">flag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">key1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">cip2</span><span class="p">[</span><span class="mi">61</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;TTTTTT:000U:T@TTTT:0::::T@TTTT:0000:TTTT@T::::0:TTTT&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cip2</span><span class="p">[</span><span class="mi">52</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x88</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">tmp</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;T::::::&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">cip2</span><span class="p">[</span><span class="mi">53</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">block</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">block</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">block</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">block</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">cip2</span><span class="p">[</span><span class="n">block</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">else</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">cip2</span><span class="p">[</span><span class="n">block</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">^=</span> <span class="mh">0x10</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">cip3</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mh">0x53</span><span class="p">,</span><span class="mh">0x3e</span><span class="p">,</span><span class="mh">0x20</span><span class="p">,</span><span class="mh">0x41</span><span class="p">,</span><span class="mh">0x1e</span><span class="p">,</span><span class="mh">0x2c</span><span class="p">,</span><span class="mh">0x24</span><span class="p">,</span><span class="mh">0xb</span><span class="p">,</span><span class="mh">0x36</span><span class="p">,</span><span class="mh">0x28</span><span class="p">,</span><span class="mh">0x37</span><span class="p">,</span><span class="mh">0x52</span><span class="p">,</span><span class="mh">0xe</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">key2</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;aaassssddds&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">flag</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">flag</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">key2</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">char</span> <span class="n">tmp_</span> <span class="o">=</span> <span class="n">key2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">cip3</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">		<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">tmp_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="0x0f-easy_mazen6">
+<a class="header-anchor" href="#0x0f-easy_mazen6"></a>
+0x0F easy_Maze[N6]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/15.zip">easy_Maze</a></p>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-90.png" alt="alt text">
+进入<code>Step_2</code>函数，将ascll码转为字符，发现为<code>wasd</code>，结合题目，那就是迷宫题了，所以前面的<code>Step_0</code>和<code>Step_1</code>就是迷宫初始化</p>
+<p>动态调试获取迷宫图
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-91.png" alt="alt text"></p>
+<p>迷宫有点问题，应该是前面的初始化出问题了，返回去看<code>Step_0</code>和<code>Step_1</code></p>
+<ul>
+<li><strong>Step_0</strong></li>
+</ul>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-93.png" alt="alt text">
+可以看到下标越界了，超出了[7]的范围，最大范围为<code>6*7 + 7 = 49</code>，所以应该去堆栈区重新定义数组大小
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-94.png" alt="alt text">
+可以看到下面有一堆连续的数据，这也证明了我们的猜想，同理，另一个数组也要如此操作
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-95.png" alt="alt text"></p>
+<p>如图，迷宫数据正常了
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-92.png" alt="alt text"></p>
+<p>提取出迷宫数据
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-96.png" alt="alt text"></p>
+<h3 id="exp-14">
+<a class="header-anchor" href="#exp-14"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define ROW 7
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define COL 7
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define WALL (0x0)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define GOAL (&#39;E&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define UP (&#39;w&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define DOWN (&#39;s&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define LEFT (&#39;a&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define RIGHT (&#39;d&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">maze</span><span class="p">[</span><span class="n">ROW</span><span class="p">][</span><span class="n">COL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">,</span> <span class="n">GOAL</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">string</span> <span class="n">path</span><span class="p">;</span>  <span class="c1">// 路径跟踪变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">isValid</span><span class="p">(</span><span class="kt">int</span> <span class="n">row</span><span class="p">,</span> <span class="kt">int</span> <span class="n">col</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查点是否在地图内并且是可行走的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">row</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="n">ROW</span> <span class="o">&amp;&amp;</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">COL</span> <span class="o">&amp;&amp;</span> <span class="n">maze</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">!=</span> <span class="n">WALL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">bfs</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">queue</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;&#34;</span> <span class="p">});</span>  <span class="c1">// 将起点放入队列中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">bool</span> <span class="n">visited</span><span class="p">[</span><span class="n">ROW</span><span class="p">][</span><span class="n">COL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nb">false</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="n">visited</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>  <span class="c1">// 该变量用于记录图中的每个节点是否已被访问过
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Point</span> <span class="n">p</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">row</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">row</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">col</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">col</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">string</span> <span class="n">path</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">path</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 判断是否到终点了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">maze</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">GOAL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">path</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检查每个方向，如果有效就排队
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">isValid</span><span class="p">(</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visited</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span> <span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="n">UP</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visited</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">isValid</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visited</span><span class="p">[</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span> <span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="n">DOWN</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visited</span><span class="p">[</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">isValid</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visited</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="n">LEFT</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visited</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">isValid</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visited</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="n">RIGHT</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visited</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;No path found&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bfs</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -1958,7 +2302,7 @@ exp
           
           
             <img
-              data-src="/images/my/19.jpg"
+              data-src="/images/my/18.png"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -1981,7 +2325,7 @@ exp
           
           
             <img
-              data-src="/images/my/15.png"
+              data-src="/images/my/6.jpg"
               data-sizes="auto"
               alt="SSE指令集学习"
               class="lazyload"
@@ -2086,7 +2430,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            23.6k
+            25.7k
           </span
         >
         &nbsp;|&nbsp;
@@ -2094,7 +2438,7 @@ exp
           
           
 
-          00:51
+          00:55
         </span>
       </div>
     
@@ -2216,6 +2560,17 @@ exp
       <ul>
         <li><a href="#分析-12">分析</a></li>
         <li><a href="#exp-12">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0e-babyarmn5">0x0E babyarm[N5]</a>
+      <ul>
+        <li><a href="#分析-13">分析</a></li>
+        <li><a href="#exp-13">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x0f-easy_mazen6">0x0F easy_Maze[N6]</a>
+      <ul>
+        <li><a href="#exp-14">exp</a></li>
       </ul>
     </li>
   </ul>
