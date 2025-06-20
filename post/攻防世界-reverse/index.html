@@ -480,7 +480,14 @@
     </li>
     <li><a href="#0x0f-easy_mazen6">0x0F easy_Maze[N6]</a>
       <ul>
+        <li><a href="#分析-14">分析</a></li>
         <li><a href="#exp-14">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x10-mydriver2-397n6">0x10 MyDriver2-397[N6]</a>
+      <ul>
+        <li><a href="#分析-15">分析</a></li>
+        <li><a href="#exp-15">exp</a></li>
       </ul>
     </li>
   </ul>
@@ -2150,7 +2157,10 @@ exp
 <a class="header-anchor" href="#0x0f-easy_mazen6"></a>
 0x0F easy_Maze[N6]
 </h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/15.zip">easy_Maze</a></p>
-<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-90.png" alt="alt text">
+<h3 id="分析-14">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-14"></a>
+分析
+</h3><p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-90.png" alt="alt text">
 进入<code>Step_2</code>函数，将ascll码转为字符，发现为<code>wasd</code>，结合题目，那就是迷宫题了，所以前面的<code>Step_0</code>和<code>Step_1</code>就是迷宫初始化</p>
 <p>动态调试获取迷宫图
 <img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-91.png" alt="alt text"></p>
@@ -2167,6 +2177,8 @@ exp
 <img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-92.png" alt="alt text"></p>
 <p>提取出迷宫数据
 <img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-96.png" alt="alt text"></p>
+<p>抄一份解迷宫的脚本，结束</p>
+<p><a href="https://bbs.kanxue.com/thread-279425.htm">迷宫脚本</a></p>
 <h3 id="exp-14">
 <a class="header-anchor" href="#exp-14"></a>
 exp
@@ -2247,6 +2259,378 @@ exp
 </span></span><span class="line"><span class="cl">    <span class="n">bfs</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="0x10-mydriver2-397n6">
+<a class="header-anchor" href="#0x10-mydriver2-397n6"></a>
+0x10 MyDriver2-397[N6]
+</h2><p><a href="/process/Reverse/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/16.zip">MyDriver2-397</a></p>
+<h3 id="分析-15">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90-15"></a>
+分析
+</h3><p>没做过驱动逆向，跟着别的wp和AI分析一步一步来</p>
+<p>首先在<code>DriverEntry</code>入口处有这几行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">DriverObject</span><span class="o">-&gt;</span><span class="n">MajorFunction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_116A4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DriverObject</span><span class="o">-&gt;</span><span class="n">MajorFunction</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_116A4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DriverObject</span><span class="o">-&gt;</span><span class="n">MajorFunction</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_116CC</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DriverObject</span><span class="o">-&gt;</span><span class="n">DriverUnload</span> <span class="o">=</span> <span class="n">sub_11660</span><span class="p">;</span>
+</span></span></code></pre></div><p><a href="https://learn.microsoft.com/zh-tw/windows-hardware/drivers/ddi/wdm/nc-wdm-driver_dispatch">DRIVER_DISPATCH 回调函数</a>
+前三行的大概意思就是当触发<code>MajorFunction[]</code>中的某个设定值后执行用户回调函数，查阅<code>wdm.h</code>
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-97.png" alt="alt text">
+对应分别为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define IRP_MJ_CREATE                   0x00
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define IRP_MJ_CLOSE                    0x02
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define IRP_MJ_DEVICE_CONTROL           0x0e
+</span></span></span></code></pre></div><p>查阅
+<a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/irp-major-function-codes">IRP 主要功能代码</a></p>
+<blockquote>
+<p>IRP_MJ_CREATE: 当用户或内核打开设备时（CreateFile）
+IRP_MJ_CLOSE: 当用户或内核关闭设备时（CloseHandle）
+IRP_MJ_DEVICE_CONTROL: 当用户或内核发送设备控制请求时（DeviceIoControl）</p></blockquote>
+<p>总结就是</p>
+<ul>
+<li><strong>收到 打开（Create）或 关闭（Close）请求时，都交给 sub_116A4 去处理；</strong></li>
+<li><strong>收到 设备控制（IOCTL）请求时，交给 sub_116CC 去处理。</strong></li>
+</ul>
+<p>而最后一行意思是当例程被卸载时执行<code>sub_11660</code>，进入这个函数看看</p>
+<ul>
+<li><strong>sub_11660</strong></li>
+</ul>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-98.png" alt="alt text">
+进入后先执行了<code>sub_115DC();</code>函数，再进入看看</p>
+<ul>
+<li><strong>sub_115DC</strong></li>
+</ul>
+<blockquote>
+<p><strong>总结：</strong>
+这个函数实现了<code>InlineHook</code>劫持了<code>NtCreateFile</code>函数为<code>Src</code>
+通过后面对<code>sub_110B8</code>函数的分析，<code>Src</code>就是<code>NtCreateFile</code>未被修改前的地址，所以这个函数恢复了<code>NtCreateFile</code>的原有功能</p></blockquote>
+<p>为了方便检索，我后面会贴出伪代码而不是图片</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kr">__int64</span> <span class="nf">sub_115DC</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">PVOID</span> <span class="n">SystemRoutineAddress</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">Size</span><span class="p">;</span> <span class="c1">// r8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">Src</span><span class="p">;</span> <span class="c1">// rdx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">CurrentIrql</span><span class="p">;</span> <span class="c1">// bl
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// rcx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// r11
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//查找 NtCreateFile 在内核中的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">struct</span> <span class="nc">_UNICODE_STRING</span> <span class="n">DestinationString</span><span class="p">;</span> <span class="c1">// [rsp+20h] [rbp-18h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">RtlInitUnicodeString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">DestinationString</span><span class="p">,</span> <span class="sa">L</span><span class="s">&#34;NtCreateFile&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">SystemRoutineAddress</span> <span class="o">=</span> <span class="n">MmGetSystemRoutineAddress</span><span class="p">(</span><span class="o">&amp;</span><span class="n">DestinationString</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//读取补丁数据指针和长度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Size</span> <span class="o">=</span> <span class="o">::</span><span class="n">Size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Src</span> <span class="o">=</span> <span class="o">::</span><span class="n">Src</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//保存并切换 IRQL（中断请求级别）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">CurrentIrql</span> <span class="o">=</span> <span class="n">KeGetCurrentIrql</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="mi">2u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//禁用写保护（清除 CR0.WP 位）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v4</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v4</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFFFFFFEFFFFuLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_disable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//覆写目标函数的前 Size 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">memmove</span><span class="p">(</span><span class="n">SystemRoutineAddress</span><span class="p">,</span> <span class="n">Src</span><span class="p">,</span> <span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//恢复写保护与中断，并还原 CR0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v5</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_enable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v5</span> <span class="o">|</span> <span class="mh">0x10000</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">//恢复原 IRQL 并清理全局变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">result</span> <span class="o">=</span> <span class="n">CurrentIrql</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="n">CurrentIrql</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">::</span><span class="n">Src</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">LODWORD</span><span class="p">(</span><span class="o">::</span><span class="n">Size</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>一堆不懂得函数，查阅WINAPI文档</p>
+<blockquote>
+<p>RTL_CONSTANT_STRING 宏创建一个字符串或 Unicode 字符串结构来保存计数字符串
+MmGetSystemRoutineAddress 在内核导出表中查找该名字，返回它的函数指针（地址），赋给 SystemRoutineAddress，在这里为&quot;NtCreateFile&quot;</p></blockquote>
+<p><strong>注意到</strong><code>memmove(SystemRoutineAddress, Src, Size);</code>这一行，这段代码用<code>Src</code>修改了<code>NtCreateFile</code>的机器码，实现了函数的劫持</p>
+<p>对于这种技术，被定义为<code>InlineHook</code>，这个函数分析完毕，返回入口处</p>
+<p>来到第二个具有用户函数的代码块</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">v6</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sub_11008</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">qword_16448</span> <span class="o">=</span> <span class="n">ExAllocatePool</span><span class="p">(</span><span class="n">NonPagedPool</span><span class="p">,</span> <span class="mh">0x3200u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memmove</span><span class="p">(</span><span class="n">qword_16448</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">unk_13110</span><span class="p">,</span> <span class="mh">0x3200u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sub_113C8</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">RtlInitUnicodeString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">SystemRoutineName</span><span class="p">,</span> <span class="sa">L</span><span class="s">&#34;NtCreateFile&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">SystemRoutineAddress</span> <span class="o">=</span> <span class="n">MmGetSystemRoutineAddress</span><span class="p">(</span><span class="o">&amp;</span><span class="n">SystemRoutineName</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Src</span> <span class="o">=</span> <span class="n">sub_110B8</span><span class="p">(</span><span class="n">SystemRoutineAddress</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>sub_11008</strong></li>
+</ul>
+<blockquote>
+<p><strong>总结：</strong>
+创建了一个文件，文件名为<code>C:\WINDOWS\system32\taskhost.exe</code>，返回0</p></blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">NTSTATUS</span> <span class="nf">sub_11008</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_UNICODE_STRING</span> <span class="n">DestinationString</span><span class="p">;</span> <span class="c1">// [rsp+60h] [rbp-58h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_IO_STATUS_BLOCK</span> <span class="n">IoStatusBlock</span><span class="p">;</span> <span class="c1">// [rsp+70h] [rbp-48h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_OBJECT_ATTRIBUTES</span> <span class="n">ObjectAttributes</span><span class="p">;</span> <span class="c1">// [rsp+80h] [rbp-38h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">RtlInitUnicodeString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">DestinationString</span><span class="p">,</span> <span class="sa">L</span><span class="s">&#34;</span><span class="se">\\</span><span class="s">??</span><span class="se">\\</span><span class="s">C:</span><span class="se">\\</span><span class="s">WINDOWS</span><span class="se">\\</span><span class="s">system32</span><span class="se">\\</span><span class="s">taskhost.exe&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">RootDirectory</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">SecurityDescriptor</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">SecurityQualityOfService</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">Attributes</span> <span class="o">=</span> <span class="mi">576</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ObjectAttributes</span><span class="p">.</span><span class="n">ObjectName</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">DestinationString</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">ZwCreateFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">FileHandle</span><span class="p">,</span> <span class="mh">0x80000000</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ObjectAttributes</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">IoStatusBlock</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x80u</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3u</span><span class="p">,</span> <span class="mh">0x40u</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>一顿操作下来，只是创建了一个文件：<code>C:\WINDOWS\system32\taskhost.exe</code>，然后返回0，继续看</p>
+<ul>
+<li><strong>sub_113C8</strong></li>
+</ul>
+<p>总结： 留意<code>byte_16390</code>与<code>byte_16310</code>，很可能是需要的答案</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kr">__int64</span> <span class="nf">sub_113C8</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">PVOID</span> <span class="n">P</span><span class="p">;</span> <span class="c1">// rbx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// r11d
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// edx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_DWORD</span> <span class="o">*</span><span class="n">v3</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">n128</span><span class="p">;</span> <span class="c1">// r8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_BYTE</span> <span class="n">Dst</span><span class="p">[</span><span class="mi">40</span><span class="p">];</span> <span class="c1">// [rsp+20h] [rbp-38h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">memmove</span><span class="p">(</span><span class="n">Dst</span><span class="p">,</span> <span class="n">sub_11DF0</span><span class="p">,</span> <span class="mh">0x22u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">P</span> <span class="o">=</span> <span class="n">ExAllocatePool</span><span class="p">(</span><span class="n">NonPagedPool</span><span class="p">,</span> <span class="mh">0x22u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memmove</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Dst</span><span class="p">,</span> <span class="mh">0x22u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dword_16414</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">)(</span><span class="mi">3435209541LL</span><span class="p">,</span> <span class="mi">1412570316</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ExFreePoolWithTag</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v1</span> <span class="o">=</span> <span class="n">dword_16414</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v2</span> <span class="o">=</span> <span class="n">dword_16414</span> <span class="o">-</span> <span class="mh">0x5C31139B</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v3</span> <span class="o">=</span> <span class="n">byte_16310</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">v3</span><span class="o">++</span> <span class="o">^=</span> <span class="n">v1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="p">(</span> <span class="n">v3</span> <span class="o">&lt;</span> <span class="n">byte_16390</span> <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v4</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">SubStr</span> <span class="o">=</span> <span class="n">byte_16310</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">word_16432</span> <span class="o">=</span> <span class="n">v2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">word_16430</span> <span class="o">=</span> <span class="n">v2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">byte_16310</span><span class="p">[</span><span class="n">v2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">byte_16310</span><span class="p">[</span><span class="n">v2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span> <span class="n">n128</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n128</span> <span class="o">&lt;</span> <span class="mi">128</span><span class="p">;</span> <span class="o">++</span><span class="n">n128</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">byte_16390</span><span class="p">[</span><span class="n">n128</span><span class="p">]</span> <span class="o">^=</span> <span class="n">byte_16310</span><span class="p">[</span><span class="n">v4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="p">((</span><span class="n">v4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">v2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v4</span> <span class="o">=</span> <span class="p">(</span><span class="n">v4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">v2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里出现了一些加密或解密操作，像是对密文的加密或解密，留意<code>byte_16390</code>与<code>byte_16310</code></p>
+<ul>
+<li><strong>sub_110B8</strong></li>
+</ul>
+<blockquote>
+<p>总结:
+<strong>前一半构造了v9这个函数，v9会跳转到NtCreateFile的位置</strong>
+<strong>后一半对<code>NtCreateFile</code>函数进行了<code>InlineHook</code>，使程序执行<code>NtCreateFile</code>函数的时候跳转到<code>sub_114D0</code>函数的位置</strong></p></blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">PVOID</span> <span class="kr">__fastcall</span> <span class="nf">sub_110B8</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">Dst</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">Dst_1</span><span class="p">;</span> <span class="c1">// rdi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n0xE</span><span class="p">;</span> <span class="c1">// ebx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">PVOID</span> <span class="n">PoolWithTag</span><span class="p">;</span> <span class="c1">// rdi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">CurrentIrql</span><span class="p">;</span> <span class="c1">// bl
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v7</span><span class="p">;</span> <span class="c1">// rcx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v8</span><span class="p">;</span> <span class="c1">// r11
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="o">*</span><span class="n">v9</span><span class="p">;</span> <span class="c1">// rbx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">Size</span><span class="p">;</span> <span class="c1">// r11
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v11</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v12</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_BYTE</span> <span class="n">v14</span><span class="p">[</span><span class="mi">14</span><span class="p">];</span> <span class="c1">// [rsp+20h] [rbp-38h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">_BYTE</span> <span class="n">v15</span><span class="p">[</span><span class="mi">14</span><span class="p">];</span> <span class="c1">// [rsp+30h] [rbp-28h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="n">v15</span> <span class="o">=</span> <span class="mh">0xFFFF0000000025FFuLL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Dst_1</span> <span class="o">=</span> <span class="n">Dst</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n0xE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="n">v14</span> <span class="o">=</span> <span class="mh">0xFFFF0000000025FFuLL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">do</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v4</span> <span class="o">=</span> <span class="n">qword_16448</span><span class="p">(</span><span class="n">Dst_1</span><span class="p">,</span> <span class="mi">64</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n0xE</span> <span class="o">+=</span> <span class="n">v4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dst_1</span> <span class="o">+=</span> <span class="n">v4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="p">(</span> <span class="n">n0xE</span> <span class="o">&lt;=</span> <span class="mh">0xE</span> <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">LODWORD</span><span class="p">(</span><span class="o">::</span><span class="n">Size</span><span class="p">)</span> <span class="o">=</span> <span class="n">n0xE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">PoolWithTag</span> <span class="o">=</span> <span class="n">ExAllocatePoolWithTag</span><span class="p">(</span><span class="n">NonPagedPool</span><span class="p">,</span> <span class="n">n0xE</span><span class="p">,</span> <span class="mh">0x53595351u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">CurrentIrql</span> <span class="o">=</span> <span class="n">KeGetCurrentIrql</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="mi">2u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v7</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v7</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFFFFFFEFFFFuLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_disable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memmove</span><span class="p">(</span><span class="n">PoolWithTag</span><span class="p">,</span> <span class="n">Dst</span><span class="p">,</span> <span class="o">::</span><span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v8</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_enable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v8</span> <span class="o">|</span> <span class="mh">0x10000</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="n">CurrentIrql</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v9</span> <span class="o">=</span> <span class="n">ExAllocatePoolWithTag</span><span class="p">(</span><span class="n">NonPagedPool</span><span class="p">,</span> <span class="p">(</span><span class="o">::</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">14</span><span class="p">),</span> <span class="mh">0x53595351u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memset</span><span class="p">(</span><span class="n">v9</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="p">(</span><span class="o">::</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">14</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">Dst</span><span class="p">[</span><span class="o">::</span><span class="n">Size</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memmove</span><span class="p">(</span><span class="n">v9</span><span class="p">,</span> <span class="n">PoolWithTag</span><span class="p">,</span> <span class="o">::</span><span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Size</span> <span class="o">=</span> <span class="o">::</span><span class="n">Size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="o">::</span><span class="n">Size</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="n">v14</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="n">qword_16420</span> <span class="o">=</span> <span class="n">v9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_114D0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">LOBYTE</span><span class="p">(</span><span class="n">v9</span><span class="p">)</span> <span class="o">=</span> <span class="n">KeGetCurrentIrql</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="mi">2u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v11</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v11</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFFFFFFEFFFFuLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_disable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">memset</span><span class="p">(</span><span class="n">Dst</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="o">::</span><span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="n">Dst</span> <span class="o">=</span> <span class="o">*</span><span class="n">v15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="p">(</span><span class="n">Dst</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="p">(</span><span class="n">Dst</span> <span class="o">+</span> <span class="mi">6</span><span class="p">)</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v12</span> <span class="o">=</span> <span class="n">__readcr0</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_enable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr0</span><span class="p">(</span><span class="n">v12</span> <span class="o">|</span> <span class="mh">0x10000</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__writecr8</span><span class="p">(</span><span class="n">v9</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">PoolWithTag</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>先看返回值为<code>PoolWithTag</code>，<code>PoolWithTag</code>来源于这个函数传入的<code>Dst</code>
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-99.png" alt="alt text">
+回到主函数可以看到<code>Dst</code>为<code>NtCreateFile</code>，<strong>注意这里的<code>NtCreateFile</code>是原来的未被修改的函数</strong>
+<img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-100.png" alt="alt text">
+这部分的意思就是把<code>NtCreateFile</code>备份给<code>Src</code>，在卸载例程是恢复<code>NtCreateFile</code>原来的样子</p>
+<p>再留意</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="mh">0xFFFF0000000025FFuLL</span>
+</span></span></code></pre></div><p>由于计算机小端序存储，所以应该是<code>FF2500000000FFFF</code>，看到<code>FF25</code>应该感到熟悉，从机器码翻译到汇编指令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">FF <span class="m">25</span> <span class="m">00</span> <span class="m">00</span> <span class="m">00</span> <span class="m">00</span>  FF  FF
+</span></span><span class="line"><span class="cl">│  │ │  │  │  │   │   └─ padding（写两遍只是填满 <span class="m">8</span> 字节）
+</span></span><span class="line"><span class="cl">│  └─ opcode 0x25：表示 <span class="o">[</span>opcode 0xFF /2<span class="o">]</span> 即 “jmp qword ptr <span class="o">[</span>disp32<span class="o">]</span>”
+</span></span><span class="line"><span class="cl">└──── opcode 0xFF：分组里 /2 <span class="o">=</span> JMP
+</span></span></code></pre></div><p>结合后面的内容</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">memset</span><span class="p">(</span><span class="n">v9</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="p">(</span><span class="o">::</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">14</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">Dst</span><span class="p">[</span><span class="o">::</span><span class="n">Size</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">memmove</span><span class="p">(</span><span class="n">v9</span><span class="p">,</span> <span class="n">PoolWithTag</span><span class="p">,</span> <span class="o">::</span><span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Size</span> <span class="o">=</span> <span class="o">::</span><span class="n">Size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="o">::</span><span class="n">Size</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="n">v14</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="o">*&amp;</span><span class="n">v9</span><span class="p">[</span><span class="n">Size</span> <span class="o">+</span> <span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v14</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_114D0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">memset</span><span class="p">(</span><span class="n">Dst</span><span class="p">,</span> <span class="mh">0x90</span><span class="p">,</span> <span class="o">::</span><span class="n">Size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">Dst</span> <span class="o">=</span> <span class="o">*</span><span class="n">v15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="n">Dst</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="p">(</span><span class="n">Dst</span> <span class="o">+</span> <span class="mi">6</span><span class="p">)</span> <span class="o">=</span> <span class="o">*&amp;</span><span class="n">v15</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span>
+</span></span></code></pre></div><p><strong>前一半构造了v9这个函数，v9会跳转到NtCreateFile的位置</strong></p>
+<p><strong>后一半对<code>NtCreateFile</code>函数进行了<code>InlineHook</code>，使程序执行<code>NtCreateFile</code>函数的时候跳转到<code>sub_114D0</code>函数的位置</strong></p>
+<p>进入<code>sub_114D0</code>函数看看</p>
+<ul>
+<li><strong>sub_114D0</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">sub_114D0</span><span class="p">(</span><span class="kr">__int64</span> <span class="n">a1</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a2</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a3</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a4</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a5</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a6</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a7</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">v8</span><span class="p">;</span> <span class="c1">// esi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v9</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">v10</span><span class="p">;</span> <span class="c1">// rdi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">n128</span><span class="p">;</span> <span class="c1">// rax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// ebx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">v8</span> <span class="o">=</span> <span class="n">qword_16420</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">,</span> <span class="n">a5</span><span class="p">,</span> <span class="n">a6</span><span class="p">,</span> <span class="n">a7</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">v8</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="n">wcsstr</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">a3</span> <span class="o">+</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="mi">8LL</span><span class="p">),</span> <span class="n">SubStr</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">v9</span> <span class="o">=</span> <span class="n">dword_16428</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">v10</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">a3</span> <span class="o">+</span> <span class="mi">16</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span> <span class="n">dword_16428</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">++</span><span class="n">dword_16428</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="n">v9</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">8</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">n128</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">byte_16390</span><span class="p">[</span><span class="n">n128</span><span class="p">];</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span> <span class="n">n128</span> <span class="o">&gt;=</span> <span class="mi">128</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">++</span><span class="n">n128</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="n">sub_115DC</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">          <span class="n">sub_112B4</span><span class="p">(</span><span class="n">v10</span><span class="p">,</span> <span class="n">byte_16390</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dword_16428</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">v8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>qword_16420</code>就是主调函数中的<code>v9</code>也就是<code>NtCreateFile</code></p>
+<p><code>sub_115DC();</code>就是恢复InlineHook，跟最开始分析的那个一样</p>
+<p>这部分没什么信息</p>
+<p>那就回到<code>sub_113C8()</code>去解那个加密</p>
+<p><img src="/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-reverse/img/image-101.png" alt="alt text">
+成功了，看半天其实只用上了<code>sub_113C8()</code>函数</p>
+<blockquote>
+<p>the flag is A_simple_Inline_hook_Drv
+RCTF{A_simple_Inline_hook_Drv}</p></blockquote>
+<h3 id="exp-15">
+<a class="header-anchor" href="#exp-15"></a>
+exp
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">byte_16310</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x95</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x6E</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xA2</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xB3</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0x9A</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x57</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0xA9</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xA2</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x6E</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xF7</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x02</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xF6</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x1F</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0xB1</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0xB1</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">byte_16390</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x70</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x37</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x47</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x0C</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x6D</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x3A</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x36</span><span class="p">,</span> <span class="mh">0x6D</span><span class="p">,</span> <span class="mh">0x16</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x09</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x28</span><span class="p">,</span> <span class="mh">0x6E</span><span class="p">,</span> <span class="mh">0x0B</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x6D</span><span class="p">,</span> <span class="mh">0x68</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x6A</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x02</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x78</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x33</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x33</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x2E</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x78</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x5F</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x33</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x33</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x2E</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x78</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x00</span>
+</span></span><span class="line"><span class="cl">	<span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">v1</span> <span class="o">=</span> <span class="mh">0x54321CCC</span> <span class="o">&amp;</span> <span class="mh">0xF0F0F0F0F0F0F0F0</span> <span class="o">^</span> <span class="mh">0xCCC12345</span> <span class="o">&amp;</span> <span class="mh">0xF0F0F0F0F0F0F0F</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">uint32_t</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">v1</span> <span class="o">-</span> <span class="mh">0x5C31139B</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">byte_16390</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span> <span class="o">^=</span> <span class="p">(</span><span class="n">v1</span> <span class="o">&amp;</span> <span class="mh">0x000000FF</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">byte_16390</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">^=</span> <span class="p">((</span><span class="n">v1</span> <span class="o">&amp;</span> <span class="mh">0x0000FF00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">byte_16390</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">^=</span> <span class="p">((</span><span class="n">v1</span> <span class="o">&amp;</span> <span class="mh">0x00FF0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">byte_16390</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">^=</span> <span class="p">((</span><span class="n">v1</span> <span class="o">&amp;</span> <span class="mh">0xFF000000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">byte_16310</span><span class="p">[</span><span class="n">v2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">byte_16310</span><span class="p">[</span><span class="n">v2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int32_t</span> <span class="n">v4</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">128</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">byte_16390</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^=</span> <span class="n">byte_16310</span><span class="p">[</span><span class="n">v4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">		<span class="n">v4</span> <span class="o">=</span> <span class="p">(</span><span class="n">v4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">v2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">byte_16390</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div>
       
     </div>
@@ -2302,7 +2686,7 @@ exp
           
           
             <img
-              data-src="/images/my/18.png"
+              data-src="/images/my/17.png"
               data-sizes="auto"
               alt="BUU-Reverse"
               class="lazyload"
@@ -2325,7 +2709,7 @@ exp
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/10.jpg"
               data-sizes="auto"
               alt="SSE指令集学习"
               class="lazyload"
@@ -2430,7 +2814,7 @@ exp
       <div>
         <span class="icon-brush"
           >&nbsp;
-            25.7k
+            28.5k
           </span
         >
         &nbsp;|&nbsp;
@@ -2438,7 +2822,7 @@ exp
           
           
 
-          00:55
+          01:01
         </span>
       </div>
     
@@ -2570,7 +2954,14 @@ exp
     </li>
     <li><a href="#0x0f-easy_mazen6">0x0F easy_Maze[N6]</a>
       <ul>
+        <li><a href="#分析-14">分析</a></li>
         <li><a href="#exp-14">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x10-mydriver2-397n6">0x10 MyDriver2-397[N6]</a>
+      <ul>
+        <li><a href="#分析-15">分析</a></li>
+        <li><a href="#exp-15">exp</a></li>
       </ul>
     </li>
   </ul>
