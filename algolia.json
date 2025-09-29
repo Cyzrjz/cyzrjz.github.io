@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1759065411",
+    "permalink": "/post/pe%E5%B7%A5%E5%85%B7/",
+    "title": "PE工具",
+    
+    "content": "这是一个里程碑，是我学习WIN32 API和PE结构后我的第一个项目，虽然已经满大街了，但还是想记录一下这个项目的一些心得\n图形化框架 我使用了Windows消息控件来实现图形化界面，使用了Win32 API中的各种消息机制，包括注册窗口类、创建窗口、显示窗口、处理消息、发送消息等\n在这一部分的时候踩了不少坑，比如通用控件和自定义控件消息处理方式的区别，前者使用WM_NOTIFY消息，后者使用WM_COMMAND消息\n但在写这篇文章的时候，我已经完成了我的界面，所以在这里不再记录我怎么实现的\n核心内容 接下来写的就是我正在实现的功能了，也是程序的核心模块\n进程遍历 这块内容我早已写过无数遍，虽然之前是在没系统学过WIN32 API的时候，但现在再写一遍却有不同的体会，现在我知道了每个函数的功能，并且我能够自己查阅MSDN文档来解决问题\n在这个功能函数里，主要的到进程名称、PID、镜像基址、镜像大小、进程模块\n进程名称：PROCESSENTRY32-\u0026amp;gt;szExeFile PID：PROCESSENTRY32-\u0026amp;gt;th32ProcessID 镜像基址：MODULEENTRY32-\u0026amp;gt;modBaseAddr 镜像大小：MODULEENTRY32-\u0026amp;gt;modBaseSize 可见后两个都需要遍历进程模块，但我们需要的东西一般在第一个模块里，所以可以偷个懒看第一个模块就行了\nVOID EnumProcess(HWND hListProcess) { LV_ITEM lvItem; // 初始化 memset(\u0026amp;amp;lvItem, 0, sizeof(LV_ITEM)); lvItem.mask = LVIF_TEXT; // 进程遍历 // 获取系统快照 HANDLE hProcessSnap; HANDLE hProcess; DWORD dwPriorityClass; PROCESSENTRY32 pe32; MODULEENTRY32 me32; pe32.dwSize = sizeof(PROCESSENTRY32); me32.dwSize = sizeof(MODULEENTRY32); HANDLE hModuleSnap; char* pProcessName = nullptr; hProcessSnap = …",
+    
+    "date": "2025-09-28 21:16:51",
+    "updated": "2025-09-28 21:16:51"
+  }
+  
+  , 
+  {
     "objectID": "1748242851",
     "permalink": "/post/litctf2025/",
     "title": "LitCTF2025",
