@@ -156,7 +156,7 @@
 
 
   
- <link rel="stylesheet" href="/css/main.min.f733dcb5f5f43503ece2a5817d54461ea9641518f66ab17c660d22bb4c1acecd.css" />
+ <link rel="stylesheet" href="/css/main.min.43cca01ce635e499cdae85c6057c7d926970ad38b576d0be1b7e116d9198cd36.css" />
 
 
 
@@ -421,7 +421,7 @@
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">9</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -563,6 +563,7 @@
       
       
         <p>这是一个里程碑，是我学习<strong>WIN32 API</strong>和<strong>PE结构</strong>后我的第一个项目，虽然已经满大街了，但还是想记录一下这个项目的一些心得</p>
+<p>本项目使用32位编译，所以在64位下解析是错误的，需要注意</p>
 <h2 id="图形化框架">
 <a class="header-anchor" href="#%e5%9b%be%e5%bd%a2%e5%8c%96%e6%a1%86%e6%9e%b6"></a>
 图形化框架
@@ -786,7 +787,70 @@
 <h3 id="pe结构解析">
 <a class="header-anchor" href="#pe%e7%bb%93%e6%9e%84%e8%a7%a3%e6%9e%90"></a>
 PE结构解析
-</h3>
+</h3><p>先画界面
+<img src="/post/pe%E5%B7%A5%E5%85%B7/img/image-4.png" alt="alt text">
+我把这个dialog资源为<code>IDD_DIALOG_PE</code>，当我打开文件时，会弹出这个新的窗口</p>
+<p>其中编辑框内需要写入PE信息，如何往编辑框写入如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">HWND</span> <span class="n">hEdit</span> <span class="o">=</span> <span class="n">GetDlgItem</span><span class="p">(</span><span class="n">hwndDlg</span><span class="p">,</span> <span class="n">IDC_EDIT_ADDRESSOFENTRYPOINT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">strTempAddr</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">hEdit</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">printError</span><span class="p">(</span><span class="s">&#34;GetDlgItem&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">sprintf</span><span class="p">(</span><span class="n">strTempAddr</span><span class="p">,</span> <span class="s">&#34;0x%08X&#34;</span><span class="p">,</span> <span class="n">pFileStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">AddressOfEntryPoint</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SetWindowText</span><span class="p">(</span><span class="n">hEdit</span><span class="p">,</span> <span class="n">strTempAddr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>GetDlgItem</code>获取到编辑框的句柄，然后用<code>SetWindowText</code>将地址写入编辑框内</p>
+<ul>
+<li><strong>打开文件</strong>
+直接调用<code>GetOpenFileName</code>获取文件绝对路径，再通过<code>ReadFile</code>读取文件内容，然后调用<code>AnalysisPE</code>分析PE结构</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">TCHAR</span> <span class="n">szPeFileExt</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;*.exe;*.dll;*.scr;*.drv;*.sys&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">TCHAR</span> <span class="n">szFileName</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">memset</span><span class="p">(</span><span class="n">szFileName</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stOpenFile</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">OPENFILENAME</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">stOpenFile</span><span class="p">.</span><span class="n">lStructSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">OPENFILENAME</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">stOpenFile</span><span class="p">.</span><span class="n">Flags</span> <span class="o">=</span> <span class="n">OFN_FILEMUSTEXIST</span> <span class="o">|</span> <span class="n">OFN_PATHMUSTEXIST</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">stOpenFile</span><span class="p">.</span><span class="n">hwndOwner</span> <span class="o">=</span> <span class="n">hwndDlg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">stOpenFile</span><span class="p">.</span><span class="n">lpstrFilter</span> <span class="o">=</span> <span class="n">szPeFileExt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">stOpenFile</span><span class="p">.</span><span class="n">lpstrFile</span> <span class="o">=</span> <span class="n">szFileName</span><span class="p">;</span> <span class="c1">// 文件绝对路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">stOpenFile</span><span class="p">.</span><span class="n">nMaxFile</span> <span class="o">=</span> <span class="n">MAX_PATH</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">GetOpenFileName</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stOpenFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">ReadFile</span><span class="p">(</span><span class="n">stOpenFile</span><span class="p">.</span><span class="n">lpstrFile</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pFileBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">AnalysisPE</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pFileStruct</span><span class="p">);</span>
+</span></span></code></pre></div><ul>
+<li><strong>分析PE结构</strong>
+分析PE结构，主要是获取PE头、NT头、节表、导出表等信息，并将这些信息存储在<code>PEstruct</code>结构体内</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">PEstruct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_DOS_HEADER</span> <span class="n">pDosHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_NT_HEADERS</span> <span class="n">pNTHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_SECTION_HEADER</span> <span class="n">pSectionHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_EXPORT_DIRECTORY</span> <span class="n">pExportTable</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">AnalysisPE</span><span class="p">(</span><span class="n">IN</span> <span class="n">PDWORD</span> <span class="n">pFileBuffer</span><span class="p">,</span> <span class="n">OUT</span> <span class="n">PEstruct</span><span class="o">**</span> <span class="n">pPEstruct</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">pFileBuffer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">OutputDebugString</span><span class="p">(</span><span class="s">&#34;文件为空&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PEstruct</span><span class="o">*</span> <span class="n">pTempStruct</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempStruct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PEstruct</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pTempStruct</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">OutputDebugString</span><span class="p">(</span><span class="s">&#34;申请内存失败&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_DOS_HEADER</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_NT_HEADERS</span><span class="o">&gt;</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">)</span> <span class="o">+</span> <span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_lfanew</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_SECTION_HEADER</span><span class="o">&gt;</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">)</span> <span class="o">+</span> <span class="n">pTempStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">SizeOfOptionalHeader</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="n">pPEstruct</span> <span class="o">=</span> <span class="n">pTempStruct</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>显示PE信息</strong>
+最后的效果如图所示，显示了PE头、NT头、节表、导出表等信息
+<img src="/post/pe%E5%B7%A5%E5%85%B7/img/image-5.png" alt="alt text"></li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
@@ -850,7 +914,7 @@ PE结构解析
           
           
             <img
-              data-src="/images/my/6.jpg"
+              data-src="/images/my/16.jpg"
               data-sizes="auto"
               alt="LitCTF2025"
               class="lazyload"
@@ -924,9 +988,6 @@ PE结构解析
   
   
 
-  
-  
-
 
 
 <footer id="footer">
@@ -960,7 +1021,7 @@ PE结构解析
       <div>
         <span class="icon-brush"
           >&nbsp;
-            30.2k
+            29.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -968,7 +1029,7 @@ PE结构解析
           
           
 
-          01:05
+          01:03
         </span>
       </div>
     
@@ -1041,7 +1102,7 @@ PE结构解析
   <div class="sidebar-state-article">
     <div>文章</div>
     
-    <div class="sidebar-state-number">10</div>
+    <div class="sidebar-state-number">9</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>

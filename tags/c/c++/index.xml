@@ -13,7 +13,7 @@
       <link>https://cyzrjz.github.io/post/pe%E5%B7%A5%E5%85%B7/</link>
       <pubDate>Sun, 28 Sep 2025 21:16:51 +0800</pubDate>
       <guid>https://cyzrjz.github.io/post/pe%E5%B7%A5%E5%85%B7/</guid>
-      <description>&lt;p&gt;这是一个里程碑，是我学习&lt;strong&gt;WIN32 API&lt;/strong&gt;和&lt;strong&gt;PE结构&lt;/strong&gt;后我的第一个项目，虽然已经满大街了，但还是想记录一下这个项目的一些心得&lt;/p&gt;&#xA;&lt;h2 id=&#34;图形化框架&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%9b%be%e5%bd%a2%e5%8c%96%e6%a1%86%e6%9e%b6&#34;&gt;&lt;/a&gt;&#xA;图形化框架&#xA;&lt;/h2&gt;&lt;p&gt;我使用了Windows消息控件来实现图形化界面，使用了Win32 API中的各种消息机制，包括注册窗口类、创建窗口、显示窗口、处理消息、发送消息等&lt;/p&gt;</description>
+      <description>&lt;p&gt;这是一个里程碑，是我学习&lt;strong&gt;WIN32 API&lt;/strong&gt;和&lt;strong&gt;PE结构&lt;/strong&gt;后我的第一个项目，虽然已经满大街了，但还是想记录一下这个项目的一些心得&lt;/p&gt;&#xA;&lt;p&gt;本项目使用32位编译，所以在64位下解析是错误的，需要注意&lt;/p&gt;</description>
     </item>
     <item>
       <title>DLL注入实现反截屏</title>
