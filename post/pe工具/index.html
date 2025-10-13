@@ -767,10 +767,10 @@
 </span></span><span class="line"><span class="cl">		<span class="n">lvItem</span><span class="p">.</span><span class="n">iSubItem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">		<span class="n">ListView_InsertItem</span><span class="p">(</span><span class="n">hListProcess</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lvItem</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">		<span class="c1">// 模块基址
+</span></span><span class="line"><span class="cl">		<span class="c1">// 模块地址
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
 </span></span><span class="line"><span class="cl">		<span class="n">memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">		<span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;0x%08X&#34;</span><span class="p">,</span> <span class="n">me32</span><span class="p">.</span><span class="n">modBaseAddr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">me32</span><span class="p">.</span><span class="n">szExePath</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">		<span class="n">lvItem</span><span class="p">.</span><span class="n">pszText</span> <span class="o">=</span> <span class="n">buf</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">		<span class="n">lvItem</span><span class="p">.</span><span class="n">iItem</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">		<span class="n">lvItem</span><span class="p">.</span><span class="n">iSubItem</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
