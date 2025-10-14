@@ -1,0 +1,1989 @@
+<!doctype html>
+<html
+  lang="zh-cn" 
+  
+    data-theme-mode="auto"
+  
+>
+  <head>
+    
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  加密壳框架——基于傀儡进程的壳 | Cyzrjz
+</title>
+<meta
+  name="description"
+  content="基于傀儡进程的壳框架"
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_0khxww3tj3q9\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="/css/loader.min.ac746e154f756f8220326eeb52a719f142ab038be5a8ddf30ea5ef15ef2356ea.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="加密壳框架——基于傀儡进程的壳 | Cyzrjz" />
+  <meta
+    property="og:description"
+    content="基于傀儡进程的壳框架"
+  />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/" />
+  <meta
+    property="og:site_name"
+    content="W31c0me t0 My610g"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="Cyzrjz" />
+  <meta property="article:published_time" content="2025-10-12T20:34:40&#43;08:00" />
+  <meta property="article:modified_time" content="2025-10-12T20:34:40&#43;08:00" />
+  
+    <meta property="article:tag" content="逆向壳C/C&#43;&#43;" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="/css/main.min.43cca01ce635e499cdae85c6057c7d926970ad38b576d0be1b7e116d9198cd36.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+
+    
+  </head>
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/">首页</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/archives">归档</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/about">关于</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/friend">友链</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="加密壳框架——基于傀儡进程的壳">
+        
+      
+    
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">加密壳框架——基于傀儡进程的壳</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <div id="content"
+          class="sidebar-left"
+            >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        
+          <div class="sidebar-toc-sidebar">
+            <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#设计思路">设计思路</a></li>
+    <li><a href="#错误处理">错误处理</a></li>
+    <li><a href="#核心代码">核心代码</a>
+      <ul>
+        <li><a href="#加壳器">加壳器</a></li>
+        <li><a href="#壳源">壳源</a></li>
+      </ul>
+    </li>
+    <li><a href="#完整代码">完整代码</a>
+      <ul>
+        <li><a href="#加壳器-1">加壳器</a></li>
+        <li><a href="#壳源-1">壳源</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+          </div>
+          <div class="sidebar-common-sidebar hidden">
+            
+<div class="sidebar-author">
+  <img
+    data-src="/avatar/avatar.png"
+    data-sizes="auto"
+    alt="Cyzrjz"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">Cyzrjz</div>
+  <div class="sidebar-description">静籁永恒</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    
+    <div class="sidebar-state-number">10</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">11</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="首页"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">首页</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="归档"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">归档</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="关于"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">关于</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/friend"
+        aria-label="友链"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">友链</div>
+    </div>
+  
+</div>
+
+          </div>
+        
+      
+
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+    
+  </div>
+  
+</aside>
+
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <span
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-10-12 20:34:40 &#43;0800 &#43;0800" itemprop="datePublished"
+      >2025-10-12</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-10-12</time
+    >
+  </span>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="前言">
+<a class="header-anchor" href="#%e5%89%8d%e8%a8%80"></a>
+前言
+</h2><p>这是第二个项目，是对“壳”的初步探索。思路源于滴水3期的项目要求，一个基于傀儡进程的壳框架，在写壳的过程中遇到了不少问题，如果不自己来写一遍的话是记不住这些错误的</p>
+<p>归根结底，纸上得来终觉浅，绝知此事要躬行。</p>
+<p>因为是个壳框架，所以不写加密解密的具体实现，只写框架的设计思路</p>
+<p>暂未完成对于<code>VirtualAllocEx</code>申请空间失败的处理</p>
+<h2 id="设计思路">
+<a class="header-anchor" href="#%e8%ae%be%e8%ae%a1%e6%80%9d%e8%b7%af"></a>
+设计思路
+</h2><p><img src="/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/img/image-1.png" alt="流程图"></p>
+<p><img src="/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/img/image.png" alt="设计思路"></p>
+<p>1、读取主模块的数据</p>
+<p>2、解密：得到原来的PE文件</p>
+<p>3、以挂起的形式创建进程：CreateProcess</p>
+<p>要创建的进程，就是壳子本身！</p>
+<p>4、获取外壳程序的Context,后面要用</p>
+<p>5、卸载外壳程序.</p>
+<p>6、在指定的位置分配空间：位置就是src的ImageBase ,大小就是Src的SizeOfImage</p>
+<p>7、如果成功，将Src的PE文件拉伸 复制到该空间中</p>
+<p>8、如果申请空间失败，但有重定位表：在任意位置申请空间，然后将PE文件拉伸、复制、修复重定位表。</p>
+<p>9、如果第6步申请空间失败，并且还没有重定位表，直接返回：失败.</p>
+<p>10、修改外壳程序的Context:</p>
+<pre><code>将Context的ImageBase 改成 Src的ImageBase				
+            
+将Context的OEP 改成 Src的OEP				
+</code></pre>
+<p>11、设置Context 并恢复主线程</p>
+<p>12、终止外壳程序，解壳过程结束.</p>
+<h2 id="错误处理">
+<a class="header-anchor" href="#%e9%94%99%e8%af%af%e5%a4%84%e7%90%86"></a>
+错误处理
+</h2><p>这个错误处理为什么要写在前面？</p>
+<p>因为遇到的错误才是真正对我有帮助的，如果顺风顺水到会让我干到不安，这是错误处理，也是项目经验，不论做什么事情，错误处理终究是最重要的</p>
+<p>1、C05错误：
+这是我遇到的第一个问题，这个问题源于ASLR地址随机化，卸载进程用到的<code>NtUnmapViewOfSection</code>会因安全而触发C05错误，解决方法就是关闭地址随机化</p>
+<p>2、加壳后没有报错，但也没有任何显示：
+这个问题排查了好久，网上也找不到什么线索，检查进程发现有一条线程的转发量极高，且有一个模块地址为0xCDCDCDCD，猜测debug版内存空间默认填写int3中断，编译为release版后解决
+但这治标不治本，我回到debug版将申请的空间memwet为0后解决了这个问题，但很明显这不是问题的关键，我怀疑是某个数组溢出导致的，等我找到问题所在再补充</p>
+<p>3、NtUnmapViewOfSection卸载的时候第二个参数是什么：
+第二个参数应该是远程进程的ImageBase，不一定是PE文件中的0x400000，可能是其他加载地址，不能直接写0x400000，需要ReadProcessMemory（contxPacker.Ebx + 8）获取远程进程的ImageBase</p>
+<h2 id="核心代码">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e4%bb%a3%e7%a0%81"></a>
+核心代码
+</h2><p>由于是基于傀儡进程的壳，所以需要额外的加壳器将目标程序加密后写入壳源</p>
+<h3 id="加壳器">
+<a class="header-anchor" href="#%e5%8a%a0%e5%a3%b3%e5%99%a8"></a>
+加壳器
+</h3><p>加壳器的设计思路就是将目标程序加密后直接加入壳源的新增节，这部分没什么难点，具体代码卸载文章末尾处</p>
+<h3 id="壳源">
+<a class="header-anchor" href="#%e5%a3%b3%e6%ba%90"></a>
+壳源
+</h3><p>在这一块我想了许久，壳源是如何将目标程序成功加载的</p>
+<p>在前面的课程中重点提到了<strong>以挂起方式创建进程</strong>，项目中流程也提到了这一步，但如何具体实现？</p>
+<p>我想了个词来描述这个过程：<strong>偷天换日</strong></p>
+<p>因为这个壳的思路就是<strong>用目标程序的内存镜像替换掉宿主的映像并把线程上下文改为新的入口点，从而让宿主进程最终运行被替换的程序代码</strong></p>
+<p>那么需要解决的问题就具体化了：</p>
+<ol>
+<li>目标程序是否需要拉伸后再复制到宿主进程的内存空间中</li>
+<li>以什么方式创建进程，进程信息如何获取</li>
+<li>如何卸载原宿主进程</li>
+<li>如何修改进程的上下文</li>
+<li>如何将目标程序的内存镜像复制到准确的空间(目标程序的ImageBase+OEP)中</li>
+<li>如何恢复宿主进程的线程</li>
+</ol>
+<p>这里直接给出答案：</p>
+<ol>
+<li>是</li>
+<li>以<strong>挂起(CREATE_SUSPENDED)<strong>方式创建进程，通过</strong>STARTUPINFO</strong>和<strong>PROCESS_INFORMATION</strong>结构体获取进程信息</li>
+<li><code>NtUnmapViewOfSection</code>函数可以卸载宿主进程的映像</li>
+<li><code>CONTEXT</code>结构体存储线程的上下文信息，其中<code>CONTEXT.Eax</code>指向<code>OEP,CONTEXT.Ebx+8</code>指向<code>ImageBase</code></li>
+<li><code>VirtualAllocE</code>x可以在指定的位置分配内存，<code>WriteProcessMemory</code>可以将目标程序的内存镜像复制到该空间中</li>
+<li><code>ResumeThread</code>恢复执行线程</li>
+</ol>
+<h4 id="代码实现">
+<a class="header-anchor" href="#%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0"></a>
+代码实现
+</h4><ol>
+<li>以挂起方式创建进程，并保存进程信息</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">STARTUPINFO</span> <span class="n">siPackerProc</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span> <span class="c1">// 进程启动信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">PROCESS_INFORMATION</span> <span class="n">piPackerProc</span><span class="p">;</span> <span class="c1">// 进程信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">siPackerProc</span><span class="p">.</span><span class="n">cb</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">siPackerProc</span><span class="p">);</span> <span class="c1">//这一步必须初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="n">CreateProcess</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">NULL</span><span class="p">,</span>   <span class="c1">//  指向一个NULL结尾的、用来指定可执行模块的宽字节字符串  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">szExeFullPath</span><span class="p">,</span> <span class="c1">// 命令行字符串  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指向一个SECURITY_ATTRIBUTES结构体，这个结构体决定是否返回的句柄可以被子进程继承。  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    如果lpProcessAttributes参数为空（NULL），那么句柄不能被继承。&lt;同上&gt;  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nb">false</span><span class="p">,</span><span class="c1">//    指示新进程是否从调用进程处继承了句柄。   
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">CREATE_SUSPENDED</span><span class="p">,</span>  <span class="c1">//  指定附加的、用来控制优先类和进程的创建的标  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//  CREATE_NEW_CONSOLE  新控制台打开子进程  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//  CREATE_SUSPENDED    子进程创建后挂起，直到调用ResumeThread函数  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指向一个新进程的环境块。如果此参数为空，新进程使用调用进程的环境  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指定子进程的工作路径  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="o">&amp;</span><span class="n">siPackerProc</span><span class="p">,</span> <span class="c1">// 决定新进程的主窗体如何显示的STARTUPINFO结构体  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="o">&amp;</span><span class="n">piPackerProc</span>  <span class="c1">// 接收新进程的识别信息的PROCESS_INFORMATION结构体  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">TEXT</span><span class="p">(</span><span class="s">&#34;挂起创建程序成功！！！&#34;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">CONTEXT</span> <span class="n">contxPacker</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">contxPacker</span><span class="p">.</span><span class="n">ContextFlags</span> <span class="o">=</span> <span class="n">CONTEXT_FULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">GetThreadContext</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">contxPacker</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//获取入口点						
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">DWORD</span> <span class="n">dwEntryPoint</span> <span class="o">=</span> <span class="n">contxPacker</span><span class="p">.</span><span class="n">Eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//获取ImageBase						
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">char</span><span class="o">*</span> <span class="n">baseAddress</span> <span class="o">=</span> <span class="p">(</span><span class="n">CHAR</span><span class="o">*</span><span class="p">)</span><span class="n">contxPacker</span><span class="p">.</span><span class="n">Ebx</span> <span class="o">+</span> <span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">szBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ReadProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">baseAddress</span><span class="p">,</span> <span class="n">szBuffer</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;ReadProcessMemory failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	    <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">ResumeThread</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">);</span> <span class="c1">// 恢复执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>卸载原宿主进程的映像</li>
+</ol>
+<p>在这里出现问题了，我无法直接使用<code>NtUnmapViewOfSection</code>函数，该函数未文档化，需要查阅一些资料</p>
+<p><a href="http://www.cppblog.com/elva/archive/2014/07/28/32788.html">利用NtUnmapViewOfSection强制卸载模块</a></p>
+<p>有点麻烦，需要从<code>ntdll.dll</code>中导出该函数，自己创建 NtUnmapViewOfSection 原型（用户态通过 ntdll 导出），我直接照抄文章中的代码了</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 创建 NtUnmapViewOfSection 原型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">typedef</span> <span class="nf">ULONG</span><span class="p">(</span><span class="n">WINAPI</span><span class="o">*</span> <span class="n">PFNNtUnmapViewOfSection</span><span class="p">)(</span><span class="n">IN</span> <span class="n">HANDLE</span> <span class="n">ProcessHandle</span><span class="p">,</span> <span class="n">IN</span> <span class="n">PVOID</span> <span class="n">BaseAddress</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">HMODULE</span> <span class="n">hNtModule</span> <span class="o">=</span> <span class="n">GetModuleHandle</span><span class="p">(</span><span class="s">&#34;ntdll.dll&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">hNtModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">hNtModule</span> <span class="o">=</span> <span class="n">LoadLibrary</span><span class="p">(</span><span class="s">&#34;ntdll.dll&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">hNtModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;ntdll find faied!!!&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">PFNNtUnmapViewOfSection</span> <span class="n">pfnNtUnmapViewOfSection</span> <span class="o">=</span> <span class="p">(</span><span class="n">PFNNtUnmapViewOfSection</span><span class="p">)</span><span class="n">GetProcAddress</span><span class="p">(</span><span class="n">hNtModule</span><span class="p">,</span> <span class="s">&#34;NtUnmapViewOfSection&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">pfnNtUnmapViewOfSection</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">pfnNtUnmapViewOfSection</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="p">(</span><span class="n">PVOID</span><span class="p">)</span><span class="n">baseAddress</span><span class="p">);</span>
+</span></span></code></pre></div><ol start="3">
+<li>在指定位置分配内存，并将目标程序的内存镜像复制到该空间中</li>
+</ol>
+<p>使用<code>VirtualAllocEx</code>函数分配内存，并使用<code>WriteProcessMemory</code>函数将目标程序的内存镜像复制到该空间中</p>
+<p><code>VirtualAllocEx</code>会返回申请的内存的起始地址</p>
+<ul>
+<li>setp1：在指定位置分配内存</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">LPVOID</span> <span class="n">lpPuppetProcessBaseAddr</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">lpPuppetProcessBaseAddr</span> <span class="o">=</span> <span class="n">VirtualAllocEx</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">(</span><span class="n">LPVOID</span><span class="p">)</span><span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfImage</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MEM_COMMIT</span> <span class="o">|</span> <span class="n">MEM_RESERVE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PAGE_EXECUTE_READWRITE</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">lpPuppetProcessBaseAddr</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;重新分配内存 failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li>setp2：将文件拉伸并写入内存</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">FileToImage</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">,</span> <span class="n">SrcStruct</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpSrcImageBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">nRet</span> <span class="o">=</span> <span class="n">WriteProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">lpPuppetProcessBaseAddr</span><span class="p">,</span> <span class="n">lpSrcImageBuffer</span><span class="p">,</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfImage</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nRet</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;WriteProcessMemory&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol start="4">
+<li>修改外壳程序的Context</li>
+</ol>
+<p>将Context的ImageBase(Ebx+8) 改成 Src的ImageBase			
+将Context的OEP(Eax) 改成 Src的OEP</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">PVOID</span> <span class="n">pImageBase</span> <span class="o">=</span> <span class="p">(</span><span class="n">PVOID</span><span class="p">)</span><span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">nRet</span> <span class="o">=</span> <span class="n">WriteProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="p">(</span><span class="n">LPVOID</span><span class="p">)(</span><span class="n">contxPacker</span><span class="p">.</span><span class="n">Ebx</span> <span class="o">+</span> <span class="mi">8</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">pImageBase</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">PVOID</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nRet</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;修改ImageBase失败&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">contxPacker</span><span class="p">.</span><span class="n">Eax</span> <span class="o">=</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span> <span class="o">+</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">AddressOfEntryPoint</span><span class="p">;</span>
+</span></span></code></pre></div><ol start="5">
+<li>设置Context 并恢复主线程</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">SetThreadContext</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">contxPacker</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;SetThreadContext 失败&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="n">MB_OK</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">ResumeThread</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">);</span> <span class="c1">// 恢复执行
+</span></span></span></code></pre></div><ol start="6">
+<li>释放申请的空间</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">lpSrcImageBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpSrcImageBuffer</span><span class="p">);</span>
+</span></span></code></pre></div><h2 id="完整代码">
+<a class="header-anchor" href="#%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81"></a>
+完整代码
+</h2><h3 id="加壳器-1">
+<a class="header-anchor" href="#%e5%8a%a0%e5%a3%b3%e5%99%a8-1"></a>
+加壳器
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">PEstruct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_DOS_HEADER</span> <span class="n">pDosHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_NT_HEADERS</span> <span class="n">pNTHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_FILE_HEADER</span> <span class="n">pFileHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_OPTIONAL_HEADER32</span> <span class="n">pOptionHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_SECTION_HEADER</span> <span class="n">pSectionHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">PEstruct</span><span class="o">*</span> <span class="n">pPackerStruct</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">PEstruct</span><span class="o">*</span> <span class="n">pNewStruct</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwPackerSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwSrcSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwNewSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kr">inline</span> <span class="n">DWORD</span> <span class="nf">align_up</span><span class="p">(</span><span class="n">DWORD</span> <span class="n">x</span><span class="p">,</span> <span class="n">DWORD</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nl">x</span> <span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="nf">BufferToFile</span><span class="p">(</span><span class="n">IN</span> <span class="n">LPCSTR</span> <span class="n">lpszFile</span><span class="p">,</span> <span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pFileBuffer</span><span class="p">,</span> <span class="n">IN</span> <span class="n">DWORD</span> <span class="n">FileSize</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">FILE</span><span class="o">*</span> <span class="n">pFile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">lpszFile</span><span class="p">,</span> <span class="s">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFile</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;创建文件失败</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nWriteNum</span> <span class="o">=</span> <span class="n">fwrite</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">FileSize</span><span class="p">,</span> <span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">nWriteNum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;写入文件失败</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;写入0x%x字节</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">nWriteNum</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="nf">RvaToRaw</span><span class="p">(</span><span class="n">IN</span> <span class="n">DWORD</span> <span class="n">Rva</span><span class="p">,</span> <span class="n">IN</span> <span class="n">PEstruct</span><span class="o">*</span> <span class="n">pFEStruct</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 遍历节表寻找Rva在哪个节里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">VirtualAddress</span> <span class="o">&lt;=</span> <span class="n">Rva</span> <span class="o">&amp;&amp;</span> <span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">VirtualAddress</span> <span class="o">+</span> <span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">SizeOfRawData</span> <span class="o">&gt;=</span> <span class="n">Rva</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">Rva</span> <span class="o">-</span> <span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">VirtualAddress</span> <span class="o">+</span> <span class="n">pFEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">PointerToRawData</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="nf">ReadFileToBuffer</span><span class="p">(</span><span class="n">IN</span> <span class="n">TCHAR</span><span class="o">*</span> <span class="n">szFilePath</span><span class="p">,</span> <span class="n">OUT</span> <span class="n">LPVOID</span><span class="o">*</span> <span class="n">WriteBuffer</span><span class="p">,</span> <span class="n">OUT</span> <span class="n">DWORD</span><span class="o">&amp;</span> <span class="n">nSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pTempBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nFileSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">FILE</span><span class="o">*</span> <span class="n">pFile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">szFilePath</span><span class="p">,</span> <span class="s">&#34;rb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fopen&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span> <span class="o">=</span> <span class="n">fseek</span><span class="p">(</span><span class="n">pFile</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SEEK_END</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fseek&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nFileSize</span> <span class="o">=</span> <span class="n">ftell</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">nFileSize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;ftell&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span> <span class="o">=</span> <span class="n">fseek</span><span class="p">(</span><span class="n">pFile</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SEEK_SET</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fseek&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BYTE</span><span class="p">[</span><span class="n">nFileSize</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">pTempBuffer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;new&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">size_t</span> <span class="n">nRead</span> <span class="o">=</span> <span class="n">fread</span><span class="p">(</span><span class="n">pTempBuffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nFileSize</span><span class="p">,</span> <span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">nRead</span> <span class="o">!=</span> <span class="n">nFileSize</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fread&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">pTempBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nSize</span> <span class="o">=</span> <span class="n">nFileSize</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="n">WriteBuffer</span> <span class="o">=</span> <span class="n">pTempBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">VOID</span> <span class="nf">Analysis</span><span class="p">(</span><span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pFileBuffer</span><span class="p">,</span> <span class="n">OUT</span> <span class="n">PEstruct</span><span class="o">**</span> <span class="n">pPEstruct</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// PE头开始分析
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">PEstruct</span><span class="o">*</span> <span class="n">pTempPEStruct</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PEstruct</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span> <span class="o">=</span> <span class="p">(</span><span class="n">PIMAGE_DOS_HEADER</span><span class="p">)</span><span class="n">pFileBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//pDosHeader = (PIMAGE_DOS_HEADER)pFileBuffer;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_magic</span> <span class="o">!=</span> <span class="n">IMAGE_DOS_SIGNATURE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;不是有效的MZ标志&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span> <span class="o">=</span> <span class="n">PIMAGE_NT_HEADERS</span><span class="p">((</span><span class="n">DWORD</span><span class="p">)</span><span class="n">pFileBuffer</span> <span class="o">+</span> <span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_lfanew</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">Signature</span> <span class="o">!=</span> <span class="n">IMAGE_NT_SIGNATURE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;不是有效的PE标志&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span> <span class="o">=</span> <span class="n">PIMAGE_SECTION_HEADER</span><span class="p">((</span><span class="n">DWORD</span><span class="p">)</span><span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span> <span class="o">+</span> <span class="n">pTempPEStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">SizeOfOptionalHeader</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="n">pPEstruct</span> <span class="o">=</span> <span class="n">pTempPEStruct</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">VOID</span> <span class="nf">AddSrcToPacker</span><span class="p">(</span><span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pPackerBuffer</span><span class="p">,</span> <span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pSrcBuffer</span><span class="p">,</span><span class="n">OUT</span> <span class="n">LPVOID</span><span class="o">*</span> <span class="n">pNewBuffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pTempNewBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">PackerAlignment</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">dwFileAlignment</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">dwSectionAlignment</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">lastVirtEnd</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="mi">80</span> <span class="o">&gt;</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">SizeOfHeaders</span> <span class="o">-</span>
+</span></span><span class="line"><span class="cl">		<span class="p">(</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_lfanew</span> <span class="o">+</span> <span class="mi">24</span>
+</span></span><span class="line"><span class="cl">			<span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">SizeOfOptionalHeader</span>
+</span></span><span class="line"><span class="cl">			<span class="o">+</span> <span class="mi">40</span> <span class="o">*</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;节表空间不足</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">dwFileAlignment</span> <span class="o">=</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">FileAlignment</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">dwSectionAlignment</span> <span class="o">=</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">SectionAlignment</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">dwNewSize</span> <span class="o">=</span> <span class="n">align_up</span><span class="p">(</span><span class="n">dwPackerSize</span> <span class="o">+</span> <span class="n">align_up</span><span class="p">(</span><span class="n">dwSrcSize</span><span class="p">,</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">FileAlignment</span><span class="p">),</span> <span class="n">dwFileAlignment</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempNewBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BYTE</span><span class="p">[</span><span class="n">dwNewSize</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pTempNewBuffer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">pTempNewBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dwNewSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">(</span><span class="n">pTempNewBuffer</span><span class="p">,</span> <span class="n">pPackerBuffer</span><span class="p">,</span> <span class="n">dwPackerSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">DWORD</span><span class="p">)</span><span class="n">pTempNewBuffer</span> <span class="o">+</span> <span class="n">dwPackerSize</span><span class="p">),</span> <span class="n">pSrcBuffer</span><span class="p">,</span> <span class="n">dwSrcSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">IMAGE_SECTION_HEADER</span> <span class="n">NewSection</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">NewSection</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">NewSection</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="n">lastVirtEnd</span> <span class="o">=</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">Misc</span><span class="p">.</span><span class="n">VirtualSize</span>
+</span></span><span class="line"><span class="cl">		<span class="o">?</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">VirtualAddress</span> <span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">Misc</span><span class="p">.</span><span class="nl">VirtualSize</span>
+</span></span><span class="line"><span class="cl">		<span class="p">:</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">VirtualAddress</span> <span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">SizeOfRawData</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BYTE</span> <span class="n">Name</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;NewSec&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">Characteristics</span> <span class="o">=</span> <span class="mh">0x60000020</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">(</span><span class="n">NewSection</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NewSection</span><span class="p">.</span><span class="n">Misc</span><span class="p">.</span><span class="n">VirtualSize</span> <span class="o">=</span> <span class="n">dwSrcSize</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NewSection</span><span class="p">.</span><span class="n">VirtualAddress</span> <span class="o">=</span> <span class="n">align_up</span><span class="p">(</span><span class="n">lastVirtEnd</span><span class="p">,</span> <span class="n">dwSectionAlignment</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NewSection</span><span class="p">.</span><span class="n">SizeOfRawData</span> <span class="o">=</span> <span class="n">align_up</span><span class="p">(</span><span class="n">dwSrcSize</span><span class="p">,</span> <span class="n">dwFileAlignment</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NewSection</span><span class="p">.</span><span class="n">PointerToRawData</span> <span class="o">=</span> <span class="n">align_up</span><span class="p">(</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">SizeOfRawData</span> <span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">PointerToRawData</span><span class="p">,</span><span class="n">dwFileAlignment</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">NewSection</span><span class="p">.</span><span class="n">Characteristics</span> <span class="o">=</span> <span class="n">Characteristics</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">((</span><span class="n">BYTE</span><span class="o">*</span><span class="p">)</span><span class="n">pTempNewBuffer</span> <span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_lfanew</span> <span class="o">+</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">SizeOfOptionalHeader</span> <span class="o">+</span> <span class="mi">40</span> <span class="o">*</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NewSection</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">NewSection</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Analysis</span><span class="p">(</span><span class="n">pTempNewBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pNewStruct</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pNewStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">SizeOfImage</span> <span class="o">=</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">SizeOfImage</span> <span class="o">+</span> <span class="n">align_up</span><span class="p">(</span><span class="n">dwSrcSize</span><span class="p">,</span> <span class="n">pPackerStruct</span><span class="o">-&gt;</span><span class="n">pOptionHeader</span><span class="o">-&gt;</span><span class="n">SectionAlignment</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pNewStruct</span><span class="o">-&gt;</span><span class="n">pFileHeader</span><span class="o">-&gt;</span><span class="n">NumberOfSections</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="n">pNewBuffer</span> <span class="o">=</span> <span class="n">pTempNewBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">TCHAR</span> <span class="n">szPackerFullPath</span><span class="p">[</span><span class="n">MAX_PATH</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="n">TCHAR</span> <span class="n">szSrcFullPath</span><span class="p">[</span><span class="n">MAX_PATH</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pPackerStruct</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PEstruct</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pPackerBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pSrcBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pNewBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 判断是否申请空间成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">		code
+</span></span></span><span class="line"><span class="cl"><span class="cm">	*/</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="c1">//确定路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;请选择壳源的绝对路径：</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">szPackerFullPath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;请选择程序的绝对路径：</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">szSrcFullPath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ReadFileToBuffer</span><span class="p">(</span><span class="n">szPackerFullPath</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pPackerBuffer</span><span class="p">,</span> <span class="n">dwPackerSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ReadFileToBuffer</span><span class="p">(</span><span class="n">szSrcFullPath</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pSrcBuffer</span><span class="p">,</span> <span class="n">dwSrcSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Analysis</span><span class="p">(</span><span class="n">pPackerBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pPackerStruct</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">AddSrcToPacker</span><span class="p">(</span><span class="n">pPackerBuffer</span><span class="p">,</span> <span class="n">pSrcBuffer</span><span class="p">,</span><span class="o">&amp;</span><span class="n">pNewBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">BufferToFile</span><span class="p">(</span><span class="s">&#34;D:</span><span class="se">\\</span><span class="s">Note</span><span class="se">\\</span><span class="s">C</span><span class="se">\\</span><span class="s">DTdebug</span><span class="se">\\</span><span class="s">壳</span><span class="se">\\</span><span class="s">测试文件</span><span class="se">\\</span><span class="s">out.exe&#34;</span><span class="p">,</span> <span class="n">pNewBuffer</span><span class="p">,</span> <span class="n">dwNewSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">system</span><span class="p">(</span><span class="s">&#34;pause&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="壳源-1">
+<a class="header-anchor" href="#%e5%a3%b3%e6%ba%90-1"></a>
+壳源
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">PEstruct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_DOS_HEADER</span> <span class="n">pDosHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_NT_HEADERS</span> <span class="n">pNTHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_SECTION_HEADER</span> <span class="n">pSectionHeader</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PIMAGE_EXPORT_DIRECTORY</span> <span class="n">pExportTable</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="nf">ULONG</span><span class="p">(</span><span class="n">WINAPI</span><span class="o">*</span> <span class="n">PFNNtUnmapViewOfSection</span><span class="p">)(</span><span class="n">IN</span> <span class="n">HANDLE</span> <span class="n">ProcessHandle</span><span class="p">,</span> <span class="n">IN</span> <span class="n">PVOID</span> <span class="n">BaseAddress</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="nf">AnalysisPE</span><span class="p">(</span><span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pFileBuffer</span><span class="p">,</span><span class="n">OUT</span> <span class="n">PEstruct</span><span class="o">*</span> <span class="n">pStruct</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_DOS_HEADER</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_NT_HEADERS</span><span class="o">&gt;</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">pFileBuffer</span><span class="p">)</span> <span class="o">+</span> <span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pDosHeader</span><span class="o">-&gt;</span><span class="n">e_lfanew</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pSectionHeader</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PIMAGE_SECTION_HEADER</span><span class="o">&gt;</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">)</span> <span class="o">+</span> <span class="n">pStruct</span><span class="o">-&gt;</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">SizeOfOptionalHeader</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="nf">FileToImage</span><span class="p">(</span><span class="n">IN</span> <span class="n">LPVOID</span> <span class="n">pFileBuffer</span><span class="p">,</span><span class="n">IN</span> <span class="n">PEstruct</span> <span class="n">Struct</span><span class="p">,</span><span class="n">OUT</span> <span class="n">LPVOID</span><span class="o">*</span> <span class="n">ImageBuffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pTempImageBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">dwImageSize</span> <span class="o">=</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfImage</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempImageBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BYTE</span><span class="p">[</span><span class="n">dwImageSize</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">pTempImageBuffer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;FileToImage 重新分配内存 failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">pTempImageBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dwImageSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">(</span><span class="n">pTempImageBuffer</span><span class="p">,</span> <span class="n">pFileBuffer</span><span class="p">,</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfHeaders</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">NumberOfSections</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">memcpy</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">DWORD</span><span class="p">)</span><span class="n">pTempImageBuffer</span> <span class="o">+</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">VirtualAddress</span><span class="p">),</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">DWORD</span><span class="p">)</span><span class="n">Struct</span><span class="p">.</span><span class="n">pDosHeader</span> <span class="o">+</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">PointerToRawData</span><span class="p">),</span> <span class="n">Struct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">SizeOfRawData</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="n">ImageBuffer</span> <span class="o">=</span> <span class="n">pTempImageBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempImageBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="nf">ReadFileToBuffer</span><span class="p">(</span><span class="n">IN</span> <span class="n">TCHAR</span><span class="o">*</span> <span class="n">szFilePath</span><span class="p">,</span> <span class="n">OUT</span> <span class="n">LPVOID</span><span class="o">*</span> <span class="n">WriteBuffer</span><span class="p">,</span> <span class="n">OUT</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">nSize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">pTempBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nFileSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 读取文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">FILE</span><span class="o">*</span> <span class="n">pFile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">szFilePath</span><span class="p">,</span> <span class="s">&#34;rb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fopen&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span> <span class="o">=</span> <span class="n">fseek</span><span class="p">(</span><span class="n">pFile</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SEEK_END</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fseek&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nFileSize</span> <span class="o">=</span> <span class="n">ftell</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">nFileSize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;ftell&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span> <span class="o">=</span> <span class="n">fseek</span><span class="p">(</span><span class="n">pFile</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SEEK_SET</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fseek&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pTempBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BYTE</span><span class="p">[</span><span class="n">nFileSize</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pTempBuffer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;new&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">pTempBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nFileSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_t</span> <span class="n">nRead</span> <span class="o">=</span> <span class="n">fread</span><span class="p">(</span><span class="n">pTempBuffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nFileSize</span><span class="p">,</span> <span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">nRead</span> <span class="o">!=</span> <span class="n">nFileSize</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;fread&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">pTempBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fclose</span><span class="p">(</span><span class="n">pFile</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nSize</span> <span class="o">=</span> <span class="n">nFileSize</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">WriteBuffer</span> <span class="o">=</span> <span class="n">pTempBuffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pTempBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="nf">InjectProcess</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nPackerFileSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nSrcFileSize</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">szBuffer</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">nRet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PEstruct</span> <span class="n">PackerStruct</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="n">PEstruct</span> <span class="n">SrcStruct</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="n">TCHAR</span> <span class="n">szExeFullPath</span><span class="p">[</span><span class="n">MAX_PATH</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">lpPackerBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">lpSrcBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">lpSrcBegin</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">lpSrcImageBuffer</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LPVOID</span> <span class="n">lpPuppetProcessBaseAddr</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">STARTUPINFO</span> <span class="n">siPackerProc</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">};</span> <span class="c1">// 进程启动信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">PROCESS_INFORMATION</span> <span class="n">piPackerProc</span> <span class="o">=</span> <span class="p">{};</span> <span class="c1">// 进程信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">CONTEXT</span> <span class="n">contxPacker</span> <span class="o">=</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//strcpy(szExeFullPath, &#34;D:\\Note\\C\\DTdebug\\壳\\测试文件\\out.exe&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 1、读取主模块的数据(壳源程序路径)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">GetModuleFileName</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">szExeFullPath</span><span class="p">,</span> <span class="n">MAX_PATH</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ReadFileToBuffer</span><span class="p">(</span><span class="n">szExeFullPath</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpPackerBuffer</span><span class="p">,</span> <span class="n">nPackerFileSize</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//strcpy(szExeFullPath, &#34;D:\\Note\\C\\DTdebug\\壳\\测试文件\\out.exe&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">AnalysisPE</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PackerStruct</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="c1">// 2、解密：得到原来的PE文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 先检查是否是加壳程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="n">strcmp</span><span class="p">((</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">PackerStruct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">PackerStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">Name</span><span class="p">,</span> <span class="s">&#34;NewSec&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;无可执行程序&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">nSrcFileSize</span> <span class="o">=</span> <span class="n">PackerStruct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">PackerStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">SizeOfRawData</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">lpSrcBegin</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">LPVOID</span><span class="o">&gt;</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">DWORD</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">)</span> <span class="o">+</span> <span class="n">PackerStruct</span><span class="p">.</span><span class="n">pSectionHeader</span><span class="p">[</span><span class="n">PackerStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">FileHeader</span><span class="p">.</span><span class="n">NumberOfSections</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">PointerToRawData</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">lpSrcBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BYTE</span><span class="p">[</span><span class="n">nSrcFileSize</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">lpSrcBuffer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;new lpSrcBuffer&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nSrcFileSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memcpy</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">,</span> <span class="n">lpSrcBegin</span><span class="p">,</span> <span class="n">nSrcFileSize</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="c1">// 3、以挂起的形式创建进程，获取进程的ImageBase和AddressOfEntryPoint
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">siPackerProc</span><span class="p">.</span><span class="n">cb</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">siPackerProc</span><span class="p">);</span> <span class="c1">//这一步必须初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="p">(</span><span class="n">CreateProcess</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">NULL</span><span class="p">,</span>   <span class="c1">//  指向一个NULL结尾的、用来指定可执行模块的宽字节字符串  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">szExeFullPath</span><span class="p">,</span> <span class="c1">// 命令行字符串  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指向一个SECURITY_ATTRIBUTES结构体，这个结构体决定是否返回的句柄可以被子进程继承。  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    如果lpProcessAttributes参数为空（NULL），那么句柄不能被继承。&lt;同上&gt;  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">false</span><span class="p">,</span><span class="c1">//    指示新进程是否从调用进程处继承了句柄。   
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">CREATE_SUSPENDED</span><span class="p">,</span>  <span class="c1">//  指定附加的、用来控制优先类和进程的创建的标  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//  CREATE_NEW_CONSOLE  新控制台打开子进程  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//  CREATE_SUSPENDED    子进程创建后挂起，直到调用ResumeThread函数  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指向一个新进程的环境块。如果此参数为空，新进程使用调用进程的环境  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nb">NULL</span><span class="p">,</span> <span class="c1">//    指定子进程的工作路径  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="o">&amp;</span><span class="n">siPackerProc</span><span class="p">,</span> <span class="c1">// 决定新进程的主窗体如何显示的STARTUPINFO结构体  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="o">&amp;</span><span class="n">piPackerProc</span>  <span class="c1">// 接收新进程的识别信息的PROCESS_INFORMATION结构体  
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//MessageBox(0, TEXT(&#34;挂起创建程序成功！！！&#34;), 0, 0);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">contxPacker</span><span class="p">.</span><span class="n">ContextFlags</span> <span class="o">=</span> <span class="n">CONTEXT_FULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">GetThreadContext</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">contxPacker</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//获取入口点						
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">DWORD</span> <span class="n">dwEntryPoint</span> <span class="o">=</span> <span class="n">contxPacker</span><span class="p">.</span><span class="n">Eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1">//获取ImageBase						
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kt">char</span><span class="o">*</span> <span class="n">baseAddress</span> <span class="o">=</span> <span class="p">(</span><span class="n">CHAR</span><span class="o">*</span><span class="p">)</span><span class="n">contxPacker</span><span class="p">.</span><span class="n">Ebx</span> <span class="o">+</span> <span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">memset</span><span class="p">(</span><span class="n">szBuffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ReadProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">baseAddress</span><span class="p">,</span> <span class="n">szBuffer</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;ReadProcessMemory failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 5、卸载外壳程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">HMODULE</span> <span class="n">hNtModule</span> <span class="o">=</span> <span class="n">GetModuleHandle</span><span class="p">(</span><span class="s">&#34;ntdll.dll&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">hNtModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">hNtModule</span> <span class="o">=</span> <span class="n">LoadLibrary</span><span class="p">(</span><span class="s">&#34;ntdll.dll&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">hNtModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;ntdll find faied!!!&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">PFNNtUnmapViewOfSection</span> <span class="n">pfnNtUnmapViewOfSection</span> <span class="o">=</span> <span class="p">(</span><span class="n">PFNNtUnmapViewOfSection</span><span class="p">)</span><span class="n">GetProcAddress</span><span class="p">(</span><span class="n">hNtModule</span><span class="p">,</span> <span class="s">&#34;NtUnmapViewOfSection&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">pfnNtUnmapViewOfSection</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;GetProcAddress NtUnmapViewOfSection failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">pfnNtUnmapViewOfSection</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="p">(</span><span class="n">PVOID</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="n">szBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1">// 6、在指定的位置分配空间：位置就是src的ImageBase  大小就是Src的SizeOfImage
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">AnalysisPE</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">SrcStruct</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">lpPuppetProcessBaseAddr</span> <span class="o">=</span> <span class="n">VirtualAllocEx</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">			<span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="p">(</span><span class="n">LPVOID</span><span class="p">)</span><span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfImage</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MEM_COMMIT</span> <span class="o">|</span> <span class="n">MEM_RESERVE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">PAGE_EXECUTE_READWRITE</span>
+</span></span><span class="line"><span class="cl">		<span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">lpPuppetProcessBaseAddr</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;重新分配内存 failed&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 将目标程序拉伸后用WriteProcessMemory存到lpPuppetProcessBaseAddr
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">FileToImage</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">,</span> <span class="n">SrcStruct</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpSrcImageBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">nRet</span> <span class="o">=</span> <span class="n">WriteProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">lpPuppetProcessBaseAddr</span><span class="p">,</span> <span class="n">lpSrcImageBuffer</span><span class="p">,</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">SizeOfImage</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nRet</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;WriteProcessMemory&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 10、修改外壳程序的Context:		
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">PVOID</span> <span class="n">pImageBase</span> <span class="o">=</span> <span class="p">(</span><span class="n">PVOID</span><span class="p">)</span><span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">nRet</span> <span class="o">=</span> <span class="n">WriteProcessMemory</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="p">(</span><span class="n">LPVOID</span><span class="p">)(</span><span class="n">contxPacker</span><span class="p">.</span><span class="n">Ebx</span> <span class="o">+</span> <span class="mi">8</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">pImageBase</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">PVOID</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nRet</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;修改ImageBase失败&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">contxPacker</span><span class="p">.</span><span class="n">Eax</span> <span class="o">=</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">ImageBase</span> <span class="o">+</span> <span class="n">SrcStruct</span><span class="p">.</span><span class="n">pNTHeader</span><span class="o">-&gt;</span><span class="n">OptionalHeader</span><span class="p">.</span><span class="n">AddressOfEntryPoint</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">SetThreadContext</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">contxPacker</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;SetThreadContext 失败&#34;</span><span class="p">,</span> <span class="s">&#34;Error&#34;</span><span class="p">,</span> <span class="n">MB_OK</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ResumeThread</span><span class="p">(</span><span class="n">piPackerProc</span><span class="p">.</span><span class="n">hThread</span><span class="p">);</span> <span class="c1">// 恢复执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//MessageBox(0, &#34;载入成功&#34;, 0, 0);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpPackerBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpSrcBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span><span class="p">(</span><span class="n">lpSrcImageBuffer</span><span class="p">)</span> <span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">lpSrcImageBuffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="n">MessageBox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">TEXT</span><span class="p">(</span><span class="s">&#34;挂起创建程序失败！！！&#34;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">WINAPI</span> <span class="nf">WinMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">hInstance</span><span class="p">,</span>      <span class="c1">// handle to current instance
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">HINSTANCE</span> <span class="n">hPrevInstance</span><span class="p">,</span>  <span class="c1">// handle to previous instance
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">LPSTR</span> <span class="n">lpCmdLine</span><span class="p">,</span>          <span class="c1">// command line
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span> <span class="n">nCmdShow</span>              <span class="c1">// show state
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">InjectProcess</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e9%80%86%e5%90%91"
+        rel="tag"
+        >逆向</a
+      >
+    </li>
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e5%a3%b3"
+        rel="tag"
+        >壳</a
+      >
+    </li>
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/c/c&#43;&#43;"
+        rel="tag"
+        >C/C&#43;&#43;</a
+      >
+    </li>
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="/images/my/16.jpg"
+              data-sizes="auto"
+              alt="PE工具"
+              class="lazyload"
+            />
+          
+        
+        <a href="/post/pe%E5%B7%A5%E5%85%B7/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            PE工具
+          
+        </h3>
+      </div>
+    
+
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+</section>
+        </div>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+        2025
+      
+      <span class="footer-info-sep rotate"></span>
+      Cyzrjz
+    </div>
+    
+      <div>
+        基于&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            34.7k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          01:14
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >总访问量&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >总访客量&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#设计思路">设计思路</a></li>
+    <li><a href="#错误处理">错误处理</a></li>
+    <li><a href="#核心代码">核心代码</a>
+      <ul>
+        <li><a href="#加壳器">加壳器</a></li>
+        <li><a href="#壳源">壳源</a></li>
+      </ul>
+    </li>
+    <li><a href="#完整代码">完整代码</a>
+      <ul>
+        <li><a href="#加壳器-1">加壳器</a></li>
+        <li><a href="#壳源-1">壳源</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="/avatar/avatar.png"
+    data-sizes="auto"
+    alt="Cyzrjz"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">Cyzrjz</div>
+  <div class="sidebar-description">静籁永恒</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    
+    <div class="sidebar-state-number">10</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">11</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="首页"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">首页</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="归档"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">归档</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="关于"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">关于</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/friend"
+        aria-label="友链"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">友链</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" />
+        </div>
+      </div>
+    
+    
+    
+    
+
+
+
+
+
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+  <script>
+    var ALGOLIA_CONFIG = {
+      logo: '\/images\/algolia_logo.svg',
+      algolia: {
+        applicationID: "P838ONQIH8",
+        apiKey: "23e3b2dde8ed64b7219c2ba3aed27e87",
+        indexName: "Myblog",
+        hits: {
+          "per_page": parseInt("10")
+        },
+        labels: {
+          "input_placeholder": "搜索.....",
+          "hits_empty": "未发现与 「${query}」相关内容",
+          "hits_stats": "找到${hits}条结果（用时 ${time} ms）"
+        }
+      }
+    };
+  </script>
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/algoliasearch@4.17.1/dist/algoliasearch-lite.umd.js"
+    defer
+    
+    
+    
+    integrity="sha384-xvLS0jfKuoREs7pqkRI/OI8GcqohO5S&#43;jQz7ZBtQXnsXmD&#43;9jDOOY4cL6dCPzlrk" crossorigin="anonymous"
+  ></script>
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/instantsearch.js@4.56.1/dist/instantsearch.production.min.js"
+    defer
+    
+    
+    
+    integrity="sha384-hHJCflT4KBLQyHfKO9vpstIcFKn/Y&#43;KHTORelMMEn7mOp2AVPp&#43;7fr03dLgZiV3J" crossorigin="anonymous"
+  ></script>
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="/js/algolia_search.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-8LyaidD9GPxQQgLJO/WRw/O2h3BoNq/ApI/ecpvM6RsrCz2qP2ppBXUKihP4V/2d" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"var(--red-1)\",\"var(--red-2)\",\"var(--red-3)\",\"var(--red-4)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"var(--red-0)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+<script>
+  function initLive2d() {
+    live2d.init('https:\/\/fastly.jsdelivr.net\/gh\/D-Sketon\/plugin-live2d\/', {themeTipsPath: ""});
+  }
+</script> 
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js"
+    
+    async
+    
+    onload="initLive2d()"
+    
+  ></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+        
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "Cyzrjz",
+          title: "加密壳框架——基于傀儡进程的壳",
+          url: "https:\/\/cyzrjz.github.io\/post\/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B\/",
+          description: "基于傀儡进程的壳框架",
+          cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
+        };
+      </script>
+    
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+              
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+              
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+      
+    
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+
+
+
+
+
+    
+  </body>
+</html>

@@ -2,6 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://cyzrjz.github.io/tags/c/c&#43;&#43;/</loc>
+    <lastmod>2025-10-12T20:34:40+08:00</lastmod>
+  </url><url>
+    <loc>https://cyzrjz.github.io/tags/</loc>
+    <lastmod>2025-10-12T20:34:40+08:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://cyzrjz.github.io/en/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://cyzrjz.github.io/ja/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-tw"
+                href="https://cyzrjz.github.io/zh-tw/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://cyzrjz.github.io/tags/"
+                />
+  </url><url>
     <loc>https://cyzrjz.github.io/</loc>
     <lastmod>2025-10-12T20:34:40+08:00</lastmod>
     <xhtml:link
@@ -25,39 +51,19 @@
                 href="https://cyzrjz.github.io/"
                 />
   </url><url>
-    <loc>https://cyzrjz.github.io/tags/c/c&#43;&#43;/</loc>
-    <lastmod>2025-09-28T21:16:51+08:00</lastmod>
+    <loc>https://cyzrjz.github.io/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/</loc>
+    <lastmod>2025-10-12T20:34:40+08:00</lastmod>
+  </url><url>
+    <loc>https://cyzrjz.github.io/tags/%E5%A3%B3/</loc>
+    <lastmod>2025-10-12T20:34:40+08:00</lastmod>
+  </url><url>
+    <loc>https://cyzrjz.github.io/tags/%E9%80%86%E5%90%91/</loc>
+    <lastmod>2025-10-12T20:34:40+08:00</lastmod>
   </url><url>
     <loc>https://cyzrjz.github.io/post/pe%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2025-09-28T21:16:51+08:00</lastmod>
   </url><url>
-    <loc>https://cyzrjz.github.io/tags/</loc>
-    <lastmod>2025-09-28T21:16:51+08:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://cyzrjz.github.io/en/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://cyzrjz.github.io/ja/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-tw"
-                href="https://cyzrjz.github.io/zh-tw/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://cyzrjz.github.io/tags/"
-                />
-  </url><url>
     <loc>https://cyzrjz.github.io/tags/%E5%B7%A5%E5%85%B7/</loc>
-    <lastmod>2025-09-28T21:16:51+08:00</lastmod>
-  </url><url>
-    <loc>https://cyzrjz.github.io/tags/%E9%80%86%E5%90%91/</loc>
     <lastmod>2025-09-28T21:16:51+08:00</lastmod>
   </url><url>
     <loc>https://cyzrjz.github.io/post/litctf2025/</loc>
