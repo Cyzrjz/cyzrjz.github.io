@@ -815,7 +815,8 @@ exp
 </span></span><span class="line"><span class="cl">	<span class="n">flag</span><span class="o">+=</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">^</span><span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
 </span></span></code></pre></div><blockquote>
-<p>flag{e10adc3949ba59abbe56e057f20f883e}</p></blockquote>
+<p>flag{e10adc3949ba59abbe56e057f20f883e}</p>
+</blockquote>
 <h2 id="wustctf2020funnyre">
 <a class="header-anchor" href="#wustctf2020funnyre"></a>
 [WUSTCTF2020]funnyre
@@ -832,7 +833,8 @@ NOP后选中红色区域按下P重构函数，F5反编译，发现JUMPOUT(0x400B
 进反汇编看看具体操作</p>
 <p>先看看字符串存储模式</p>
 <blockquote>
-<p>从<code>lea     rdi, [rdx+5]</code>开始是为了绕过前面的比较，不然的话后面需要在bss段也写入<code>flag{</code></p></blockquote>
+<p>从<code>lea     rdi, [rdx+5]</code>开始是为了绕过前面的比较，不然的话后面需要在bss段也写入<code>flag{</code></p>
+</blockquote>
 <p><img src="/post/buuctf-reverse/img/image-36.png" alt="alt text">
 <code>[rdx+5]</code>就是<code>flag{</code>后的内容
 然后对flag{}包裹的内容进行逐字符异或</p>
@@ -867,7 +869,8 @@ exp
 </span></span><span class="line"><span class="cl"><span class="n">solution</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">cast_to</span><span class="o">=</span><span class="nb">bytes</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
 </span></span></code></pre></div><blockquote>
-<p>flag{1dc20f6e3d497d15cef47d9a66d6f1af}</p></blockquote>
+<p>flag{1dc20f6e3d497d15cef47d9a66d6f1af}</p>
+</blockquote>
 
       
     </div>
@@ -946,7 +949,7 @@ exp
           
           
             <img
-              data-src="/images/my/2.jpg"
+              data-src="/images/my/17.png"
               data-sizes="auto"
               alt="攻防世界 Reverse"
               class="lazyload"

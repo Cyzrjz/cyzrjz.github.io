@@ -698,7 +698,8 @@ SSE
 <li>__m128: 容纳四个32位浮点值</li>
 </ul>
 <blockquote>
-<p>对于<code>__m128d</code>和<code>__m128i</code>，编译器自动把局部和全局变量在栈上对齐16字节。若需要对齐<code>整型</code>、<code>float</code>和<code>double</code>数组，使用<code>__declspec(align)</code></p></blockquote>
+<p>对于<code>__m128d</code>和<code>__m128i</code>，编译器自动把局部和全局变量在栈上对齐16字节。若需要对齐<code>整型</code>、<code>float</code>和<code>double</code>数组，使用<code>__declspec(align)</code></p>
+</blockquote>
 <ul>
 <li>要访问8位数据</li>
 </ul>
@@ -736,7 +737,8 @@ SSE
 <p>对齐访问可在一次内存总线事务中完成全部数据加载/存储，降低时钟周期和硬件复杂度。未对齐访问可能被拆成多次访问，增加延迟；在部分架构上甚至会引发异常。</p>
 <p>例如__m128 表示一个 128 位宽的 SIMD 向量，可存放 4 个单精度浮点（4×32 bit = 128 bit），在内存中，它占用 16 字节 连续空间</p>
 <blockquote>
-<p>早期 SSE/SSE2 指令（如 MOVAPS/MOVAPD）对内存操作数必须是 16 字节对齐，否则 CPU 会产生一般保护异常（#GP）,<strong>后续 SSE3/SSE4.1 引入了可处理非对齐数据的指令（如 MOVUPS），但性能仍低于对齐版本​</strong></p></blockquote>
+<p>早期 SSE/SSE2 指令（如 MOVAPS/MOVAPD）对内存操作数必须是 16 字节对齐，否则 CPU 会产生一般保护异常（#GP）,<strong>后续 SSE3/SSE4.1 引入了可处理非对齐数据的指令（如 MOVUPS），但性能仍低于对齐版本​</strong></p>
+</blockquote>
 <h4 id="内存对齐">
 <a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%af%b9%e9%bd%90"></a>
 内存对齐
@@ -1100,7 +1102,7 @@ SSE
           
           
             <img
-              data-src="/images/my/17.png"
+              data-src="/images/my/9.jpg"
               data-sizes="auto"
               alt="攻防世界 Reverse"
               class="lazyload"
@@ -1123,7 +1125,7 @@ SSE
           
           
             <img
-              data-src="/images/my/11.png"
+              data-src="/images/my/7.jpg"
               data-sizes="auto"
               alt="Angr符号执行"
               class="lazyload"
