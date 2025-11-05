@@ -3,6 +3,18 @@
   
   
   {
+    "objectID": "1761411311",
+    "permalink": "/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/",
+    "title": "Windows内核笔记-保护模式",
+    
+    "content": " 前言 说是笔记，实际上还是课后习题的内容，我不擅长写笔记，就不误导别人了\n常见问题 这个写在前面是便于错误速查，若是有同样的问题可以直接在这里速查，免得去翻后面的内容\n这里对于错误的定义是不符合视频内容的东西，比如说软件问题，命令报错等等\n所用镜像和软件版本 WDK7600 WinXP SP3 zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso SHA1：D142469D0C3953D8E4A6A490A58052EF52837F0F 601.04MB 2008-05-02 下载地址：ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/ 序列号: MRX3F-47B9T-2487J-KWKMF-RPWBY VC6 编译前要清理\n如果遇到以下错误，试试先清理项目再重新编译，构造调用门\nAccess violation - code c0000005 (!!! second chance !!!) nt!NtWaitForDebugEvent+0x122: 8063a3aa f6412c05 test byte ptr [ecx+2Ch],5 Windbg !process 0 0符号错误 kd\u0026amp;gt; !process 0 0 **** NT ACTIVE PROCESS DUMP **** NT symbols are incorrect, please fix symbols 解决方法：\n.sympath SRV*C:\\Symbols*https://msdl.microsoft.com/download/symbols ;表示把本地缓存放在 C:\\Symbols，并从微软符号服务器下载 .symfix ;（可选）自动设置到 MS 符号服务器 !sym noisy ;开启符号加载的详细信息（便于排错） .reload /f ;强制重载全部模块符号 .sympath ;查看当前符号路径 lmv m nt ;或 lmv m ntkrnl* 查看内核模块及其符 …",
+    
+    "date": "2025-10-26 00:55:11",
+    "updated": "2025-10-26 00:55:11"
+  }
+  
+  , 
+  {
     "objectID": "1760272480",
     "permalink": "/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/",
     "title": "加密壳框架——基于傀儡进程的壳",

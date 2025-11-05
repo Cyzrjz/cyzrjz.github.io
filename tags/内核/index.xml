@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>内核 on W31c0me t0 My610g</title>
+    <link>https://cyzrjz.github.io/tags/%E5%86%85%E6%A0%B8/</link>
+    <description>Recent content in 内核 on W31c0me t0 My610g</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 26 Oct 2025 00:55:11 +0800</lastBuildDate>
+    <atom:link href="https://cyzrjz.github.io/tags/%E5%86%85%E6%A0%B8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Windows内核笔记-保护模式</title>
+      <link>https://cyzrjz.github.io/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 26 Oct 2025 00:55:11 +0800</pubDate>
+      <guid>https://cyzrjz.github.io/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%89%8d%e8%a8%80&#34;&gt;&lt;/a&gt;&#xA;前言&#xA;&lt;/h2&gt;&lt;p&gt;说是笔记，实际上还是课后习题的内容，我不擅长写笔记，就不误导别人了&lt;/p&gt;&#xA;&lt;h2 id=&#34;常见问题&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98&#34;&gt;&lt;/a&gt;&#xA;常见问题&#xA;&lt;/h2&gt;&lt;p&gt;这个写在前面是便于错误速查，若是有同样的问题可以直接在这里速查，免得去翻后面的内容&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

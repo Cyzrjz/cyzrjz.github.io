@@ -1,0 +1,2391 @@
+<!doctype html>
+<html
+  lang="zh-cn" 
+  
+    data-theme-mode="auto"
+  
+>
+  <head>
+    
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Windows内核笔记-保护模式 | Cyzrjz
+</title>
+<meta
+  name="description"
+  content="滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题"
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_0khxww3tj3q9\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="/css/loader.min.ac746e154f756f8220326eeb52a719f142ab038be5a8ddf30ea5ef15ef2356ea.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Windows内核笔记-保护模式 | Cyzrjz" />
+  <meta
+    property="og:description"
+    content="滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题"
+  />
+  <meta property="og:url" content="https://cyzrjz.github.io/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/" />
+  <meta
+    property="og:site_name"
+    content="W31c0me t0 My610g"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="Cyzrjz" />
+  <meta property="article:published_time" content="2025-10-26T00:55:11&#43;08:00" />
+  <meta property="article:modified_time" content="2025-10-26T00:55:11&#43;08:00" />
+  
+    <meta property="article:tag" content="逆向内核C/C&#43;&#43;" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="/css/main.min.43cca01ce635e499cdae85c6057c7d926970ad38b576d0be1b7e116d9198cd36.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+
+    
+  </head>
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/">首页</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/archives">归档</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/about">关于</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="/friend">友链</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="Windows内核笔记-保护模式">
+        
+      
+    
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Windows内核笔记-保护模式</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <div id="content"
+          class="sidebar-left"
+            >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        
+          <div class="sidebar-toc-sidebar">
+            <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#常见问题">常见问题</a>
+      <ul>
+        <li><a href="#所用镜像和软件版本">所用镜像和软件版本</a></li>
+        <li><a href="#vc6">VC6</a></li>
+        <li><a href="#windbg">Windbg</a></li>
+        <li><a href="#调用门实验蓝屏c05等错误">调用门实验蓝屏,C05等错误</a></li>
+      </ul>
+    </li>
+    <li><a href="#段描述符与段选择子">段描述符与段选择子</a>
+      <ul>
+        <li><a href="#笔记">笔记</a></li>
+        <li><a href="#课后练习">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#段描述符属性">段描述符属性</a>
+      <ul>
+        <li><a href="#笔记-1">笔记</a></li>
+        <li><a href="#课后练习-1">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码间的跳转">代码间的跳转</a>
+      <ul>
+        <li><a href="#笔记-2">笔记</a></li>
+        <li><a href="#课后练习-2">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#长调用与短调用">长调用与短调用</a>
+      <ul>
+        <li><a href="#笔记-3">笔记</a></li>
+      </ul>
+    </li>
+    <li><a href="#调用门">调用门</a>
+      <ul>
+        <li><a href="#笔记-4">笔记</a></li>
+        <li><a href="#课后练习-3">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#小测">小测</a>
+      <ul>
+        <li><a href="#需求">需求</a></li>
+        <li><a href="#实现">实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+          </div>
+          <div class="sidebar-common-sidebar hidden">
+            
+<div class="sidebar-author">
+  <img
+    data-src="/avatar/avatar.png"
+    data-sizes="auto"
+    alt="Cyzrjz"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">Cyzrjz</div>
+  <div class="sidebar-description">静籁永恒</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    
+    <div class="sidebar-state-number">11</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="首页"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">首页</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="归档"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">归档</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="关于"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">关于</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/friend"
+        aria-label="友链"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">友链</div>
+    </div>
+  
+</div>
+
+          </div>
+        
+      
+
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+    
+  </div>
+  
+</aside>
+
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <span
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-10-26 00:55:11 &#43;0800 &#43;0800" itemprop="datePublished"
+      >2025-10-26</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-10-26</time
+    >
+  </span>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="前言">
+<a class="header-anchor" href="#%e5%89%8d%e8%a8%80"></a>
+前言
+</h2><p>说是笔记，实际上还是课后习题的内容，我不擅长写笔记，就不误导别人了</p>
+<h2 id="常见问题">
+<a class="header-anchor" href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98"></a>
+常见问题
+</h2><p>这个写在前面是便于错误速查，若是有同样的问题可以直接在这里速查，免得去翻后面的内容</p>
+<p>这里对于错误的定义是不符合视频内容的东西，比如说软件问题，命令报错等等</p>
+<h3 id="所用镜像和软件版本">
+<a class="header-anchor" href="#%e6%89%80%e7%94%a8%e9%95%9c%e5%83%8f%e5%92%8c%e8%bd%af%e4%bb%b6%e7%89%88%e6%9c%ac"></a>
+所用镜像和软件版本
+</h3><ul>
+<li>WDK7600</li>
+<li>WinXP SP3
+<ul>
+<li>zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso</li>
+<li>SHA1：D142469D0C3953D8E4A6A490A58052EF52837F0F</li>
+<li>601.04MB</li>
+<li>2008-05-02</li>
+<li>下载地址：ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/</li>
+<li>序列号: MRX3F-47B9T-2487J-KWKMF-RPWBY</li>
+</ul>
+</li>
+</ul>
+<h3 id="vc6">
+<a class="header-anchor" href="#vc6"></a>
+VC6
+</h3><ol>
+<li>
+<p><strong>编译前要清理</strong></p>
+<p>如果遇到以下错误，试试先清理项目再重新编译，构造调用门</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">Access</span> <span class="nv">violation</span> <span class="o">-</span> <span class="nv">code</span> <span class="nv">c0000005</span> <span class="p">(</span><span class="err">!!!</span> <span class="nv">second</span> <span class="nb">ch</span><span class="nv">ance</span> <span class="err">!!!</span><span class="p">)</span> <span class="nv">nt</span><span class="err">!</span><span class="nv">NtWaitForDebugEvent</span><span class="o">+</span><span class="mh">0x122</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl"><span class="err">8063</span><span class="nf">a3aa</span> <span class="nv">f6412c05</span> <span class="nv">test</span> <span class="kt">byte</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ecx</span><span class="o">+</span><span class="mh">2Ch</span><span class="p">],</span><span class="mi">5</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="windbg">
+<a class="header-anchor" href="#windbg"></a>
+Windbg
+</h3><ol>
+<li>!process 0 0符号错误</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kd&gt; !process <span class="m">0</span> <span class="m">0</span> 
+</span></span><span class="line"><span class="cl">**** NT ACTIVE PROCESS DUMP **** 
+</span></span><span class="line"><span class="cl">NT symbols are incorrect, please fix symbols
+</span></span></code></pre></div><p>解决方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">.sympath SRV*C:<span class="se">\S</span>ymbols*https://msdl.microsoft.com/download/symbols <span class="p">;</span>表示把本地缓存放在 C:<span class="se">\S</span>ymbols，并从微软符号服务器下载
+</span></span><span class="line"><span class="cl">.symfix          <span class="p">;</span>（可选）自动设置到 MS 符号服务器
+</span></span><span class="line"><span class="cl">!sym noisy       <span class="p">;</span>开启符号加载的详细信息（便于排错）
+</span></span><span class="line"><span class="cl">.reload /f       <span class="p">;</span>强制重载全部模块符号
+</span></span><span class="line"><span class="cl">.sympath         <span class="p">;</span>查看当前符号路径
+</span></span><span class="line"><span class="cl">lmv m nt         <span class="p">;</span>或 lmv m ntkrnl*  查看内核模块及其符号加载状态
+</span></span><span class="line"><span class="cl">!process <span class="m">0</span> <span class="m">0</span>     <span class="p">;</span>重试
+</span></span></code></pre></div><h3 id="调用门实验蓝屏c05等错误">
+<a class="header-anchor" href="#%e8%b0%83%e7%94%a8%e9%97%a8%e5%ae%9e%e9%aa%8c%e8%93%9d%e5%b1%8fc05%e7%ad%89%e9%94%99%e8%af%af"></a>
+调用门实验蓝屏,C05等错误
+</h3><ul>
+<li>
+<p><strong>参考资料</strong>
+<a href="https://blog.csdn.net/weixin_43751677/article/details/135662097">进入0环蓝屏问题(幽灵熔断)</a>
+<a href="https://bbs.kanxue.com/thread-217562.htm">【看雪】调用门的使用以及调试调用门的注意事项</a>
+<a href="https://0xcc12138.github.io/Windows%E5%86%85%E6%A0%B815%28%E9%94%AE%E7%9B%98Hook%EF%BC%8C%E8%B0%83%E7%94%A8%E9%97%A8%29/">cc12138博客</a></p>
+</li>
+<li>
+<p><strong>具体错误</strong></p>
+</li>
+</ul>
+<p>我并没有遇到<code>幽灵熔断</code>导致的蓝屏问题，但我遇到了<code>C05</code>的错误，我的代码如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>	
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="o">+</span><span class="mh">0x8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="o">+</span><span class="mh">0x4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">y</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">z</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span> <span class="mh">0xc</span><span class="p">;</span> <span class="c1">// push了3个参数，需要手动平衡堆栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">PrintRegisetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x %x %x&#34;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">buf</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PrintRegisetr</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在阅读上面的资料后，<strong>所有线索指向<code>内核断点</code>会修改<code>FS</code></strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-25.png" alt="线索1"></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-26.png" alt="线索2"></p>
+<ul>
+<li>
+<p><strong>解决办法</strong></p>
+<ol>
+<li><strong>不在内核产生断点</strong></li>
+<li><strong>使用<code>push fs;pop fs</code>(失败)</strong>
+这个方法我没有成功，在内核产生断点依旧会修改<code>FS</code>的值为<code>30</code>，并且出内核后<code>FS</code>的值会恢复为<code>0</code></li>
+</ol>
+</li>
+</ul>
+<h2 id="段描述符与段选择子">
+<a class="header-anchor" href="#%e6%ae%b5%e6%8f%8f%e8%bf%b0%e7%ac%a6%e4%b8%8e%e6%ae%b5%e9%80%89%e6%8b%a9%e5%ad%90"></a>
+段描述符与段选择子
+</h2><h3 id="笔记">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0"></a>
+笔记
+</h3><ol>
+<li>GDT(全局描述符表)  LDT(局部描述符表)</li>
+</ol>
+<blockquote>
+<p>当我们执行类似<code>MOV DS,AX</code>指令时，CPU会查表，根据AX的值来决定查找<code>GDT</code>还是<code>LDT</code>,查找表的什么位置，查出多少数据.</p>
+</blockquote>
+<p>也就是说，在执行<code>MOV DS,AX</code>时<code>AX</code>的值不能是随便的</p>
+<p>可以用Windbg的</p>
+<p><code>r gdtr</code>(r是查看寄存器，gdtr是48位的，不是96位的)来查找GDT表的地址</p>
+<p><code>r gdtl</code>来查看GDT表的长度</p>
+<p><code>dd 8003f000</code>查看地址为<code>8003f000</code>的数据，以四字节分组显示(dq则是8字节分组显示)
+<code>dq 8003f000 L40</code>显示40组数据，每组8字节，从<code>8003f000</code>开始</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image.png" alt="输出"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f000</span>  <span class="mi">00000000</span><span class="err">`</span><span class="mi">00000000</span> <span class="mi">00</span><span class="no">cf9b00</span><span class="err">`</span><span class="mi">0000</span><span class="no">ffff</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f010</span>  <span class="mi">00</span><span class="no">cf9300</span><span class="err">`</span><span class="mi">0000</span><span class="no">ffff</span> <span class="mi">00</span><span class="no">cffb00</span><span class="err">`</span><span class="mi">0000</span><span class="no">ffff</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f020</span>  <span class="mi">00</span><span class="no">cff300</span><span class="err">`</span><span class="mi">0000</span><span class="no">ffff</span> <span class="mi">80008</span><span class="no">b04</span><span class="err">`</span><span class="mi">200020</span><span class="no">ab</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f030</span>  <span class="no">ffc093df</span><span class="err">`</span><span class="no">f0000001</span> <span class="mi">0040</span><span class="no">f300</span><span class="err">`</span><span class="mi">00000</span><span class="no">fff</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f040</span>  <span class="mi">0000</span><span class="no">f200</span><span class="err">`</span><span class="mi">0400</span><span class="no">ffff</span> <span class="mi">00000000</span><span class="err">`</span><span class="mi">00000000</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f050</span>  <span class="mi">80008954</span><span class="err">`</span><span class="no">af000068</span> <span class="mi">80008954</span><span class="err">`</span><span class="no">af680068</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f060</span>  <span class="mi">00009302</span><span class="err">`</span><span class="mi">2</span><span class="no">f40ffff</span> <span class="mi">0000920</span><span class="no">b</span><span class="err">`</span><span class="mi">80003</span><span class="no">fff</span>
+</span></span><span class="line"><span class="cl"><span class="err">8003</span><span class="nf">f070</span>  <span class="no">ff0092ff</span><span class="err">`</span><span class="mi">700003</span><span class="no">ff</span> <span class="mi">80009</span><span class="no">a40</span><span class="err">`</span><span class="mi">0000</span><span class="no">ffff</span>
+</span></span></code></pre></div><p>以8字节显示是因为GDT表的每个项占8字节，而GDT表的起始地址是<code>0x00000000</code>，接下来分析每个项的含义</p>
+<ol start="2">
+<li>段选择子</li>
+</ol>
+<blockquote>
+<p>段选择子是一个16位的段描述符，该描述符指向了定义该段的段描述符</p>
+</blockquote>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-2.png" alt="段选择子"></p>
+<p>RPL：请求特权级别</p>
+<p>TI：</p>
+<p>TI=0  查GDT表
+TI=1  查LDT表</p>
+<p>Index：</p>
+<p>处理器将索引值乘以8
+在加上GDT或者LDT的
+基地址，就是要加载的
+段描述符</p>
+<p>例如拆分<code>1B</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1B
+</span></span><span class="line"><span class="cl">0000 0000 0001 1011
+</span></span><span class="line"><span class="cl">0000000000011 0 11
+</span></span></code></pre></div><p>TI=0，查GDT表</p>
+<p>index=3，查GDT的第三项(<strong>00cffb00`0000ffff</strong>)</p>
+<ol start="3">
+<li>段描述符</li>
+</ol>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-1.png" alt="GDT"></p>
+<ol start="4">
+<li>
+<p>加载段描述符至段寄存器</p>
+<pre><code> 除了MOV指令，我们还可以使用LES、LSS、LDS、LFS、LGS指令修改寄存器.
+
+ CS不能通过上述的指令进行修改，CS为代码段，CS的改变会导致EIP的改变，要改CS，必须要保证CS与EIP一起改，后面会讲.
+</code></pre>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>					
+</span></span><span class="line"><span class="cl"><span class="kr">__asm</span>							
+</span></span><span class="line"><span class="cl"><span class="p">{</span>			
+</span></span><span class="line"><span class="cl">	<span class="n">les</span> <span class="n">ecx</span><span class="p">,</span><span class="n">fword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">buffer</span><span class="p">]</span> <span class="c1">//高2个字节给es，低四个字节给ecx	
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>注意：RPL&lt;=DPL(在数值上)</p>
+<h3 id="课后练习">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0"></a>
+课后练习
+</h3><p>1、记住段描述符与段选择子的结构</p>
+<p>2、使用LES、LDS等指令修改段寄存器</p>
+<p>思考题：</p>
+<p>段描述符共有64位，但需要填充的是80位，怎么填？</p>
+<h2 id="段描述符属性">
+<a class="header-anchor" href="#%e6%ae%b5%e6%8f%8f%e8%bf%b0%e7%ac%a6%e5%b1%9e%e6%80%a7"></a>
+段描述符属性
+</h2><h3 id="笔记-1">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-1"></a>
+笔记
+</h3><table>
+  <thead>
+      <tr>
+          <th>域简称</th>
+          <th>全称</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>S</td>
+          <td>系统(System)</td>
+          <td>S=0代表该描述符是一个系统段，S=1代表该描述符是代码段，数据段或者堆栈段</td>
+      </tr>
+      <tr>
+          <td>P</td>
+          <td>存在(Present)</td>
+          <td>指示该段是否存在于内存中。如果P=0，则当将指向段描述符的段选择器加载到段寄存器中时，处理器将生成段不存在异常。内存管理软件可以使用此标志来控制哪些段实际加载到物理内存中。它除了提供分页外，还提供了一个管理虚拟内存的控件。</td>
+      </tr>
+      <tr>
+          <td>DPL</td>
+          <td>描述符特权级(Descriptor Privilege Level)</td>
+          <td>这两位定义了该段的特权级别（0~3），简单来说，仅当要访问该段的程序的特权级别（CPL）等于或高于这个段的级时CPU才允许其访问，否则便会抛出保护性异常（GPF）</td>
+      </tr>
+      <tr>
+          <td>D/B</td>
+          <td>Default/Big</td>
+          <td>对于代码段，该位表示的是这个代码段默认的位数(Default Bit)。 D=0：16位代码段 D=1：32位代码段 对于栈段，该位称为B(Big)标志。B=1：使用32位堆栈指针（保存在ESP中） B=0：使用16位堆栈指针（保存在SP中） 对于数据段，该位称为B(Big)标志，指定了段的上界。B=1：段的上界是0xFFFFFFFF(4GB) B=0：段的上界是0xFFFF(64KB)</td>
+      </tr>
+      <tr>
+          <td>G</td>
+          <td>Granularity</td>
+          <td>该位用于描述段界限的粒度。G=1：段界限是4K字节对齐的。G=0：段界限是字节对齐的。</td>
+      </tr>
+      <tr>
+          <td>Type</td>
+          <td>段类型</td>
+          <td>由S位来决定段类型，具体内容见下面的分析</td>
+      </tr>
+      <tr>
+          <td>L</td>
+          <td>64-bit代码段</td>
+          <td>用于描述IA-32e模式下的代码段。L=1：代码段包含64位代码 L=0：代码段包含兼容模型的代码</td>
+      </tr>
+      <tr>
+          <td>AVL</td>
+          <td>Availible and reserved bits</td>
+          <td>供系统软件（操作系统）使用</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>
+<p><strong>P位</strong></p>
+<p>P位在段描述符的高4字节第15位，用于描述段是否有效</p>
+<p>P=1 段描述符有效</p>
+<p>P=0 段描述符无效</p>
+<p>当我们通过指令往段寄存器加载段描述符时，CPU首先检查P位，若P位为0，则不做后续检查</p>
+</li>
+<li>
+<p><strong>G位</strong></p>
+<p>G位在段描述符的高4字节第23位</p>
+</li>
+<li>
+<p><strong>段描述符与段寄存器的关系</strong></p>
+<p>段寄存器的结构如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">WORD</span>  <span class="n">Selector</span><span class="p">;</span>		<span class="c1">//16位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">WORD</span>  <span class="n">Atrribute</span><span class="p">;</span>	<span class="c1">//16位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">DWORD</span> <span class="n">Base</span><span class="p">;</span>		    <span class="c1">//32位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">DWORD</span> <span class="n">Limit</span><span class="p">;</span>		<span class="c1">//32位
+</span></span></span></code></pre></div><p>按照段描述符来拆分段寄存器</p>
+<ul>
+<li>
+<p><strong>Atrribute</strong></p>
+<p>段描述符高4字节第8位至24位</p>
+</li>
+<li>
+<p><strong>Base</strong></p>
+<p>Base被拆分为多块，来自段描述符的</p>
+<ol>
+<li>(Base 31:24)高4字节24位到31位</li>
+<li>(Base 23:16)高4字节0位到7位</li>
+<li>(Base 15:0)低4字节16位到31位</li>
+</ol>
+</li>
+<li>
+<p><strong>Limit</strong></p>
+<p>Limit被拆分为多块，来自段描述符的</p>
+<ol>
+<li>(Limit 19:16)高4字节16位到19位</li>
+<li>(Limit 15:0)低4字节0位到15位</li>
+</ol>
+<p>但是这样加起来只有20位(FFFFF)，剩下的12位在哪？</p>
+<p>若G=1，则Limit为4K字节对齐的段界限(FFFFFFFF)，若G=0，则Limit为字节对齐的段界限(000FFFFF)</p>
+</li>
+<li>
+<p><strong>S位</strong></p>
+<p>S = 1 代码段或者数据段描述符</p>
+<p>S = 0 系统段描述符</p>
+<p>S位，DPL，P位构成一个字，其中在windows操作系统中DPL只有<code>00</code>或<code>11</code>两种可能</p>
+<p>所以当我们想分析代码段或数据段TYPE域属性，S位一定是1，P位一定是1，则只需要注意段描述符高4字节的第5个字若为<code>0x9</code>或<code>0xF</code>，则是代码段或数据段
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-4.png" alt="判断代码段或数据段">
+若要再细分是代码段还是数据段，则需要分析TYPE域</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>TYPE域</strong></p>
+<ol>
+<li><strong>S位为1</strong></li>
+</ol>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-3.png" alt="TYPE域"></p>
+<p>TYPE域位于段描述符高4字节第6字，如上图所示，若大于等于0x8，则是代码段，否则数据段</p>
+<ul>
+<li>
+<p><strong>数据段</strong></p>
+<p>A 访问位，表示该位最后一次被操作系统清零后，该段是否被访问过.每当处理器将该段选择符置入某个段寄存器时，就将该位置1.</p>
+<p>W 是否可写</p>
+<p>E 扩展方向(为1则向下拓展)</p>
+<p>如下图，红色部分是有效的，图一是向上拓展，图二向下拓展</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-6.png" alt="拓展方向"></p>
+</li>
+<li>
+<p><strong>代码段</strong></p>
+<p>A 访问位</p>
+<p>R 可读位</p>
+<p>C 一致位</p>
+<p>C = 1 一致代码段</p>
+<p>C = 0 非一致代码段</p>
+</li>
+</ul>
+<ol start="2">
+<li><strong>S位为0</strong></li>
+</ol>
+<p>当S=0时，该段描述符为系统描述符，系统描述符有分为以下类型
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-5.png" alt="系统描述符"></p>
+</li>
+<li>
+<p><strong>D/B位</strong></p>
+<p>位于段描述符的第22位</p>
+<p>情况一：对CS段的影响</p>
+<pre><code>  D = 1 采用32位寻址方式	
+
+  D = 0 采用16位寻址方式	
+
+  前缀67 改变寻址方式	
+</code></pre>
+<p>情况二：对SS段的影响</p>
+<pre><code>  D = 1 隐式堆栈访问指令（如：PUSH POP CALL） 使用32位堆栈指针寄存器ESP	
+
+  D = 0 隐式堆栈访问指令（如：PUSH POP CALL） 使用16位堆栈指针寄存器SP	
+</code></pre>
+<p>情况三：向下拓展的数据段</p>
+<pre><code>  D = 1 段上线为4GB	
+
+  D = 0 段上线为64KB	
+</code></pre>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-7.png" alt="D/B位"></p>
+</li>
+<li>
+<p><strong>段权限检查</strong></p>
+</li>
+</ul>
+<ol>
+<li>
+<p><strong>CPU分级</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-8.png" alt="CPU"></p>
+<p>ring0权限最高，ring3权限最低</p>
+</li>
+<li>
+<p><strong>CPL(Current Privilege Level)：当前特权级</strong></p>
+<blockquote>
+<p>CPL用来查看当前程序属于几环</p>
+</blockquote>
+<p>CS和SS中存储的段选择子后2位就是<strong>CPL</strong></p>
+<p>例如：
+CS: 001B = 0000 0000 0001 1011
+最后两位加起来为3，则当前程序处于3环(ring3)</p>
+</li>
+<li>
+<p><strong>DPL(Descriptor Privilege Level)：描述符特权级别</strong></p>
+<blockquote>
+<p>DPL存储在段描述符中，规定了访问该段所需要的特权级别是什么.
+通俗的理解：
+如果你想访问我，那么你应该具备什么特权</p>
+</blockquote>
+<p>举例说明：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="nb">DS</span><span class="p">,</span><span class="nb">AX</span>  
+</span></span></code></pre></div><p>如果AX指向的段<code>DPL = 0</code>  但当前程序的<code>CPL = 3</code> <strong>这行指令是不会成功的</strong>！</p>
+</li>
+<li>
+<p><strong>RPL(Request Privilege Level)：请求特权级别</strong></p>
+<p>RPL是针对段选择子而言的，每个段的选择子都有自己的RPL。
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-9.png" alt="RPL"></p>
+<p>举例说明：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">Mov</span> <span class="nb">ax</span><span class="p">,</span><span class="mi">0008</span>	<span class="err">与</span>	<span class="nv">Mov</span> <span class="nb">ax</span><span class="p">,</span><span class="mb">000B</span> 		<span class="o">//</span><span class="err">段选择子</span>  		
+</span></span><span class="line"><span class="cl"><span class="nf">Mov</span> <span class="nb">ds</span><span class="p">,</span><span class="nb">ax</span>		<span class="nv">Mov</span> <span class="nb">ds</span><span class="p">,</span><span class="nb">ax</span>		<span class="o">//</span><span class="err">将段描述</span>
+</span></span></code></pre></div><p>0008 = 1 0 00</p>
+<p>000B = 1 0 11</p>
+<p>指向的是同一个段描述符,但RPL是不一样的.</p>
+</li>
+<li>
+<p><strong>数据段的权限检查</strong></p>
+<p>参考如下代码：</p>
+<p>比如当前程序处于0环，也就是说CPL=0</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">Mov</span> <span class="nb">ax</span><span class="p">,</span><span class="mb">000B</span>	<span class="o">//</span><span class="mi">1011</span>   <span class="nv">RPL</span> <span class="err">=</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="nf">Mov</span> <span class="nb">ds</span><span class="p">,</span><span class="nb">ax</span>	<span class="o">//</span><span class="nb">ax</span><span class="err">指向的段描述符的</span><span class="nv">DPL</span> <span class="err">=</span> <span class="mi">0</span>
+</span></span></code></pre></div><p>数据段的权限检查：</p>
+<p><strong><code>CPL &lt;= DPL  并且 RPL &lt;= DPL</code></strong> (数值上的比较)</p>
+<p>注意：</p>
+<p><strong>代码段和系统段描述符中的检查方式并不一样</strong></p>
+</li>
+<li>
+<p><strong>总结：</strong></p>
+<p>CPL：CPU当前的权限级别</p>
+<p>DPL：如果你想访问我，你应该具备什么样的权限</p>
+<p>RPL：用什么权限去访问一个段</p>
+<p>为啥要有RPL?</p>
+<pre><code> 我们本可以用&quot;读 写&quot;的权限去打开一个文件，但为了避免出错，有些时候我们使用&quot;只读&quot;的权限去打开。
+</code></pre>
+</li>
+</ol>
+<h3 id="课后练习-1">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-1"></a>
+课后练习
+</h3><ul>
+<li>
+<p>分析段选择子为0x1B、0x23对应的段描述符，并将内容填写到段寄存器结构体中</p>
+<ol>
+<li>0x1B</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1B
+</span></span><span class="line"><span class="cl">0000 0000 0001 1011
+</span></span><span class="line"><span class="cl">0000000000011 0 11
+</span></span></code></pre></div><p>index=3，查GDT的第三项(<strong>00cffb00`0000ffff</strong>)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">00cffb00`0000ffff
+</span></span><span class="line"><span class="cl">0000 0000 1100 1111 1111 1011 0000 0000 
+</span></span><span class="line"><span class="cl">0000 0000 0000 0000 1111 1111 1111 1111
+</span></span><span class="line"><span class="cl">Selector = 0x1B
+</span></span><span class="line"><span class="cl">Atrribute = 1100 1111 1111 1011 = 0xCFFB
+</span></span><span class="line"><span class="cl">Base = 0000 0000 0000 0000 0000 0000 0000 0000 = 0x00000000
+</span></span><span class="line"><span class="cl">Limit = 1111 1111 1111 1111 = 0xFFFFFFFF(G=1)
+</span></span></code></pre></div><ol start="2">
+<li>0x23</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">23
+</span></span><span class="line"><span class="cl">0000 0000 0010 0011
+</span></span><span class="line"><span class="cl">0000000000100 0 11
+</span></span></code></pre></div><p>index=4，查GDT的第五项(<strong>00cff300`0000ffff</strong>)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">00cff300`0000ffff
+</span></span><span class="line"><span class="cl">0000 0000 1100 1111 1111 0011 0000 0000
+</span></span><span class="line"><span class="cl">0000 0000 0000 0000 1111 1111 1111 1111
+</span></span><span class="line"><span class="cl">Selector = 0x23
+</span></span><span class="line"><span class="cl">Atrribute = 1100 1111 1111 0011 = 0xCFF3
+</span></span><span class="line"><span class="cl">Base = 0000 0000 0000 0000 0000 0000 0000 0000 = 0x00000000
+</span></span><span class="line"><span class="cl">Limit = 1111 1111 1111 1111 = 0xFFFFFFFF(G=1)
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="代码间的跳转">
+<a class="header-anchor" href="#%e4%bb%a3%e7%a0%81%e9%97%b4%e7%9a%84%e8%b7%b3%e8%bd%ac"></a>
+代码间的跳转
+</h2><h3 id="笔记-2">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-2"></a>
+笔记
+</h3><ul>
+<li>
+<p><strong>段间跳转</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">JMP</span> <span class="mh">0x20</span><span class="p">:</span><span class="mh">0x004183D7</span> <span class="c1">;CPU如何执行这行代码?</span>
+</span></span></code></pre></div><p>(1) <strong>段选择子拆分</strong></p>
+<pre><code>  0x20 对应二进制形式 0000 0000 0010 0000
+
+  RPL = 00   
+  TI = 0
+  Index = 4
+</code></pre>
+<p>(2) <strong>查表得到段描述符</strong></p>
+<pre><code>  TI = 0 所以查GDT表
+
+  Index = 4 找到对应的段描述符
+
+  四种情况可以跳转：代码段、调用门、TSS任务段、任务门
+</code></pre>
+<p>(3) <strong>权限检查</strong></p>
+<pre><code>  如果是非一致代码段，要求:CPL == DPL 并且 RPL &lt;= DPL
+
+  如果是一致代码段，要求:CPL &gt;= DPL
+</code></pre>
+<p>(4) <strong>加载段描述符</strong></p>
+<pre><code>  通过上面的权限检查后，CPU会将段描述符加载到CS段寄存器中.
+</code></pre>
+<p>(5) <strong>代码执行</strong></p>
+<pre><code>  CPU将 CS.Base + Offset 的值写入EIP 然后执行CS:EIP处的代码，段间跳转结束.
+</code></pre>
+</li>
+</ul>
+<h3 id="课后练习-2">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-2"></a>
+课后练习
+</h3><ol>
+<li><strong>实现段间跳转</strong></li>
+</ol>
+<p><a href="https://bbs.kanxue.com/thread-270476.htm#msg_header_h2_3">看雪-保护模式学习笔记之段机制</a></p>
+<h2 id="长调用与短调用">
+<a class="header-anchor" href="#%e9%95%bf%e8%b0%83%e7%94%a8%e4%b8%8e%e7%9f%ad%e8%b0%83%e7%94%a8"></a>
+长调用与短调用
+</h2><h3 id="笔记-3">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-3"></a>
+笔记
+</h3><ul>
+<li>
+<p><strong>短调用</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">CALL</span>  <span class="err">立即数</span><span class="o">/</span><span class="err">寄存器</span><span class="o">/</span><span class="err">内存</span>
+</span></span></code></pre></div><p>发生改变的寄存器：<strong>ESP EIP</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-11.png" alt="短调用"></p>
+</li>
+<li>
+<p><strong>长调用(跨段不提权)</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">CALL</span>  <span class="nb">CS</span><span class="p">:</span><span class="nv">EIP</span><span class="p">(</span><span class="nv">EIP是废弃的</span><span class="p">)</span>
+</span></span></code></pre></div><p>发生改变的寄存器：<strong>ESP EIP  CS</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-12.png" alt="长调用(跨段不提权)"></p>
+</li>
+<li>
+<p><strong>长调用(跨段提权)</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">CALL</span>  <span class="nb">CS</span><span class="p">:</span><span class="nv">EIP</span><span class="p">(</span><span class="nv">EIP是废弃的</span><span class="p">)</span>
+</span></span></code></pre></div><p>发生改变的寄存器：<strong>ESP EIP  CS SS</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-13.png" alt="长调用(跨段不提权)">
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-14.png" alt="长调用(跨段不提权)"></p>
+</li>
+<li>
+<p><strong>总结</strong></p>
+<ol>
+<li>
+<p>跨段调用时，一旦有权限切换，就会切换堆栈.</p>
+</li>
+<li>
+<p>CS的权限一旦改变，SS的权限也要随着改变，CS与SS的等级必须一样.</p>
+</li>
+<li>
+<p>JMP FAR 只能跳转到同级非一致代码段，但CALL FAR可以通过调用门
+提权，提升CPL的权限.</p>
+</li>
+</ol>
+<p>SS与ESP从哪里来？参见TSS段.</p>
+</li>
+</ul>
+<h2 id="调用门">
+<a class="header-anchor" href="#%e8%b0%83%e7%94%a8%e9%97%a8"></a>
+调用门
+</h2><h3 id="笔记-4">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-4"></a>
+笔记
+</h3><ol>
+<li>
+<p>调用门执行流程</p>
+<p>指令格式：CALL  CS:EIP(EIP是废弃的，跳转地址由调用门描述符决定)</p>
+<p>执行步骤：</p>
+<ol>
+<li>
+<p>根据CS的值 查GDT表，找到对应的段描述符  这个描述符是一个调用门.</p>
+</li>
+<li>
+<p>在调用门描述符中存储另一个代码段段的选择子.</p>
+</li>
+<li>
+<p>选择子指向的段的 <strong>段.Base + 偏移地址</strong> 就是真正要执行的地址.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>门描述符</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-10.png" alt="调用门"></p>
+<p>调用门描述符的P位,DPL都要为1，S位为0，TYPE域为1100</p>
+</li>
+<li>
+<p>构造一个调用门</p>
+<p>根据门描述符来构造一个调用门，基础结构如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">CallGateDescriptor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">offset_low</span><span class="p">;</span>     <span class="c1">// 目标代码段偏移地址的低 16 位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">selector</span><span class="p">;</span>       <span class="c1">// 目标代码段的段选择子
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">param_count</span> <span class="p">:</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">// 参数数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">reserved</span> <span class="p">:</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// 保留位（通常为 0）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">Type</span> <span class="p">:</span> <span class="mi">4</span><span class="p">;</span><span class="c1">//属性   1110（对应 32 位调用门）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">s</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span><span class="c1">//0系统段 1数据段存储段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">dpl</span> <span class="p">:</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// 描述符特权级别（DPL）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">char</span>  <span class="nl">present</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 存在位（P）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">offset_high</span><span class="p">;</span>    <span class="c1">// 目标代码段偏移地址的高 16 位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></code></pre></div><p>其中<strong>两段Offset相加则为跳转目标地址</strong>，</p>
+</li>
+<li>
+<p>代码测试</p>
+<p>步骤一：代码测试，并观察堆栈与寄存器的变化.</p>
+<p>记录执行前的寄存器值：</p>
+<p>CS   SS   ESP</p>
+<p>步骤二：在测试代码中加入特权指令并读取高2G内存.</p>
+</li>
+</ol>
+<h3 id="课后练习-3">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-3"></a>
+课后练习
+</h3><ol>
+<li>
+<p><strong>实现调用门(无参提权)</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-15.png" alt="段描述符"></p>
+<p>找到未被使用的段描述符，位置在第9个，修改为<code>0000EC00</code>00080000`</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eq 8003f048 0000EC00<span class="sb">`</span><span class="m">00080000</span>
+</span></span></code></pre></div><p>此时跳转地址为0地址，下面的代码是一定会报错的</p>
+<p>测试代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">GetRegisetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>运行后报错
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-16.png" alt="报错"></p>
+<p>那如何通过调用门去调用代码所写的<code>GetRegisetr</code>函数？那就需要获取<code>GetRegisetr</code>的地址了
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-17.png" alt="获取地址">
+在调试中获取了<code>GetRegisetr</code>的地址为<code>00401030</code>，那么就修改调用门为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eq 8003f048 0040EC00<span class="sb">`</span><span class="m">00081030</span>
+</span></span></code></pre></div><p>系统卡死，可以在Windbg里看到系统被断下来了，因为我们的<code>GetRegisetr</code>函数里写了<code>int 3</code>断点指令</p>
+<p>现在回去观察一下寄存器
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-18.png" alt="前">
+在执行调用门前，寄存器(<strong>长调用(跨段提权)所push的寄存器</strong>)为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CS: 0x1B
+</span></span><span class="line"><span class="cl">SS: 0x23
+</span></span><span class="line"><span class="cl">ESP: 0012FF28
+</span></span></code></pre></div><p>继续运行代码，在Windbg里断下
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-19.png" alt="后"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CS: 0x8
+</span></span><span class="line"><span class="cl">SS: 0x10
+</span></span><span class="line"><span class="cl">ESP: b168cdd0
+</span></span></code></pre></div><p>可以看到ESP的地址远远大于8，已经进入0环了，再看看堆栈
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-20.png" alt="堆栈"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">00401068 0000001b 0012ff28 00000023
+</span></span></code></pre></div><p>再看看之前长调用(跨段提权)的堆栈图
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-13.png" alt="长调用(跨段不提权)">
+不难发现对应关系为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CS: 0x00000023
+</span></span><span class="line"><span class="cl">ESP: 0x0012ff28
+</span></span><span class="line"><span class="cl">SS: 0x0000001B
+</span></span><span class="line"><span class="cl">返回地址: 0x00401068
+</span></span></code></pre></div><p>既然成功提权，那么就可以做一下只有内核能做的事了，比如读取高2G内存</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">BYTE</span> <span class="n">GDT</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">GetRegisetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="mh">0x8003f00c</span> <span class="c1">// 读取高2G地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">ebx</span><span class="p">,[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span><span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sgdt</span>  <span class="n">GDT</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">PrintRegisetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DWORD</span> <span class="n">GDT_ADDR</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">PDWORD</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">GDT</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">WORD</span> <span class="n">GDT_LIMIT</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">PWORD</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">GDT</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x %x %x&#34;</span><span class="p">,</span><span class="n">dwH2GValue</span><span class="p">,</span> <span class="n">GDT_ADDR</span><span class="p">,</span> <span class="n">GDT_LIMIT</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PrintRegisetr</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>再次查找<code>GetRegisetr</code>的地址为<code>00401040</code>，设置调用门</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eq 8003f048 0040EC00<span class="sb">`</span><span class="m">00081040</span>
+</span></span></code></pre></div><p>执行代码
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-21.png" alt="输出"></p>
+<p>再对照<code>Windbg</code>里<code>0x8003f00c</code>地址处的内容</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-22.png" alt="对照"></p>
+<p>可以看到我们成功在用户代码区获取了高2G内存的数据</p>
+</li>
+<li>
+<p><strong>实现调用门(有参提权)</strong></p>
+<p>和上面的做法差不多，只需要**修改调用门的ParamCount(传入参数个数)**即可，直接给代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eq 8003f048 0040EC03<span class="sb">`</span><span class="m">00081030</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>	
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="o">+</span><span class="mh">0x8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="o">+</span><span class="mh">0x4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">y</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x24</span><span class="o">+</span><span class="mh">0x8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">z</span><span class="p">],</span><span class="n">eax</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span> <span class="mh">0xc</span><span class="p">;</span> <span class="c1">// push了3个参数，需要手动平衡堆栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">PrintRegisetr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x %x %x&#34;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">buf</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PrintRegisetr</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-23.png" alt="堆栈"></p>
+<p>伪代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-nasm" data-lang="nasm"><span class="line"><span class="cl"><span class="nf">push</span> <span class="nb">SS</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="nb">ESP</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="mi">3</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="nb">CS</span>
+</span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="err">返回地址</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-24.png" alt="堆栈图"></p>
+<p><strong>调用<code>printf</code>报错C05</strong></p>
+<p>我检查了寄存器执行前后的变化，如图
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/419d8fbe717371841f0e400dd38fbf15.png" alt="前"></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/1971453c4562ec39b388a1a9b21d6477.png" alt="后"></p>
+<p>可以看到<code>FS</code>从<code>3B</code>变为了<code>00</code>，这是不正确的，查找资料发现</p>
+<blockquote>
+<p>构造用门描述符前后堆栈变化中 <code>FS</code>从<code>3B</code>变成了<code>30</code>，是由于<code>Func()</code> 中<code>INT 3</code> 造成的，<code>INT3</code>会改变<code>FS</code>值</p>
+</blockquote>
+<blockquote>
+<p>在线上班中提出了一些问题，我若是在<code>call</code>里修改了<code>ebp,eax,ecx</code>等寄存器，返回后会恢复原来的寄存器还是为我在0环修改的内容，经过实验，发现返回后是我在0环修改的内容，所以需要在<code>call</code>内部手动保存寄存器</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="小测">
+<a class="header-anchor" href="#%e5%b0%8f%e6%b5%8b"></a>
+小测
+</h2><h3 id="需求">
+<a class="header-anchor" href="#%e9%9c%80%e6%b1%82"></a>
+需求
+</h3><p>1、构造一个调用门，实现3环读取高2G内存。
+2、在第一题的基础上进行修改，实现通过翻墙的方式返回到其他地址。
+3、在第一题的基础上进行修改，在门中再建一个门跳转到其他地址。
+工
+要求:
+代码正常执行不蓝屏</p>
+<h3 id="实现">
+<a class="header-anchor" href="#%e5%ae%9e%e7%8e%b0"></a>
+实现
+</h3><ol>
+<li>
+<p>构造一个调用门，实现3环读取高2G内存。</p>
+<p>调用门描述符</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eq 8003f048 0040EC00`00081020
+</span></span></code></pre></div><ul>
+<li>代码</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func1</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x8003f048</span> <span class="c1">// 读取高2G地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="p">[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="n">dwH2GValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-27.png" alt="结果"></p>
+</li>
+<li>
+<p>在第一题的基础上进行修改，实现通过翻墙的方式返回到其他地址</p>
+<p>调用门描述符</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eq 8003f048 0040EC00`00081030
+</span></span></code></pre></div><ul>
+<li>代码</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func1</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x8003f048</span> <span class="c1">// 读取高2G地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="p">[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">esp</span><span class="p">],</span><span class="mh">0x401050</span> <span class="c1">// 跳转到Func2的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">retf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func2</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">push</span> <span class="mh">0x00401098</span> <span class="c1">// 返回main函数的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span><span class="mh">0x12345678</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ret</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="n">dwH2GValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-30.png" alt="结果"></p>
+</li>
+<li>
+<p>在第一题的基础上进行修改，在门中再建一个门跳转到其他地址</p>
+</li>
+</ol>
+<p>找到两个能写调用门描述符的地方
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-31.png" alt="alt text"></p>
+<p>一个是原先的<code>0x8003f048</code></p>
+<p>另一个是<code>0x8003f090</code></p>
+<p>调用门描述符</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eq 0x8003f048 0040EC00`00081030
+</span></span><span class="line"><span class="cl">eq 0x8003f090 0040EC00`00081050
+</span></span></code></pre></div><ul>
+<li>代码</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">buf1</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">buf2</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func1</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x8003f048</span> <span class="c1">// 读取高2G地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">ebx</span><span class="p">,</span> <span class="p">[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span> <span class="n">ebx</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func2</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span><span class="mh">0x12345678</span> <span class="c1">// 重新赋值，验证是否被执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">retf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf1</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buf2</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x90</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buf1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="n">dwH2GValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-32.png" alt="结果"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e9%80%86%e5%90%91"
+        rel="tag"
+        >逆向</a
+      >
+    </li>
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/%e5%86%85%e6%a0%b8"
+        rel="tag"
+        >内核</a
+      >
+    </li>
+  
+    <li class="article-tag-list-item" data-aos="zoom-in">
+      <a
+        class="article-tag-list-link"
+        href="/tags/c/c&#43;&#43;"
+        rel="tag"
+        >C/C&#43;&#43;</a
+      >
+    </li>
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="/images/my/14.png"
+              data-sizes="auto"
+              alt="加密壳框架——基于傀儡进程的壳"
+              class="lazyload"
+            />
+          
+        
+        <a href="/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            加密壳框架——基于傀儡进程的壳
+          
+        </h3>
+      </div>
+    
+
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+</section>
+        </div>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+        2025
+      
+      <span class="footer-info-sep rotate"></span>
+      Cyzrjz
+    </div>
+    
+      <div>
+        基于&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            41.2k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          01:27
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >总访问量&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >总访客量&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#常见问题">常见问题</a>
+      <ul>
+        <li><a href="#所用镜像和软件版本">所用镜像和软件版本</a></li>
+        <li><a href="#vc6">VC6</a></li>
+        <li><a href="#windbg">Windbg</a></li>
+        <li><a href="#调用门实验蓝屏c05等错误">调用门实验蓝屏,C05等错误</a></li>
+      </ul>
+    </li>
+    <li><a href="#段描述符与段选择子">段描述符与段选择子</a>
+      <ul>
+        <li><a href="#笔记">笔记</a></li>
+        <li><a href="#课后练习">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#段描述符属性">段描述符属性</a>
+      <ul>
+        <li><a href="#笔记-1">笔记</a></li>
+        <li><a href="#课后练习-1">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码间的跳转">代码间的跳转</a>
+      <ul>
+        <li><a href="#笔记-2">笔记</a></li>
+        <li><a href="#课后练习-2">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#长调用与短调用">长调用与短调用</a>
+      <ul>
+        <li><a href="#笔记-3">笔记</a></li>
+      </ul>
+    </li>
+    <li><a href="#调用门">调用门</a>
+      <ul>
+        <li><a href="#笔记-4">笔记</a></li>
+        <li><a href="#课后练习-3">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#小测">小测</a>
+      <ul>
+        <li><a href="#需求">需求</a></li>
+        <li><a href="#实现">实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="/avatar/avatar.png"
+    data-sizes="auto"
+    alt="Cyzrjz"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">Cyzrjz</div>
+  <div class="sidebar-description">静籁永恒</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    
+    <div class="sidebar-state-number">11</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/"
+        aria-label="首页"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">首页</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/archives"
+        aria-label="归档"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">归档</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/about"
+        aria-label="关于"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">关于</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="/friend"
+        aria-label="友链"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">友链</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" />
+        </div>
+      </div>
+    
+    
+    
+    
+
+
+
+
+
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+  <script>
+    var ALGOLIA_CONFIG = {
+      logo: '\/images\/algolia_logo.svg',
+      algolia: {
+        applicationID: "P838ONQIH8",
+        apiKey: "23e3b2dde8ed64b7219c2ba3aed27e87",
+        indexName: "Myblog",
+        hits: {
+          "per_page": parseInt("10")
+        },
+        labels: {
+          "input_placeholder": "搜索.....",
+          "hits_empty": "未发现与 「${query}」相关内容",
+          "hits_stats": "找到${hits}条结果（用时 ${time} ms）"
+        }
+      }
+    };
+  </script>
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/algoliasearch@4.17.1/dist/algoliasearch-lite.umd.js"
+    defer
+    
+    
+    
+    integrity="sha384-xvLS0jfKuoREs7pqkRI/OI8GcqohO5S&#43;jQz7ZBtQXnsXmD&#43;9jDOOY4cL6dCPzlrk" crossorigin="anonymous"
+  ></script>
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/instantsearch.js@4.56.1/dist/instantsearch.production.min.js"
+    defer
+    
+    
+    
+    integrity="sha384-hHJCflT4KBLQyHfKO9vpstIcFKn/Y&#43;KHTORelMMEn7mOp2AVPp&#43;7fr03dLgZiV3J" crossorigin="anonymous"
+  ></script>
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="/js/algolia_search.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-8LyaidD9GPxQQgLJO/WRw/O2h3BoNq/ApI/ecpvM6RsrCz2qP2ppBXUKihP4V/2d" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"var(--red-1)\",\"var(--red-2)\",\"var(--red-3)\",\"var(--red-4)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"var(--red-0)\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+<script>
+  function initLive2d() {
+    live2d.init('https:\/\/fastly.jsdelivr.net\/gh\/D-Sketon\/plugin-live2d\/', {themeTipsPath: ""});
+  }
+</script> 
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js"
+    
+    async
+    
+    onload="initLive2d()"
+    
+  ></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+        
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "Cyzrjz",
+          title: "Windows内核笔记-保护模式",
+          url: "https:\/\/cyzrjz.github.io\/post\/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0\/",
+          description: "滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题",
+          cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
+        };
+      </script>
+    
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+              
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+              
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+      
+    
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+
+
+
+
+
+    
+  </body>
+</html>
