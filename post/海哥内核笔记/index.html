@@ -436,6 +436,18 @@
         <li><a href="#实现">实现</a></li>
       </ul>
     </li>
+    <li><a href="#中断门">中断门</a>
+      <ul>
+        <li><a href="#笔记-5">笔记</a></li>
+        <li><a href="#课后练习-4">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#陷阱门">陷阱门</a>
+      <ul>
+        <li><a href="#笔记-6">笔记</a></li>
+        <li><a href="#课后练习-5">课后练习</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -657,9 +669,9 @@ Windbg
 </h3><ul>
 <li>
 <p><strong>参考资料</strong>
-<a href="https://blog.csdn.net/weixin_43751677/article/details/135662097">进入0环蓝屏问题(幽灵熔断)</a>
-<a href="https://bbs.kanxue.com/thread-217562.htm">【看雪】调用门的使用以及调试调用门的注意事项</a>
-<a href="https://0xcc12138.github.io/Windows%E5%86%85%E6%A0%B815%28%E9%94%AE%E7%9B%98Hook%EF%BC%8C%E8%B0%83%E7%94%A8%E9%97%A8%29/">cc12138博客</a></p>
+<a href="https://blog.csdn.net/weixin_43751677/article/details/135662097">进入0环蓝屏问题(幽灵熔断)</a></p>
+<p><a href="https://bbs.kanxue.com/thread-217562.htm">【看雪】调用门的使用以及调试调用门的注意事项</a></p>
+<p><a href="https://0xcc12138.github.io/Windows%E5%86%85%E6%A0%B815%28%E9%94%AE%E7%9B%98Hook%EF%BC%8C%E8%B0%83%E7%94%A8%E9%97%A8%29/">cc12138博客</a></p>
 </li>
 <li>
 <p><strong>具体错误</strong></p>
@@ -1576,7 +1588,332 @@ CS: 001B = 0000 0000 0001 1011
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-32.png" alt="结果"></p>
-
+<h2 id="中断门">
+<a class="header-anchor" href="#%e4%b8%ad%e6%96%ad%e9%97%a8"></a>
+中断门
+</h2><h3 id="笔记-5">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-5"></a>
+笔记
+</h3><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-33.png" alt="中断门"></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-34.png" alt="中断门"></p>
+<ul>
+<li><strong>与调用门的区别</strong></li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>数据位</th>
+          <th>31-16</th>
+          <th>15</th>
+          <th>14-13</th>
+          <th>12</th>
+          <th>11-8</th>
+          <th>7-5</th>
+          <th>4-0</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>含义</td>
+          <td>offset</td>
+          <td>P</td>
+          <td>DPL</td>
+          <td>S</td>
+          <td>Type</td>
+          <td>无</td>
+          <td>param.count</td>
+      </tr>
+      <tr>
+          <td>调用门</td>
+          <td>偏移</td>
+          <td>有效位</td>
+          <td>特权等级</td>
+          <td>值为0</td>
+          <td>值为1100</td>
+          <td>值为000</td>
+          <td>可以传递参数</td>
+      </tr>
+      <tr>
+          <td>中断门</td>
+          <td>同上</td>
+          <td>同上</td>
+          <td>同上</td>
+          <td>同上</td>
+          <td>值为1110</td>
+          <td>值为000</td>
+          <td>不允许传参，固定为0000</td>
+      </tr>
+  </tbody>
+</table>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-35.png" alt="调用流程"></p>
+<p>构造基础中断门描述符</p>
+<table>
+  <thead>
+      <tr>
+          <th>数据位</th>
+          <th>31-16</th>
+          <th>15</th>
+          <th>14-13</th>
+          <th>12</th>
+          <th>11-8</th>
+          <th>7-5</th>
+          <th>4-0</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>含义</td>
+          <td>offset</td>
+          <td>P</td>
+          <td>DPL</td>
+          <td>S</td>
+          <td>Type</td>
+          <td>无</td>
+          <td>param</td>
+      </tr>
+      <tr>
+          <td>解释</td>
+          <td>段中偏移</td>
+          <td>有效位</td>
+          <td>特权等级</td>
+          <td>系统段描述符</td>
+          <td>32位中断门</td>
+          <td>值为000</td>
+          <td>不允许传参</td>
+      </tr>
+      <tr>
+          <td>值（二进制）</td>
+          <td>0</td>
+          <td>1</td>
+          <td>11</td>
+          <td>0</td>
+          <td>1110</td>
+          <td>000</td>
+          <td>0000</td>
+      </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+      <tr>
+          <th>数据位</th>
+          <th>31-16</th>
+          <th>15-0</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>含义</td>
+          <td>selector</td>
+          <td>offset</td>
+      </tr>
+      <tr>
+          <td>解释</td>
+          <td>段选择子</td>
+          <td>段中偏移</td>
+      </tr>
+      <tr>
+          <td>值（十六进制）</td>
+          <td>0x0008</td>
+          <td>0</td>
+      </tr>
+  </tbody>
+</table>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0000EE00`00080000
+</span></span></code></pre></div><h3 id="课后练习-4">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-4"></a>
+课后练习
+</h3><ol>
+<li><strong>实现中断门</strong></li>
+</ol>
+<p>找到未被使用的中断门描述符，使用公式
+</p>
+$$index = \frac{IDT地址 - IDT基址}{8}$$<p>
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-36.png" alt="alt text">
+找到目标地址为<code>0x8003f500</code>
+计算索引
+</p>
+$$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
+<li><strong>测试代码</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func1</span><span class="p">()</span> <span class="c1">// 0x401020
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="mh">0x8003f500</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span><span class="n">eax</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">iretd</span> <span class="c1">// iret蓝屏
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="mh">0x20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="n">dwH2GValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>写入IDT</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eq 8003f500 0040EE00`00081020
+</span></span></code></pre></div><p>执行代码成功访问高2G内存
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-37.png" alt="结果"></p>
+<p>查看在进入中断门前寄存器的值</p>
+<p>在<code>Func1</code>中写入<code>int3</code>，触发断点，查看寄存器变化</p>
+<table>
+  <thead>
+      <tr>
+          <th>寄存器</th>
+          <th>说明</th>
+          <th>执行前的值</th>
+          <th>执行后的值</th>
+          <th>是否变化</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>ESP</td>
+          <td>栈顶寄存器</td>
+          <td>12FF2C</td>
+          <td>b177cdcc</td>
+          <td>√</td>
+      </tr>
+      <tr>
+          <td>EBP</td>
+          <td>栈底寄存器</td>
+          <td>12FF80</td>
+          <td>12FF80</td>
+          <td>×</td>
+      </tr>
+      <tr>
+          <td>CS</td>
+          <td>代码段寄存器</td>
+          <td>1B</td>
+          <td>08</td>
+          <td>√</td>
+      </tr>
+      <tr>
+          <td>DS</td>
+          <td>数据段寄存器</td>
+          <td>23</td>
+          <td>23</td>
+          <td>×</td>
+      </tr>
+      <tr>
+          <td>ES</td>
+          <td>附加段寄存器</td>
+          <td>23</td>
+          <td>23</td>
+          <td>×</td>
+      </tr>
+      <tr>
+          <td>SS</td>
+          <td>堆栈段寄存器</td>
+          <td>23</td>
+          <td>10</td>
+          <td>√</td>
+      </tr>
+      <tr>
+          <td>FS</td>
+          <td>附加段寄存器</td>
+          <td>3B</td>
+          <td>30</td>
+          <td>√</td>
+      </tr>
+      <tr>
+          <td>GS</td>
+          <td>附加段寄存器</td>
+          <td>0</td>
+          <td>0</td>
+          <td>×</td>
+      </tr>
+      <tr>
+          <td>EFL</td>
+          <td>标志寄存器</td>
+          <td>212</td>
+          <td>12</td>
+          <td>√</td>
+      </tr>
+  </tbody>
+</table>
+<p>查看堆栈
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-38.png" alt="堆栈"></p>
+<p>可以看到相比于调用门，<strong>中断门多传入了一个EFL寄存器</strong>，并且在进入中断门后<strong>EFL寄存器的IF位归0</strong></p>
+<ol>
+<li><strong>在调用门中使用iret返回，在中断门中使用retf返回</strong></li>
+</ol>
+<p>原理都差不多，这里只说说中断门的retf返回</p>
+<p>只需要把堆栈变得和调用门一样，然后再retf即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">DWORD</span> <span class="n">dwH2GValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwEFLValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Func1</span><span class="p">()</span> <span class="c1">// 0x401020
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pushfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="mh">0x8003f500</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwH2GValue</span><span class="p">,</span><span class="n">eax</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span><span class="p">]</span> <span class="c1">//ret
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">edx</span><span class="p">,[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">]</span> <span class="c1">//CS
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">ecx</span><span class="p">,[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">]</span> <span class="c1">//EFL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="p">[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">],</span> <span class="n">edx</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="p">[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">],</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="p">[</span><span class="n">esp</span> <span class="o">+</span> <span class="mh">0x24</span><span class="p">],</span> <span class="n">ecx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">popfd</span> <span class="c1">// 这一步将EFL恢复原来的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">retf</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="mh">0x20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="n">dwH2GValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-40.png" alt="结果">
+可以看到结果正常输出，并且EFL的值与之前一样</p>
+<h2 id="陷阱门">
+<a class="header-anchor" href="#%e9%99%b7%e9%98%b1%e9%97%a8"></a>
+陷阱门
+</h2><h3 id="笔记-6">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-6"></a>
+笔记
+</h3><h3 id="课后练习-5">
+<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-5"></a>
+课后练习
+</h3>
       
     </div>
     <footer class="article-footer">
@@ -1640,7 +1977,7 @@ CS: 001B = 0000 0000 0001 1011
           
           
             <img
-              data-src="/images/my/14.png"
+              data-src="/images/my/5.jpg"
               data-sizes="auto"
               alt="加密壳框架——基于傀儡进程的壳"
               class="lazyload"
@@ -1753,7 +2090,7 @@ CS: 001B = 0000 0000 0001 1011
       <div>
         <span class="icon-brush"
           >&nbsp;
-            41.2k
+            42.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -1761,7 +2098,7 @@ CS: 001B = 0000 0000 0001 1011
           
           
 
-          01:27
+          01:29
         </span>
       </div>
     
@@ -1847,6 +2184,18 @@ CS: 001B = 0000 0000 0001 1011
       <ul>
         <li><a href="#需求">需求</a></li>
         <li><a href="#实现">实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#中断门">中断门</a>
+      <ul>
+        <li><a href="#笔记-5">笔记</a></li>
+        <li><a href="#课后练习-4">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#陷阱门">陷阱门</a>
+      <ul>
+        <li><a href="#笔记-6">笔记</a></li>
+        <li><a href="#课后练习-5">课后练习</a></li>
       </ul>
     </li>
   </ul>
