@@ -22,11 +22,11 @@
   
 
 <title>
-  Windows内核笔记-保护模式 | Cyzrjz
+  Windows内核-保护模式 | Cyzrjz
 </title>
 <meta
   name="description"
-  content="滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题"
+  content="滴水课程保护模式笔记，记录了一些碎片知识以及课程的课后习题"
 />
 
 
@@ -114,10 +114,10 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Windows内核笔记-保护模式 | Cyzrjz" />
+  <meta property="og:title" content="Windows内核-保护模式 | Cyzrjz" />
   <meta
     property="og:description"
-    content="滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题"
+    content="滴水课程保护模式笔记，记录了一些碎片知识以及课程的课后习题"
   />
   <meta property="og:url" content="https://cyzrjz.github.io/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/" />
   <meta
@@ -341,7 +341,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/my/banner.png" alt="Windows内核笔记-保护模式">
+          <img  fetchpriority="high" src="/images/my/banner.png" alt="Windows内核-保护模式">
         
       
     
@@ -357,7 +357,7 @@
   
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">Windows内核笔记-保护模式</h1>
+            <h1 data-aos="slide-up">Windows内核-保护模式</h1>
           </a>
         
       
@@ -445,7 +445,11 @@
     <li><a href="#陷阱门">陷阱门</a>
       <ul>
         <li><a href="#笔记-6">笔记</a></li>
-        <li><a href="#课后练习-5">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#任务段">任务段</a>
+      <ul>
+        <li><a href="#笔记-7">笔记</a></li>
       </ul>
     </li>
   </ul>
@@ -1910,10 +1914,270 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
 </h2><h3 id="笔记-6">
 <a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-6"></a>
 笔记
-</h3><h3 id="课后练习-5">
-<a class="header-anchor" href="#%e8%af%be%e5%90%8e%e7%bb%83%e4%b9%a0-5"></a>
-课后练习
-</h3>
+</h3><p>与中断门几乎相同，不同在于<strong>中断门会将IF位清0，陷阱门不会</strong></p>
+<ul>
+<li>IF标志位为1表示当前CPU允许响应INTR可屏蔽中断请求</li>
+<li>IF标志位为0则表示CPU不会响应可屏蔽中断请求</li>
+</ul>
+<h2 id="任务段">
+<a class="header-anchor" href="#%e4%bb%bb%e5%8a%a1%e6%ae%b5"></a>
+任务段
+</h2><h3 id="笔记-7">
+<a class="header-anchor" href="#%e7%ac%94%e8%ae%b0-7"></a>
+笔记
+</h3><pre><code>在调用门、中断门与陷阱门中，一旦出现权限切换，那么就会有堆栈的切换。而且，由于CS的CPL发生改变，也导致了SS也必须要切换。
+
+切换时，会有新的ESP和SS(CS是由中断门或者调用门指定)这2个值从哪里来的呢？
+
+答案：TSS (Task-state segment )，任务状态段.
+</code></pre>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-41.png" alt="TSS"></p>
+<p><strong>TSS是一块104字节的内存</strong></p>
+<p>一个<code>TSS</code>对应一个<code>LDT</code>，通过<code>TSS</code>的<code>LDT段选择子</code>定位</p>
+<p><code>TSS</code>的切换可以类比线程切换，但是Windows系统和Linux系统均不使用<code>TSS</code>段进行线程切换，这部分等到操作系统章节再看</p>
+<pre><code>不要把TSS与“任务切换”联系到一起
+
+TSS的意义就在于可以同时换掉”一堆”寄存器
+</code></pre>
+<p>如何找到<code>TSS</code>段的地址？如下图所示</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-42.png" alt="TR"></p>
+<p>首先找<code>TR</code>段寄存器，通过<code>TR</code>段寄存器的段选择子去找<code>GDT</code>表中的<code>TSS段描述符</code>，再填充<code>TR</code>段寄存器的<code>Attributr</code>,<code>Base</code>,<code>Limit</code>字段</p>
+<p>其中<code>Base</code>指向<code>TSS</code>的起始地址，<code>Limit</code>为<code>TSS</code>的长度</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-43.png" alt="TSS段描述符"></p>
+<p>这里主要讲几个标志位</p>
+<table>
+  <thead>
+      <tr>
+          <th>标志位</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>B(Busy)</td>
+          <td>1表示忙碌，0表示空闲，为了确保只有一个<code>Busy Flag</code>与任务相关联，每个<code>TSS</code>应该只有一个指向它的<code>TSS描述符</code></td>
+      </tr>
+      <tr>
+          <td>G(Granularity)</td>
+          <td>1表示段界限粒度为4KB，0表示段界限粒度为1B</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>
+<p><strong>TR寄存器的读写</strong></p>
+<ol>
+<li>
+<p>将TSS段描述符加载到TR寄存器</p>
+<p>指令：LTR</p>
+<p>说明：</p>
+<ul>
+<li>
+<pre><code> 用LTR指令去装载的话，仅仅是改变TR寄存器的值(96位) ，并没有真正改变TSS 
+</code></pre>
+</li>
+<li>
+<pre><code> LTR指令只能在系统层使用
+</code></pre>
+</li>
+<li>
+<pre><code> 加载后TSS段描述符会状态位会发生改变
+</code></pre>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MOV AX,SelectorTSS
+</span></span><span class="line"><span class="cl">LTR AX
+</span></span></code></pre></div></li>
+<li>
+<p>读TR寄存器</p>
+<p>指令：<code>STR</code></p>
+<p>说明：如果用STR去读的话，只读了TR的16位，也就是选择子</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">STR</span> <span class="no">AX</span>
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>
+<p><strong>修改TR寄存器</strong></p>
+<ol>
+<li>
+<p>在Ring0 我们可以通过<code>LTR</code>指令去修改TR寄存器</p>
+</li>
+<li>
+<p>在Ring3 我们可以通过<code>CALL FAR</code> 或者 <code>JMP FAR</code>指令来修改</p>
+</li>
+</ol>
+<p>用JMP去访问一个代码段的时候，改变的是CS和EIP ：</p>
+<ol start="2">
+<li>
+<p>JMP 0x48:0x123456  如果0x48是代码段</p>
+</li>
+<li>
+<p>执行后：CS&ndash;&gt;0x48  EIP&ndash;&gt;0x123456</p>
+</li>
+</ol>
+<p>用JMP去访问一个任务段的时候：</p>
+<ol start="4">
+<li>如果0x48是TSS段描述符，先修改TR寄存器，</li>
+<li>再用TR.Base指向的TSS中的值修改当前的寄存器</li>
+</ol>
+</li>
+<li>
+<p><strong>构造TSS段描述符</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">XX00E9XX XXXX0068
+</span></span></code></pre></div><p>其中XXXXXXXX表示Base，就是我们提供的104字节的TSS段的起始地址</p>
+</li>
+<li>
+<p><strong>课堂代码</strong></p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwOK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwESP</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwCS</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">func</span><span class="p">()</span> <span class="c1">// 0x00401020
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dwOK</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">esp</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwESP</span><span class="p">,</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cs</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">word</span> <span class="n">ptr</span><span class="p">[</span><span class="n">dwCS</span><span class="p">],</span> <span class="n">ax</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 回去的代码没写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">iretd</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">bu</span><span class="p">[</span><span class="mh">0x10</span><span class="p">];</span>     <span class="c1">// 0x12ff70
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">iCr3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;input CR3:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">iCr3</span><span class="p">);</span>    <span class="c1">// 通过 windbg 工具 !process 0 0 指令获取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="n">DWORD</span> <span class="n">tTss</span><span class="p">[</span><span class="mh">0x68</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// link
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">(</span><span class="n">DWORD</span><span class="p">)</span><span class="n">bu</span><span class="p">,</span>      <span class="c1">// esp0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ss0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// esp1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ss1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// esp2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ss2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">(</span><span class="n">DWORD</span><span class="p">)</span><span class="n">iCr3</span><span class="p">,</span>    <span class="c1">// cr3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// eip
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// eflags
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// edx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ebx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// esp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// ebp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// esi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000000</span><span class="p">,</span>     <span class="c1">// edi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000008</span><span class="p">,</span>     <span class="c1">// es
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x0000001B</span><span class="p">,</span>     <span class="c1">// cs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000010</span><span class="p">,</span>     <span class="c1">// ss
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000023</span><span class="p">,</span>     <span class="c1">// ds
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x00000030</span><span class="p">,</span>     <span class="c1">// fs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x0000003B</span><span class="p">,</span>     <span class="c1">// gs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="mh">0x20ac0000</span><span class="p">,</span>     <span class="c1">// ldt？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buff</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buff</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xC0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buff</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;ok = %d  ESP = %x  CS = %x </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dwOK</span><span class="p">,</span> <span class="n">dwESP</span><span class="p">,</span> <span class="n">dwCS</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>完善代码</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwOK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwESP</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">DWORD</span> <span class="n">dwCS</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">func</span><span class="p">()</span> <span class="c1">// 0x00401020
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dwOK</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">int</span> <span class="mi">3</span> <span class="c1">// int 3 会修改FS
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="n">esp</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">dwESP</span><span class="p">,</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cs</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mov</span> <span class="n">word</span> <span class="n">ptr</span><span class="p">[</span><span class="n">dwCS</span><span class="p">],</span> <span class="n">ax</span>
+</span></span><span class="line"><span class="cl">        <span class="n">iretd</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">bu</span><span class="p">[</span><span class="mh">0x10</span><span class="p">];</span>     <span class="c1">// 0x12ff70
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">DWORD</span> <span class="n">dwCr3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">esp</span><span class="p">[</span><span class="mh">0x1000</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DWORD</span> <span class="o">*</span><span class="n">TSS</span> <span class="o">=</span> <span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="n">VirtualAlloc</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="mi">104</span><span class="p">,</span><span class="n">MEM_COMMIT</span><span class="p">,</span><span class="n">PAGE_READWRITE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">TSS</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;VirtualAlloc 失败，%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">GetLastError</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">		<span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;TSS = %x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">TSS</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;input CR3:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwCr3</span><span class="p">);</span>    <span class="c1">// 通过 windbg 工具 !process 0 0 指令获取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// link
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>      <span class="c1">// esp0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ss0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// esp1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ss1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// esp2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ss2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">dwCr3</span><span class="p">;</span>          <span class="c1">// cr3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">DWORD</span><span class="p">)</span><span class="n">func</span><span class="p">;</span>     <span class="c1">// eip
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// eflags
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ecx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// edx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ebx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">DWORD</span><span class="p">)</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x900</span><span class="p">;</span>     <span class="c1">// esp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// ebp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// esi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// edi
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000023</span><span class="p">;</span>     <span class="c1">// es
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000008</span><span class="p">;</span>     <span class="c1">// cs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000010</span><span class="p">;</span>     <span class="c1">// ss
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000023</span><span class="p">;</span>     <span class="c1">// ds
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000030</span><span class="p">;</span>     <span class="c1">// fs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// gs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// LDT Segment Selector
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">TSS</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>     <span class="c1">// I/O Map Base Address
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buff</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="n">WORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">buff</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x48</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">__asm</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">call</span> <span class="n">fword</span> <span class="n">ptr</span><span class="p">[</span><span class="n">buff</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;ok = %d  ESP = %x  CS = %x </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dwOK</span><span class="p">,</span> <span class="n">dwESP</span><span class="p">,</span> <span class="n">dwCS</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-44.png" alt="结果"></p>
+<p>在我的代码中，我通过<code>VirtualAlloc</code>给我的<code>TSS</code>分配了页面内存，关于页的概念后续会学到，这里我直接用了是因为课上已经说明了若是不在同一页会蓝屏，并且提到了<code>VirtualAlloc</code>可以解决这个问题</p>
+<p>这里还有几个小问题，课堂的代码的<code>TSS</code>是不完整的，最后的<code>LDT</code>部分被写上了<code>0x20ac0000</code>，但是<code>I/O Map Base Address</code>没有写，我把这些全置0了，结果没有蓝屏，但是我不知道这是否合理</p>
+<p>若要让系统执行我的<code>func</code>，我需要修改<code>eip</code>为我的函数的地址，否则任务切换的时候不会执行我的函数，所以我在<code>TSS</code>中把<code>eip</code>指向了<code>func</code>的地址</p>
+<p>最后困扰我的蓝屏问题是<code>esp</code>的设置，虽然发生了权限切换，但是任务切换与先前的调用门，中断门不同，他并不会走<code>esp0</code>的堆栈，而是从我当前的堆栈开始，若是填0，则会蓝屏，所以我给<code>esp</code>分配了堆栈上的空间<code>char esp[0x1000];</code>，并且写入<code>TSS[14] = (DWORD)esp+0x900;</code>，加上<code>0x900</code>偏移是因为堆栈从高地址向低地址增长，不写在栈顶是因为需要留出一个页避免越界</p>
+
       
     </div>
     <footer class="article-footer">
@@ -1977,7 +2241,7 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
           
           
             <img
-              data-src="/images/my/5.jpg"
+              data-src="/images/my/19.jpg"
               data-sizes="auto"
               alt="加密壳框架——基于傀儡进程的壳"
               class="lazyload"
@@ -2090,7 +2354,7 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
       <div>
         <span class="icon-brush"
           >&nbsp;
-            42.0k
+            43.8k
           </span
         >
         &nbsp;|&nbsp;
@@ -2098,7 +2362,7 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
           
           
 
-          01:29
+          01:33
         </span>
       </div>
     
@@ -2195,7 +2459,11 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
     <li><a href="#陷阱门">陷阱门</a>
       <ul>
         <li><a href="#笔记-6">笔记</a></li>
-        <li><a href="#课后练习-5">课后练习</a></li>
+      </ul>
+    </li>
+    <li><a href="#任务段">任务段</a>
+      <ul>
+        <li><a href="#笔记-7">笔记</a></li>
       </ul>
     </li>
   </ul>
@@ -2592,9 +2860,9 @@ $$index = \frac{8003f500h - 8003f400h}{8} = \frac{100h}{8h} = 20$$<ul>
       <script data-pjax>
         window.REIMU_POST = {
           author: "Cyzrjz",
-          title: "Windows内核笔记-保护模式",
+          title: "Windows内核-保护模式",
           url: "https:\/\/cyzrjz.github.io\/post\/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0\/",
-          description: "滴水中级班保护模式笔记，记录了一些碎片知识以及课程的课后习题",
+          description: "滴水课程保护模式笔记，记录了一些碎片知识以及课程的课后习题",
           cover: "https:\/\/cyzrjz.github.io\/images\/my\/banner.png",
         };
       </script>
