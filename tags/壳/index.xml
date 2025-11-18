@@ -9,11 +9,11 @@
     <lastBuildDate>Sun, 12 Oct 2025 20:34:40 +0800</lastBuildDate>
     <atom:link href="https://cyzrjz.github.io/tags/%E5%A3%B3/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>加密壳框架——基于傀儡进程的壳</title>
+      <title>加密壳框架-傀儡进程</title>
       <link>https://cyzrjz.github.io/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/</link>
       <pubDate>Sun, 12 Oct 2025 20:34:40 +0800</pubDate>
       <guid>https://cyzrjz.github.io/post/%E5%A3%B3_%E5%82%80%E5%84%A1%E8%BF%9B%E7%A8%8B/</guid>
-      <description>&lt;h2 id=&#34;前言&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%89%8d%e8%a8%80&#34;&gt;&lt;/a&gt;&#xA;前言&#xA;&lt;/h2&gt;&lt;p&gt;这是第二个项目，是对“壳”的初步探索。思路源于滴水3期的项目要求，一个基于傀儡进程的壳框架，在写壳的过程中遇到了不少问题，如果不自己来写一遍的话是记不住这些错误的&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#%e5%89%8d%e8%a8%80&#34;&gt;&lt;/a&gt;&#xA;前言&#xA;&lt;/h2&gt;&lt;p&gt;源于滴水3期的项目要求，一个基于傀儡进程的壳框架，在写壳的过程中遇到了不少问题，如果不自己来写一遍的话是记不住这些错误的&lt;/p&gt;&#xA;&lt;p&gt;归根结底，纸上得来终觉浅，绝知此事要躬行。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
