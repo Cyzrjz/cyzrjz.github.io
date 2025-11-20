@@ -459,6 +459,18 @@
         <li><a href="#任务门进一环">任务门进一环</a></li>
       </ul>
     </li>
+    <li><a href="#10-10-12分页">10-10-12分页</a>
+      <ul>
+        <li><a href="#引入">引入</a></li>
+        <li><a href="#查找记事本文本内容的物理地址">查找记事本文本内容的物理地址</a></li>
+      </ul>
+    </li>
+    <li><a href="#pdepte">PDE/PTE</a>
+      <ul>
+        <li><a href="#往0地址读写数据">往0地址读写数据</a></li>
+        <li><a href="#pdepte属性p_rw">PDE/PTE属性(P_RW)</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -621,8 +633,7 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <p>[toc]</p>
-<h2 id="前言">
+        <h2 id="前言">
 <a class="header-anchor" href="#%e5%89%8d%e8%a8%80"></a>
 前言
 </h2><p>说是笔记，实际上还是课后习题的内容，我不擅长写笔记，就不误导别人了</p>
@@ -2366,6 +2377,139 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-47.png" alt="结果"></p>
 <p>成功进入1环</p>
+<h2 id="10-10-12分页">
+<a class="header-anchor" href="#10-10-12%e5%88%86%e9%a1%b5"></a>
+10-10-12分页
+</h2><h3 id="引入">
+<a class="header-anchor" href="#%e5%bc%95%e5%85%a5"></a>
+引入
+</h3><p>首先说下，有效地址 ，线性地址，物理地址：</p>
+<p><code>MOV eax,dword ptr ds:[0x12345678]</code></p>
+<ul>
+<li>其中,0x12345678 是有效地址</li>
+<li><code>ds.Base + 0x12345678</code> 是线性地址</li>
+<li>物理地址就不用说了，要找的就是这个</li>
+</ul>
+<p>x86中分页的方式有两种：</p>
+<ul>
+<li><code>10-10-12</code></li>
+<li><code>2-9-9-12</code></li>
+</ul>
+<p>在boot.ini里，给启动参数加上<code>/execute=optin</code>，重启后就是10-10-12分页</p>
+<h3 id="查找记事本文本内容的物理地址">
+<a class="header-anchor" href="#%e6%9f%a5%e6%89%be%e8%ae%b0%e4%ba%8b%e6%9c%ac%e6%96%87%e6%9c%ac%e5%86%85%e5%ae%b9%e7%9a%84%e7%89%a9%e7%90%86%e5%9c%b0%e5%9d%80"></a>
+查找记事本文本内容的物理地址
+</h3><p>打开一个记事本，随便写入一些内容，打开<strong>Cheat Engine</strong>，附加记事本后搜索<strong>String</strong>类型的内容(勾选Unicode)，如图所示
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-48.png" alt="CE"></p>
+<p>搜索结果可能有多个，需要改变字符串，移动窗口等操作去确定目标字符串，找到后记录下来，在我这是<code>0x000B1250</code>
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-49.png" alt="线性地址"></p>
+<p>按照10-10-12bit拆分线性地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">000B1250
+</span></span><span class="line"><span class="cl">0000 0000 00    // 0 * 4(每个成员4字节)
+</span></span><span class="line"><span class="cl">00 1011 0001    // 0xB1 * 4(每个成员4字节)
+</span></span><span class="line"><span class="cl">0x250           // 0x250
+</span></span></code></pre></div><p>有了线性地址，就能通过进程的CR3找到页目录表的物理地址，再通过页目录表找到页表的物理地址，最后找到目标字符串的物理地址</p>
+<p>每个进程都有一个<code>CR3</code>(这里存的是物理地址)，准确的说是都一个CR3的值，CR3本身是个寄存器，一个核，只有一套寄存器</p>
+<p>可以理解为<strong>物理地址就是一本书，而每个进程的CR3就是该进程的目录</strong></p>
+<p>CR3指向一个物理页，一共4096字节</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-50.png" alt="CR3"></p>
+<p>之后找到CR3，也就是DirBase：<code>0x1c803000</code></p>
+<p>然后逐级查找，查物理内存的命令是<code>!dd</code></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-51.png" alt="CR3"></p>
+<ul>
+<li>第一级</li>
+</ul>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-53.png" alt="第一级">
+得到内容<code>1c631867</code>，其中最后三个字直接忽略，这是属性，所以第二级从<code>1c631000</code>开始找</p>
+<ul>
+<li>第二级</li>
+</ul>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-52.png" alt="第二级"></p>
+<ul>
+<li>第三级</li>
+</ul>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-54.png" alt="第三级"></p>
+<p>成功找到字符串</p>
+<h2 id="pdepte">
+<a class="header-anchor" href="#pdepte"></a>
+PDE/PTE
+</h2><p>在上一节中所提到的CR3寻找物理地址中，我们通过线性地址的拆分去寻找物理页，在拆分寻找的过程中所提到的第一级，第二级，第三级，都是页目录表，页表，页内偏移地址，都是通过PDE/PTE来实现的</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-55.png" alt="PDE/PTE"></p>
+<p>PTE可以不指向物理页，多个PTE也可以指向同一个物理页</p>
+<h3 id="往0地址读写数据">
+<a class="header-anchor" href="#%e5%be%800%e5%9c%b0%e5%9d%80%e8%af%bb%e5%86%99%e6%95%b0%e6%8d%ae"></a>
+往0地址读写数据
+</h3><p>正常编程中，不能读写NULL，原因是NULL指针没有对应的物理页，因此，只要我们让NULL指针最终映射到一块可读写的物理页，就可以用NULL去读写数据了</p>
+<ul>
+<li>
+<p>示例代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;x的地址%x&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="mi">0</span> <span class="o">=</span> <span class="mh">0x123</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;0的值为%x&#34;</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>读取到x的地址为<code>12ff7c</code></p>
+</li>
+<li>
+<p>拆分线性地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0012ff7c
+</span></span><span class="line"><span class="cl">0000 0000 00 // 0
+</span></span><span class="line"><span class="cl">01 0010 1111 // 12f*4=4BC
+</span></span><span class="line"><span class="cl">0xF7C
+</span></span></code></pre></div></li>
+<li>
+<p>修改PTE
+修改0地址的PTE，使其指向一块可读可写的物理页，这里我指向了x的地址
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-57.png" alt="修改PTE"></p>
+<p>可以看到0地址被成功写入，并且正常返回了
+<img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-56.png" alt="结果"></p>
+</li>
+</ul>
+<p>证明了0地址之所以不能读写，是因为它没有对应的物理页，而我们通过修改PTE指向一块可读写的物理页，使得0地址有了对应的物理页，就可以读写了</p>
+<h3 id="pdepte属性p_rw">
+<a class="header-anchor" href="#pdepte%e5%b1%9e%e6%80%a7p_rw"></a>
+PDE/PTE属性(P_RW)
+</h3><p><strong>物理页的属性 = PDE属性 &amp; PTE属性</strong></p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-58.png" alt="属性拆分"></p>
+<ul>
+<li>
+<p>R/W位</p>
+<p>R/W = 0 只读
+R/W = 1 可读可写</p>
+</li>
+<li>
+<p>P位</p>
+<p>P=1 才是有效的物理页</p>
+</li>
+<li>
+<p>代码修改常量</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="o">*</span><span class="n">str</span> <span class="o">=</span> <span class="s">&#34;Hello World&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">addr</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">str</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;线性地址：%x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="n">addr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">getchar</span><span class="p">();</span> <span class="c1">// 修改 PDE PTE 的 RW 位为1，使物理页可读可写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;M&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;修改后：%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>得到线性地址：<code>0x42303C</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0x0042303C
+</span></span><span class="line"><span class="cl">0000 0000 01  // 1 * 4
+</span></span><span class="line"><span class="cl">000 0010 0011 // 23 * 4
+</span></span><span class="line"><span class="cl">03C
+</span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-60.png" alt="过程"></p>
+<p>修改PTE的RW=1即可：</p>
+<p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-59.png" alt="结果"></p>
 
       
     </div>
@@ -2430,7 +2574,7 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
           
           
             <img
-              data-src="/images/my/18.png"
+              data-src="/images/my/10.jpg"
               data-sizes="auto"
               alt="加密壳框架-傀儡进程"
               class="lazyload"
@@ -2543,7 +2687,7 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
       <div>
         <span class="icon-brush"
           >&nbsp;
-            44.7k
+            45.9k
           </span
         >
         &nbsp;|&nbsp;
@@ -2551,7 +2695,7 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
           
           
 
-          01:34
+          01:37
         </span>
       </div>
     
@@ -2660,6 +2804,18 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
         <li><a href="#构造任务门">构造任务门</a></li>
         <li><a href="#实现一个任务门">实现一个任务门</a></li>
         <li><a href="#任务门进一环">任务门进一环</a></li>
+      </ul>
+    </li>
+    <li><a href="#10-10-12分页">10-10-12分页</a>
+      <ul>
+        <li><a href="#引入">引入</a></li>
+        <li><a href="#查找记事本文本内容的物理地址">查找记事本文本内容的物理地址</a></li>
+      </ul>
+    </li>
+    <li><a href="#pdepte">PDE/PTE</a>
+      <ul>
+        <li><a href="#往0地址读写数据">往0地址读写数据</a></li>
+        <li><a href="#pdepte属性p_rw">PDE/PTE属性(P_RW)</a></li>
       </ul>
     </li>
   </ul>
