@@ -468,7 +468,17 @@
     <li><a href="#pdepte">PDE/PTE</a>
       <ul>
         <li><a href="#往0地址读写数据">往0地址读写数据</a></li>
-        <li><a href="#pdepte属性p_rw">PDE/PTE属性(P_RW)</a></li>
+      </ul>
+    </li>
+    <li><a href="#pdepte属性">PDE/PTE属性</a>
+      <ul>
+        <li><a href="#p_rw位">P_RW位</a></li>
+        <li><a href="#us位">U/S位</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码挂物理页">代码挂物理页</a>
+      <ul>
+        <li><a href="#分析mmisaddressvalid函数">分析<code>MmIsAddressValid</code>函数</a></li>
       </ul>
     </li>
   </ul>
@@ -2435,7 +2445,8 @@ TSS的意义就在于可以同时换掉”一堆”寄存器
 PDE/PTE
 </h2><p>在上一节中所提到的CR3寻找物理地址中，我们通过线性地址的拆分去寻找物理页，在拆分寻找的过程中所提到的第一级，第二级，第三级，都是页目录表，页表，页内偏移地址，都是通过PDE/PTE来实现的</p>
 <p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-55.png" alt="PDE/PTE"></p>
-<p>PTE可以不指向物理页，多个PTE也可以指向同一个物理页</p>
+<p>PTE可以不指向物理页，多个PTE也可以指向同一个物理页，若两个线性地址的PDE与PTE都相同，则它们指向同一个物理页</p>
+<p>一个物理页的前后属性是一样的，若线性地址为0，则线性地址从0-fff都是不可读不可写的，不存在一个物理页前后属性不同的情况</p>
 <h3 id="往0地址读写数据">
 <a class="header-anchor" href="#%e5%be%800%e5%9c%b0%e5%9d%80%e8%af%bb%e5%86%99%e6%95%b0%e6%8d%ae"></a>
 往0地址读写数据
@@ -2471,11 +2482,15 @@ PDE/PTE
 </li>
 </ul>
 <p>证明了0地址之所以不能读写，是因为它没有对应的物理页，而我们通过修改PTE指向一块可读写的物理页，使得0地址有了对应的物理页，就可以读写了</p>
-<h3 id="pdepte属性p_rw">
-<a class="header-anchor" href="#pdepte%e5%b1%9e%e6%80%a7p_rw"></a>
-PDE/PTE属性(P_RW)
+<h2 id="pdepte属性">
+<a class="header-anchor" href="#pdepte%e5%b1%9e%e6%80%a7"></a>
+PDE/PTE属性
+</h2><h3 id="p_rw位">
+<a class="header-anchor" href="#p_rw%e4%bd%8d"></a>
+P_RW位
 </h3><p><strong>物理页的属性 = PDE属性 &amp; PTE属性</strong></p>
 <p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-58.png" alt="属性拆分"></p>
+<p>可以看到PDE和PTE的高20位指向下一个物理页，低12位指向物理页的属性</p>
 <ul>
 <li>
 <p>R/W位</p>
@@ -2485,6 +2500,7 @@ R/W = 1 可读可写</p>
 <li>
 <p>P位</p>
 <p>P=1 才是有效的物理页</p>
+<p>若P=0，则会产生缺页异常，走E号中断，具体查看缺页异常处理流程</p>
 </li>
 <li>
 <p>代码修改常量</p>
@@ -2506,11 +2522,67 @@ R/W = 1 可读可写</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0x0042303C
 </span></span><span class="line"><span class="cl">0000 0000 01  // 1 * 4
 </span></span><span class="line"><span class="cl">000 0010 0011 // 23 * 4
-</span></span><span class="line"><span class="cl">03C
+</span></span><span class="line"><span class="cl">0x03C
 </span></span></code></pre></div><p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-60.png" alt="过程"></p>
 <p>修改PTE的RW=1即可：</p>
 <p><img src="/post/%E6%B5%B7%E5%93%A5%E5%86%85%E6%A0%B8%E7%AC%94%E8%AE%B0/img/image-59.png" alt="结果"></p>
-
+<h3 id="us位">
+<a class="header-anchor" href="#us%e4%bd%8d"></a>
+U/S位
+</h3><ul>
+<li>
+<p>U/S位</p>
+<p>U/S位 = 0 内核态
+U/S位 = 1 用户态</p>
+</li>
+</ul>
+<p>在现在再去看地址<code>[0x81234567]</code>，他在高2G，原本我们想要修改里面的值，需要提权，现在我们可以修改其PDE与PTE的U/S位为1</p>
+<h2 id="代码挂物理页">
+<a class="header-anchor" href="#%e4%bb%a3%e7%a0%81%e6%8c%82%e7%89%a9%e7%90%86%e9%a1%b5"></a>
+代码挂物理页
+</h2><h3 id="分析mmisaddressvalid函数">
+<a class="header-anchor" href="#%e5%88%86%e6%9e%90mmisaddressvalid%e5%87%bd%e6%95%b0"></a>
+分析<code>MmIsAddressValid</code>函数
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span> <span class="n">_MmIsAddressValid</span><span class="err">@</span><span class="mi">4</span> <span class="n">proc</span> <span class="n">near</span>           <span class="p">;</span> <span class="n">CODE</span> <span class="nl">XREF</span><span class="p">:</span> <span class="n">MiMakeSystemAddressValidPfn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">C</span><span class="err">↓</span><span class="n">p</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span>                                         <span class="p">;</span> <span class="n">MiDecrementShareCount</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">493</span><span class="err">↓</span><span class="n">p</span> <span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span> <span class="n">VirtualAddress</span>  <span class="o">=</span> <span class="n">dword</span> <span class="n">ptr</span>  <span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span> <span class="p">;</span> <span class="n">FUNCTION</span> <span class="n">CHUNK</span> <span class="n">AT</span> <span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0041</span><span class="n">EDB7</span> <span class="n">SIZE</span> <span class="mo">00000007</span> <span class="n">BYTES</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span> <span class="p">;</span> <span class="n">FUNCTION</span> <span class="n">CHUNK</span> <span class="n">AT</span> <span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mf">0044F</span><span class="mi">166</span> <span class="n">SIZE</span> <span class="mo">0000001</span><span class="mi">9</span> <span class="n">BYTES</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF46</span>                 <span class="n">mov</span>     <span class="n">edi</span><span class="p">,</span> <span class="n">edi</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF48</span>                 <span class="n">push</span>    <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF49</span>                 <span class="n">mov</span>     <span class="n">ebp</span><span class="p">,</span> <span class="n">esp</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF4B</span>                 <span class="n">mov</span>     <span class="n">ecx</span><span class="p">,</span> <span class="p">[</span><span class="n">ebp</span><span class="o">+</span><span class="n">VirtualAddress</span><span class="p">]</span> <span class="p">;</span> <span class="err">获取线性地址</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF4E</span>                 <span class="n">mov</span>     <span class="n">eax</span><span class="p">,</span> <span class="n">ecx</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF50</span>                 <span class="n">shr</span>     <span class="n">eax</span><span class="p">,</span> <span class="mi">20</span>         <span class="p">;</span> <span class="err">取出线性地址的高</span><span class="mi">12</span><span class="err">位</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF53</span>                 <span class="n">mov</span>     <span class="n">edx</span><span class="p">,</span> <span class="mf">0FF</span><span class="n">Ch</span>      <span class="p">;</span> <span class="mi">12</span><span class="n">bit</span> <span class="mi">111111111100</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF58</span>                 <span class="n">and</span>     <span class="n">eax</span><span class="p">,</span> <span class="n">edx</span>        <span class="p">;</span> <span class="err">保留线性地址的高</span><span class="mi">10</span><span class="err">位（</span><span class="n">PDI</span><span class="err">），将剩余</span><span class="mi">2</span><span class="err">位置零</span><span class="p">(</span><span class="n">eax</span><span class="o">&lt;&lt;</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">eax</span> <span class="o">=</span> <span class="n">PDI</span><span class="o">*</span><span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF5A</span>                 <span class="n">sub</span>     <span class="n">eax</span><span class="p">,</span> <span class="mf">3F</span><span class="n">D00000h</span>  <span class="p">;</span> <span class="err">结果是</span><span class="n">eax</span> <span class="o">=</span> <span class="mh">0xC0300000</span><span class="o">+</span><span class="n">eax</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF5F</span>                 <span class="n">mov</span>     <span class="n">eax</span><span class="p">,</span> <span class="p">[</span><span class="n">eax</span><span class="p">]</span>      <span class="p">;</span> <span class="err">取出</span><span class="n">PDE</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF61</span>                 <span class="n">test</span>    <span class="n">al</span><span class="p">,</span> <span class="mi">1</span>           <span class="p">;</span> <span class="err">校验</span><span class="n">P位</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF63</span>                 <span class="n">jz</span>      <span class="n">loc_41EDB7</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF69</span>                 <span class="n">test</span>    <span class="n">al</span><span class="p">,</span> <span class="n">al</span>          <span class="p">;</span> <span class="err">判断</span><span class="n">PDE的PS位是否为1</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF6B</span>                 <span class="n">js</span>      <span class="kt">short</span> <span class="n">loc_40AF91</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF6D</span>                 <span class="n">shr</span>     <span class="n">ecx</span><span class="p">,</span> <span class="mi">10</span>         <span class="p">;</span> <span class="err">取出线性地址的高</span><span class="mi">22</span><span class="err">位</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF70</span>                 <span class="n">and</span>     <span class="n">ecx</span><span class="p">,</span> <span class="mf">3FF</span><span class="n">FFCh</span>    <span class="p">;</span> <span class="err">结果是</span><span class="n">ecx</span> <span class="o">=</span> <span class="n">PDI</span><span class="o">*</span><span class="mi">4096</span><span class="o">+</span><span class="n">PTI</span><span class="o">*</span><span class="mi">4</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF76</span>                 <span class="n">sub</span>     <span class="n">ecx</span><span class="p">,</span> <span class="mi">40000000</span><span class="n">h</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF7C</span>                 <span class="n">mov</span>     <span class="n">eax</span><span class="p">,</span> <span class="n">ecx</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF7E</span>                 <span class="n">mov</span>     <span class="n">ecx</span><span class="p">,</span> <span class="p">[</span><span class="n">eax</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF80</span>                 <span class="n">test</span>    <span class="n">cl</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF83</span>                 <span class="n">jz</span>      <span class="n">loc_41EDB7</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF89</span>                 <span class="n">test</span>    <span class="n">cl</span><span class="p">,</span> <span class="n">cl</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF8B</span>                 <span class="n">js</span>      <span class="n">loc_44F166</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF91</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF91</span> <span class="nl">loc_40AF91</span><span class="p">:</span>                             <span class="p">;</span> <span class="n">CODE</span> <span class="nl">XREF</span><span class="p">:</span> <span class="n">MmIsAddressValid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mi">25</span><span class="err">↑</span><span class="n">j</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF91</span>                                         <span class="p">;</span> <span class="n">MmIsAddressValid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mi">4422</span><span class="n">E</span><span class="err">↓</span><span class="n">j</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF91</span>                 <span class="n">mov</span>     <span class="n">al</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF93</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF93</span> <span class="nl">loc_40AF93</span><span class="p">:</span>                             <span class="p">;</span> <span class="n">CODE</span> <span class="nl">XREF</span><span class="p">:</span> <span class="n">MmIsAddressValid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">13E73</span><span class="err">↓</span><span class="n">j</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF93</span>                 <span class="n">pop</span>     <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="nl">text</span><span class="p">:</span><span class="mo">0040</span><span class="n">AF94</span>                 <span class="n">retn</span>    <span class="mi">4</span>
+</span></span></code></pre></div>
       
     </div>
     <footer class="article-footer">
@@ -2574,7 +2646,7 @@ R/W = 1 可读可写</p>
           
           
             <img
-              data-src="/images/my/10.jpg"
+              data-src="/images/my/6.jpg"
               data-sizes="auto"
               alt="加密壳框架-傀儡进程"
               class="lazyload"
@@ -2687,7 +2759,7 @@ R/W = 1 可读可写</p>
       <div>
         <span class="icon-brush"
           >&nbsp;
-            45.9k
+            46.6k
           </span
         >
         &nbsp;|&nbsp;
@@ -2695,7 +2767,7 @@ R/W = 1 可读可写</p>
           
           
 
-          01:37
+          01:38
         </span>
       </div>
     
@@ -2815,7 +2887,17 @@ R/W = 1 可读可写</p>
     <li><a href="#pdepte">PDE/PTE</a>
       <ul>
         <li><a href="#往0地址读写数据">往0地址读写数据</a></li>
-        <li><a href="#pdepte属性p_rw">PDE/PTE属性(P_RW)</a></li>
+      </ul>
+    </li>
+    <li><a href="#pdepte属性">PDE/PTE属性</a>
+      <ul>
+        <li><a href="#p_rw位">P_RW位</a></li>
+        <li><a href="#us位">U/S位</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码挂物理页">代码挂物理页</a>
+      <ul>
+        <li><a href="#分析mmisaddressvalid函数">分析<code>MmIsAddressValid</code>函数</a></li>
       </ul>
     </li>
   </ul>
